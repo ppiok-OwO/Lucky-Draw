@@ -40,15 +40,16 @@ class Player {
       console.log(chalk.green('카드 효과 발동이 실패했습니다!'));
       await monster.monsterAttack(this);
     }
-    console.log(chalk.green('카드를 드로우하고 사용한 카드를 더미에 돌려보냅니다!'));
-    let splicedCard = this._hasCardInHand.splice(cardIndex, 1)[0];
+    let cardArr = this._hasCard;
+    let cardArrInHand = this._hasCardInHand;
+    let splicedCard = cardArrInHand.splice(cardIndex, 1)[0];
+    cardArr.push(splicedCard);
     // let nextCard = this._hasCard.shift();
-    this._hasCard.push(splicedCard);
     // this._hasCardInHand.push(nextCard);
     let nextCard;
-    if (this._hasCard.length > 0) {
-      nextCard = this._hasCard.shift();
-      this._hasCardInHand.push(nextCard);
+    if (cardArr.length > 0) {
+      nextCard = cardArr.shift();
+      cardArrInHand.push(nextCard);
     } else {
       console.log(chalk.yellow('더미에 카드가 없습니다.'));
     }
@@ -81,7 +82,6 @@ class Player {
 
   updateHpByMonster(num) {
     this._hp += num + this._defense;
-    console.log(chalk.green(`몬스터가 ${num}만큼의 데미지를 입혔습니다.`));
   }
 
   updateDefense(playingCard) {
@@ -262,12 +262,10 @@ class Monster {
 
   monsterAttack(player) {
     // 몬스터의 공격
-    console.log('몬스터가 공격합니다!');
     player.updateHpByMonster(-this.attackDmg);
   }
   monsterLoseHp(playingCard) {
     if (playingCard._attackDmg > 0 || playingCard._spellDmg > 0) {
-      console.log('카드를 사용하여 몬스터를 공격합니다.');
       this.hp -= (playingCard._attackDmg + playingCard._spellDmg) * playingCard._cardPower;
     }
   }
@@ -319,8 +317,8 @@ function displayStatus(stage, player, monster) {
 const battle = async (stage, player, monster) => {
   // let logs = [];
   while (player._hp > 0) {
+    console.clear();
     displayStatus(stage, player, monster);
-
     // logs.forEach((log) => console.log(log));
 
     console.log(chalk.green(`\n1. 카드를 사용한다. 2. 턴을 넘긴다. 3. 도망친다.`));
@@ -333,14 +331,14 @@ const battle = async (stage, player, monster) => {
           \n보유 중인 카드 : ${player._hasCardInHand.map((card, index) => index + 1 + '.' + card._cardName).join(', ')}`),
       );
       const cardChoice = readlineSync.question('몇 번째 카드를 사용하시겠습니까? : ');
-      console.log(chalk.green(`${cardChoice}번째 카드를 선택했습니다.`));
+      // console.log(chalk.green(`${cardChoice}번째 카드를 선택했습니다.`));
       const cardIndex = Number(cardChoice - 1);
       const playingCard = player._hasCardInHand[cardIndex];
-      await player.cardPlay(playingCard, monster, cardIndex);
+      player.cardPlay(playingCard, monster, cardIndex);
     } else if (choice === '2') {
-      await monster.monsterAttack(player);
+      monster.monsterAttack(player);
     } else if (choice === '3') {
-      await player.runAway();
+      player.runAway();
     } else {
       console.log(chalk.red('잘못된 입력입니다. 다시 선택해주세요.'));
     }
