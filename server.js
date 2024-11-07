@@ -3,7 +3,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { startGame } from './game.js';
+import { startGame, typeName } from './game.js';
 
 // 로비 화면을 출력하는 함수
 function displayLobby() {
@@ -13,7 +13,7 @@ function displayLobby() {
   console.log(
     chalk.cyan(
       figlet.textSync('Lucky Draw=*', {
-        font: 'Standard',
+        font: 'ANSI Shadow',
         horizontalLayout: 'default',
         verticalLayout: 'default',
       }),
@@ -25,7 +25,9 @@ function displayLobby() {
   console.log(line);
 
   // 게임 이름
-  console.log(chalk.yellowBright.bold('CLI 게임에 오신것을 환영합니다!'));
+  console.log(
+    chalk.yellowBright.bold(`덱빌딩 카드 게임 LuckyDraw!\n도박사가 되어 운빨을 확인해보세요!`),
+  );
 
   // 설명 텍스트
   console.log(chalk.green('옵션을 선택해주세요.'));
@@ -52,7 +54,8 @@ function handleUserInput() {
     case '1':
       console.log(chalk.green('게임을 시작합니다.'));
       // 여기에서 새로운 게임 시작 로직을 구현
-      startGame();
+      typeName();
+      // startGame();
       break;
     case '2':
       console.log(chalk.yellow('구현 준비중입니다.. 게임을 시작하세요'));

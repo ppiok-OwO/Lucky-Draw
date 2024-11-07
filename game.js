@@ -12,18 +12,31 @@ class Player {
     this._deckSize = 10;
     this._handSize = 5;
     this._runAwayProb = 50;
-    // this.isPlayCard = false; // 현재 턴에 카드를 사용했는가?
+    // this._isPlayCard = false; // 현재 턴에 카드를 사용했는가?
     this._isThereAnyMonster = false; // 몬스터랑 만났나요?
     this._hasCard = []; // 덱에 보유한 카드
     this._hasCardInHand = []; // 핸드에 들어오는 카드의 배열
     this._hasStolenGoods = []; // 보유한 장물 아이템
+    this._stage = 1;
+    // this._isAttacked = false;
   }
 
   drawCardRandomly() {
+    // 카드 셔플
     let sortedCard = this._hasCard.sort(() => Math.random() - 0.5);
 
-    for (let i = 0; i < this._handSize; i++) {
-      this._hasCardInHand.push(sortedCard.shift());
+    if (this._hasCardInHand.leangth >= 1) {
+      // 손에 카드가 한 장이라도 있으면 손패에 있는 거 카드더미랑 합치기
+      this._hasCard = [...this._hasCard, ...this._hasCardInHand];
+      // 배열의 길이만큼 손패 비우기
+      for (let i = 0; i < this._hasCardInHand.length; i++) {
+        this._hasCardInHand.shift();
+      }
+    } else {
+      // 손패에 카드가 없으면 핸드 사이즈만큼 카드 뽑기
+      for (let i = 0; i < this._handSize; i++) {
+        this._hasCardInHand.push(sortedCard.shift());
+      }
     }
   }
 
@@ -36,23 +49,25 @@ class Player {
       await monster.monsterLoseHp(playingCard);
       this.updateHpByCard(playingCard);
       this.updateDefense(playingCard);
+      // this._isPlayCard = true;
+      this.playAndDraw(cardIndex);
+      return true;
     } else {
       console.log(chalk.green('카드 효과 발동이 실패했습니다!'));
       await monster.monsterAttack(this);
+      // this._isAttacked = true;
+      this.playAndDraw(cardIndex);
+      return false;
     }
+  }
+
+  playAndDraw(cardIndex) {
     let cardArr = this._hasCard;
     let cardArrInHand = this._hasCardInHand;
     let splicedCard = cardArrInHand.splice(cardIndex, 1)[0];
     cardArr.push(splicedCard);
-    // let nextCard = this._hasCard.shift();
-    // this._hasCardInHand.push(nextCard);
-    let nextCard;
-    if (cardArr.length > 0) {
-      nextCard = cardArr.shift();
-      cardArrInHand.push(nextCard);
-    } else {
-      console.log(chalk.yellow('더미에 카드가 없습니다.'));
-    }
+    let nextCard = cardArr.shift();
+    cardArrInHand.push(nextCard);
   }
 
   loseStolenGoods() {
@@ -94,9 +109,17 @@ class Player {
     this._bondingIndex += num;
   }
 
-  runAway() {
+  runAway(monster) {
     // 도망친다.
-    battle();
+    let randomValue = Math.random() * 100;
+    if (randomValue <= this._runAwayProb) {
+      console.log('도망 성공!');
+      this._stage++;
+      startGame(this);
+    } else {
+      console.log(chalk.red('이런! 불행하게도 도망치지 못했습니다.'));
+      monster.monsterAttack(this);
+    }
   }
 
   set name(value) {
@@ -301,7 +324,7 @@ class LegendaryMonster extends Monster {
   }
 }
 
-function displayStatus(stage, player, monster) {
+function displayStatus(stage, player, monster, playRsult) {
   console.log(chalk.magentaBright(`\n=== Current Status ===`));
   console.log(
     chalk.cyanBright(`| Stage: ${stage}`) +
@@ -311,14 +334,23 @@ function displayStatus(stage, player, monster) {
       ) +
       chalk.redBright(` | 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} |`),
   );
-  console.log(chalk.magentaBright(`=====================\n`));
+  console.log(chalk.magentaBright(`=====================`));
+
+  // if (playRsult === true) {
+  //   console.log(chalk.magentaBright('선택한 카드가 발동했습니다!'));
+  //   console.log(chalk.magentaBright('=====================\n'));
+  // } else if (playRsult === false) {
+  //   console.log(chalk.magentaBright('카드 발동 실패! 몬스터의 공격을 받았습니다!'));
+  //   console.log(chalk.magentaBright('=====================\n'));
+  // }
 }
 
 const battle = async (stage, player, monster) => {
   // let logs = [];
+  let playRsult;
   while (player._hp > 0) {
     console.clear();
-    displayStatus(stage, player, monster);
+    displayStatus(stage, player, monster, playRsult);
     // logs.forEach((log) => console.log(log));
 
     console.log(chalk.green(`\n1. 카드를 사용한다. 2. 턴을 넘긴다. 3. 도망친다.`));
@@ -334,11 +366,11 @@ const battle = async (stage, player, monster) => {
       // console.log(chalk.green(`${cardChoice}번째 카드를 선택했습니다.`));
       const cardIndex = Number(cardChoice - 1);
       const playingCard = player._hasCardInHand[cardIndex];
-      player.cardPlay(playingCard, monster, cardIndex);
+      playRsult = player.cardPlay(playingCard, monster, cardIndex);
     } else if (choice === '2') {
       monster.monsterAttack(player);
     } else if (choice === '3') {
-      player.runAway();
+      player.runAway(monster);
     } else {
       console.log(chalk.red('잘못된 입력입니다. 다시 선택해주세요.'));
     }
@@ -347,15 +379,13 @@ const battle = async (stage, player, monster) => {
       console.clear();
       break;
     } else if (player._hp <= 0) {
-      startGame();
+      typeName();
     }
   }
 };
 
-export async function startGame() {
+export async function startGame(player) {
   console.clear();
-  const playerName = readlineSync.question('당신의 이름은? ');
-  const player = new Player(playerName);
 
   // 시작덱 배열에 추가
   for (let i = 0; i < 5; i++) {
@@ -368,17 +398,22 @@ export async function startGame() {
   }
   player.drawCardRandomly();
 
-  let stage = 1;
-
-  while (stage <= 10) {
-    const monster = new Monster(stage);
+  while (player._stage <= 10) {
+    const monster = new Monster(player._stage);
     // 카드 셔플, 첫 핸드 가져오기
-    await battle(stage, player, monster);
+    await battle(player._stage, player, monster);
     // 스테이지 클리어 및 게임 종료 조건
     if (monster.hp <= 0) {
-      stage++;
+      player._stage++;
     } else if (player._hp <= 0) {
       break;
     }
   }
+}
+
+export function typeName() {
+  const playerName = readlineSync.question('당신의 이름은? ');
+  const player = new Player(playerName);
+
+  startGame(player);
 }
