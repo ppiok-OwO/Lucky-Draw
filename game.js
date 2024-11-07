@@ -31,6 +31,7 @@ class Player {
     for (let i = 0; i < emptyHand; i++) {
       this._hasCardInHand.push(this._hasCard.shift());
     }
+    message = '카드를 드로우했습니다!';
   }
 
   shuffleAllCards() {
@@ -49,10 +50,10 @@ class Player {
     for (let i = 0; i < this._handSize; i++) {
       this._hasCardInHand.push(this._hasCard.shift());
     }
+    message = '카드를 섞고 손패를 가득 채웠습니다!';
   }
 
   async cardPlay(playingCard, monster) {
-    console.log(chalk.green('카드를 사용했습니다!'));
     const randomValue = Math.random() * 100;
     const cardActProb = playingCard._actProb + this._bondingIndex;
 
@@ -60,6 +61,9 @@ class Player {
       monster.monsterLoseHp(playingCard);
       this.updateHpByCard(playingCard);
       this.updateDefenseByCard(playingCard);
+      message = '카드 발동 성공!';
+    } else if (randomValue > cardActProb) {
+      message = '카드 발동 실패!';
     }
   }
 
@@ -115,12 +119,12 @@ class Player {
     let randomValue = Math.random() * 100;
 
     if (randomValue <= this._runAwayProb) {
-      console.log('도망 성공!');
+      message = '도망 성공!';
       this._stage++;
       incPlayerStat(this);
       startGame(this);
     } else {
-      console.log(chalk.red('이런! 불행하게도 도망치지 못했습니다.'));
+      message = '이런! 불행하게도 도망치지 못했습니다.';
       monster.monsterAttack(this);
     }
   }
@@ -311,21 +315,25 @@ class Monster {
 //   }
 // }
 
+// 인게임 안내 메시지를 위한 변수들
+const info = '[TIP]턴을 종료할 때 가진 카드가 모두 섞입니다. 신중하게 플레이해주세요.\n';
 let message = '';
+
+// 화면에 각종 스탯을 적어보자
 function displayStatus(stage, player, monster) {
   console.log(chalk.magentaBright(`\n=== Current Status ===`));
   console.log(
-    chalk.cyanBright(`| Stage: ${stage}`) +
+    chalk.cyanBright(`| Stage: ${stage} |\n`) +
       chalk.blueBright(
-        `| 플레이어 정보 | 이름: ${player._name}, HP: ${player._hp}, 방어도: ${player._defense}, 카드 개수: ${player._hasCard.length + player._hasCardInHand.length} |
+        `| 플레이어 정보 | 이름: ${player._name}, HP: ${player._hp}, 방어도: ${player._defense}, 도망확률: ${player._runAwayProb} |
+| 카드와의 유대감: ${player._bondingIndex}, 카드 개수: ${player._hasCard.length + player._hasCardInHand.length}, 손패 크기: ${player._handSize} |
       `,
       ) +
-      chalk.redBright(
-        ` | 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} | "제 마법이 당신을 조각낼 거예요."`,
-      ),
+      chalk.redBright(`
+| 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} | "네놈을 추격해주마!" |`),
   );
   console.log(chalk.magentaBright(`=====================`));
-  console.log(chalk.cyanBright(`${message}`));
+  console.log(chalk.cyanBright(`${info}\n>>알림: ${message}`));
 }
 
 const battle = async (stage, player, monster) => {
@@ -380,8 +388,8 @@ const battle = async (stage, player, monster) => {
           \n손패에 있는 카드 : ${player._hasCardInHand.map((card, index) => index + 1 + '.' + card._cardName).join(', ')}`),
       );
       const cardRemoveIndex = readlineSync.question('몇 번째 카드를 지우시겠습니까? : ');
-      if (player._hasCard.length <= 5) {
-        console.log(chalk.red('손패 크기보다 덱이 더 적을 수 없습니다.'));
+      if (player._hasCard.length + player._hasCardInHand.length <= 5) {
+        message = '손패 크기보다 덱이 더 적을 수 없습니다.';
       } else {
         removeCard(cardRemoveIndex, player);
         monster.monsterAttack(player);
