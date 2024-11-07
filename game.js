@@ -311,17 +311,21 @@ class Monster {
 //   }
 // }
 
-function displayStatus(stage, player, monster, playRsult) {
+let message = '';
+function displayStatus(stage, player, monster) {
   console.log(chalk.magentaBright(`\n=== Current Status ===`));
   console.log(
     chalk.cyanBright(`| Stage: ${stage}`) +
       chalk.blueBright(
-        `| 플레이어 정보 | 이름: ${player._name}, HP: ${player._hp}, 방어도: ${player._defense}, 카드 개수: ${player._hasCard.length} |
+        `| 플레이어 정보 | 이름: ${player._name}, HP: ${player._hp}, 방어도: ${player._defense}, 카드 개수: ${player._hasCard.length + player._hasCardInHand.length} |
       `,
       ) +
-      chalk.redBright(` | 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} |`),
+      chalk.redBright(
+        ` | 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} | "제 마법이 당신을 조각낼 거예요."`,
+      ),
   );
   console.log(chalk.magentaBright(`=====================`));
+  console.log(chalk.cyanBright(`${message}`));
 }
 
 const battle = async (stage, player, monster) => {
@@ -346,16 +350,24 @@ const battle = async (stage, player, monster) => {
       player.cardPlay(playingCard, monster);
       monster.monsterAttack(player);
     } else if (choice === '2') {
-      let randomValue = Math.random() * 4;
-      if (randomValue >= 0 && randomValue <= 2.5) {
-        player._hasCard.push(new RareAttackCard('방패 밀치기'));
-        player._hasCard.push(new RareDefenseCard('방패 올리기'));
-      } else if (randomValue >= 2.5 && randomValue <= 3.6) {
-        player._hasCard.push(new EpicAttackCard('완벽한 타격'));
-        player._hasCard.push(new EpicDefenseCard('바리게이트'));
-      } else if (randomValue >= 3.6 && randomValue <= 3) {
-        player._hasCard.push(new LegendaryAttackCard('말살검'));
-        player._hasCard.push(new LegendaryDefenseCard('참호'));
+      let randomValue = Math.random() * 10;
+
+      if (randomValue >= 0 && randomValue < 2) {
+        addCard(player, 1);
+      } else if (randomValue >= 2 && randomValue < 4) {
+        addCard(player, 0, 1);
+      } else if (randomValue >= 4 && randomValue < 6) {
+        addCard(player, 0, 0, 1);
+      } else if (randomValue >= 6 && randomValue < 8) {
+        addCard(player, 0, 0, 0, 1);
+      } else if (randomValue >= 8 && randomValue < 8.8) {
+        addCard(player, 0, 0, 0, 0, 1);
+      } else if (randomValue >= 8.8 && randomValue < 9.5) {
+        addCard(player, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue >= 9.5 && randomValue < 9.75) {
+        addCard(player, 0, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue >= 9.75 && randomValue < 10) {
+        addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
       } else {
         incPlayerStat(player);
       }
@@ -368,7 +380,7 @@ const battle = async (stage, player, monster) => {
           \n손패에 있는 카드 : ${player._hasCardInHand.map((card, index) => index + 1 + '.' + card._cardName).join(', ')}`),
       );
       const cardRemoveIndex = readlineSync.question('몇 번째 카드를 지우시겠습니까? : ');
-      if (player._hasCardInHand <= 5) {
+      if (player._hasCard.length <= 5) {
         console.log(chalk.red('손패 크기보다 덱이 더 적을 수 없습니다.'));
       } else {
         removeCard(cardRemoveIndex, player);
