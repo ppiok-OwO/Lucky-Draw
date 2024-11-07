@@ -30,8 +30,8 @@ class Player {
   cardPlay(playingCard, monster, cardIndex) {
     console.log(chalk.green('카드를 사용했습니다!'));
     const randomValue = Math.random() * 100;
-
-    if (randomValue <= playingCard._cardActProb) {
+    const cardActProb = playingCard._actProb + this._bondingIndex;
+    if (randomValue <= cardActProb) {
       console.log(chalk.green('카드 효과가 발동합니다!'));
       monster.monsterLoseHp(playingCard);
       this.updateHpByCard(playingCard);
@@ -315,27 +315,17 @@ function displayStatus(stage, player, monster) {
 const battle = async (stage, player, monster) => {
   let logs = [];
 
-  // 시작덱 배열에 추가
-  for (let i = 0; i < 5; i++) {
-    let name = '기본 공격'; // 이름 생성 ${i + 1}
-    player._hasCard.push(new NormalAttackCard(name)); // 객체 생성 후 배열에 추가
-  }
-  for (let i = 0; i < 4; i++) {
-    let name = '기본 방어'; // 이름 생성 ${i + 1}
-    player._hasCard.push(new NormalDefenseCard(name)); // 객체 생성 후 배열에 추가
-  }
-
   // 카드 셔플, 첫 핸드 가져오기
   await player.drawCardRandomly();
 
   while (player._hp > 0) {
-    console.clear();
+    // console.clear();
     displayStatus(stage, player, monster);
 
     logs.forEach((log) => console.log(log));
 
     console.log(chalk.green(`\n1. 카드를 사용한다. 2. 턴을 넘긴다. 3. 도망친다.`));
-    const choice = readlineSync.question('당신의 선택은? ');
+    const choice = await readlineSync.question('당신의 선택은? ');
     logs.push(chalk.green(`${choice}를 선택하셨습니다.`));
 
     if (choice === '1') {
@@ -343,9 +333,9 @@ const battle = async (stage, player, monster) => {
         chalk.green(`
           \n보유 중인 카드 : ${player._hasCardInHand.map((card, index) => index + 1 + '.' + card._cardName).join(', ')}`),
       );
-      const cardChoice = readlineSync.question('몇 번째 카드를 사용하시겠습니까? : ');
-      console.log(chalk.green(`${cardChoice}번째 카드를 선택하셨습니다.`));
-
+      const cardChoice = await readlineSync.question('몇 번째 카드를 사용하시겠습니까? : ');
+      console.log(chalk.green(`${cardChoice}번째 카드를 선택했습니다.`));
+      // logs.push(chalk.green(`${cardChoice}번째 카드를 선택하셨습니다.`));
       const cardIndex = Number(cardChoice - 1);
       const playingCard = player._hasCardInHand[cardIndex];
       player.cardPlay(playingCard, monster, cardIndex);
@@ -356,6 +346,11 @@ const battle = async (stage, player, monster) => {
     } else {
       console.log(chalk.red('잘못된 입력입니다. 다시 선택해주세요.'));
     }
+
+    if (monster.hp < 0) {
+      console.clear();
+      break;
+    }
   }
 };
 
@@ -363,6 +358,16 @@ export async function startGame() {
   console.clear();
   const playerName = readlineSync.question('당신의 이름은? ');
   const player = new Player(playerName);
+
+  // 시작덱 배열에 추가
+  for (let i = 0; i < 5; i++) {
+    let name = '기본 공격'; // 이름 생성 ${i + 1}
+    player._hasCard.push(new NormalAttackCard(name)); // 객체 생성 후 배열에 추가
+  }
+  for (let i = 0; i < 4; i++) {
+    let name = '기본 방어'; // 이름 생성 ${i + 1}
+    player._hasCard.push(new NormalDefenseCard(name)); // 객체 생성 후 배열에 추가
+  }
 
   let stage = 1;
 
