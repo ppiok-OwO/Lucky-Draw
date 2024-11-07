@@ -76,6 +76,7 @@ class Player {
 
   updateHpByMonster(num) {
     this._hp += num + this._defense;
+    console.log(chalk.green(`몬스터가 ${num}만큼의 데미지를 입혔습니다.`));
   }
 
   updateDefense(index) {
@@ -263,38 +264,38 @@ class Monster {
   monsterLoseHp(playingCard) {
     if (playingCard._attackDmg > 0 || playingCard._spellDmg > 0) {
       console.log('카드를 사용하여 몬스터를 공격합니다.');
-      this.hp -= (playingCard._attackDmg + playingCard._spellDmg) * playingCard._cardPower;
+      this.hp -= (playingCard.attackDmg + playingCard.spellDmg) * playingCard._cardPower;
     }
   }
 }
 
 class NormalMonster extends Monster {
-  constructor(name) {
-    super(name);
+  constructor(stage) {
+    super(stage);
   }
 }
 
 class RareMonster extends Monster {
-  constructor(name) {
-    super(name);
-    this.hp = 150;
-    this.attackDmg = 15;
+  constructor(stage) {
+    super(stage);
+    this.hp = 150 + 100 * (stage / 2);
+    this.attackDmg = 15 + 10 * (stage / 2);
   }
 }
 
 class EpicMonster extends Monster {
-  constructor(name) {
-    super(name);
-    this.hp = 250;
-    this.attackDmg = 25;
+  constructor(stage) {
+    super(stage);
+    this.hp = 250 + 100 * (stage / 2);
+    this.attackDmg = 25 + 10 * (stage / 2);
   }
 }
 
 class LegendaryMonster extends Monster {
-  constructor(name) {
-    super(name);
-    this.hp = 400;
-    this.attackDmg = 40;
+  constructor(stage) {
+    super(stage);
+    this.hp = 400 + 100 * (stage / 2);
+    this.attackDmg = 40 + 10 * (stage / 2);
   }
 }
 
@@ -303,18 +304,29 @@ function displayStatus(stage, player, monster) {
   console.log(
     chalk.cyanBright(`| Stage: ${stage}`) +
       chalk.blueBright(
-        `| 플레이어 정보 | 이름: ${player._name}, HP: ${player._hp}, 방어도: ${player._defense},
+        `| 플레이어 정보 | 이름: ${player._name}, HP: ${player._hp}, 방어도: ${player._defense} |
+      `,
       ) +
-      chalk.redBright( | 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} |`,
-      ),
+      chalk.redBright(` | 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} |`),
   );
   console.log(chalk.magentaBright(`=====================\n`));
 }
 
 const battle = async (stage, player, monster) => {
   let logs = [];
+
+  // 시작덱 배열에 추가
+  for (let i = 0; i < 5; i++) {
+    let name = '기본 공격'; // 이름 생성 ${i + 1}
+    player._hasCard.push(new NormalAttackCard(name)); // 객체 생성 후 배열에 추가
+  }
+  for (let i = 0; i < 4; i++) {
+    let name = '기본 방어'; // 이름 생성 ${i + 1}
+    player._hasCard.push(new NormalDefenseCard(name)); // 객체 생성 후 배열에 추가
+  }
+
+  // 카드 셔플, 첫 핸드 가져오기
   await player.drawCardRandomly();
-  console.log(chalk.green(`${player._hasCardInHand['_cardName']}`));
 
   while (player._hp > 0) {
     console.clear();
@@ -336,7 +348,7 @@ const battle = async (stage, player, monster) => {
 
       const cardIndex = Number(cardChoice - 1);
       const playingCard = player._hasCardInHand[cardIndex];
-      player.cardPlay(playingCard, cardIndex, monster);
+      player.cardPlay(playingCard, monster, cardIndex);
     } else if (choice === '2') {
       monster.monsterAttack(player);
     } else if (choice === '3') {
@@ -351,16 +363,6 @@ export async function startGame() {
   console.clear();
   const playerName = readlineSync.question('당신의 이름은? ');
   const player = new Player(playerName);
-
-  for (let i = 0; i < 5; i++) {
-    let name = '기본 공격'; // 이름 생성 ${i + 1}
-    player._hasCard.push(new NormalAttackCard(name)); // 객체 생성 후 배열에 추가
-  }
-
-  for (let i = 0; i < 4; i++) {
-    let name = '기본 방어'; // 이름 생성 ${i + 1}
-    player._hasCard.push(new NormalDefenseCard(name)); // 객체 생성 후 배열에 추가
-  }
 
   let stage = 1;
 
