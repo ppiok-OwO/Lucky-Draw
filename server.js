@@ -1,3 +1,5 @@
+// 한글이 깨진다면 chcp 65001
+
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';

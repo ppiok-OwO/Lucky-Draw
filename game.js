@@ -1,215 +1,367 @@
 import chalk from 'chalk';
 import readlineSync from 'readline-sync';
 
-let playingCard;
-let cardsInHand = [];
-let cardsDrawn = [];
-
-
 class Player {
-  constructor(name, cardsDrawn = null) {
-    this.name = name;
-    this.hp = 100;
-    this.maxHp = 100;
-    this.defense = 0;
-    this.bondingIndex = 0; // 카드와의 유대감
-    this.carelessness = 50; // 부주의함(가진 아이템을 잃어버릴 확률)
-    this.deckSize = 5;
-    this.handSize = 10;
-    this.runAwayProb = 50;
-    this.isPlayCard = false; // 현재 턴에 카드를 사용했는가?
-    this.isThereAnyMonster = false; // 몬스터랑 만났나요?
-    this.hasCard = []; // 덱에 보유한 카드
-    // this.hasCardInHand = []; // 핸드에 들어오는 카드의 배열
-    this.hasStolenGoods = []; // 보유한 장물 아이템
+  constructor(name) {
+    this._name = name;
+    this._hp = 100;
+    this._maxHp = 100;
+    this._defense = 0;
+    this._bondingIndex = 0; // 카드와의 유대감
+    this._carelessness = 50; // 부주의함(가진 아이템을 잃어버릴 확률)
+    this._deckSize = 10;
+    this._handSize = 5;
+    this._runAwayProb = 50;
+    // this.isPlayCard = false; // 현재 턴에 카드를 사용했는가?
+    this._isThereAnyMonster = false; // 몬스터랑 만났나요?
+    this._hasCard = []; // 덱에 보유한 카드
+    this._hasCardInHand = []; // 핸드에 들어오는 카드의 배열
+    this._hasStolenGoods = []; // 보유한 장물 아이템
   }
 
-  drawCard() {
-    // 카드를 뽑는다.
-    cardsInHand.push(cardsDrawn);
+  drawCardRandomly() {
+    let sortedCard = this._hasCard.sort(() => Math.random() - 0.5);
+
+    for (let i = 0; i < this._handSize; i++) {
+      this._hasCardInHand.push(sortedCard.shift());
+    }
   }
 
-  playCard() {
-    // 카드를 사용한다.
-    this.isPlayCard = true;
-    cardPlay();
+  cardPlay(playingCard, monster, cardIndex) {
+    console.log(chalk.green('카드를 사용했습니다!'));
+    const randomValue = Math.random() * 100;
+
+    if (randomValue <= playingCard._cardActProb) {
+      console.log(chalk.green('카드 효과가 발동합니다!'));
+      monster.monsterLoseHp(playingCard);
+      this.updateHpByCard(playingCard);
+      this.updateDefense(playingCard);
+    } else {
+      console.log(chalk.green('카드 효과 발동이 실패했습니다!'));
+      monster.monsterAttack(this);
+    }
+
+    console.log(chalk.green('카드를 드로우하고 사용한 카드를 더미에 돌려보냅니다!'));
+    let splicedCard = this._hasCardInHand.splice(cardIndex, 1);
+    let nextCard = this._hasCard.shift();
+    this._hasCard.push(splicedCard);
+    this._hasCardInHand.push(nextCard);
   }
 
   loseStolenGoods() {
     // 장물을 잃어버린다.
+    this._hasStolenGoods.shift();
   }
 
-  updateDeckSize() {
+  updateDeckSize(num) {
     // 덱사이즈
+    this._deckSize += num;
   }
 
-  updateHandSize() {
+  updateHandSize(num) {
     // 핸드 사이즈
+    this._handSize += num;
   }
 
-  updateMaxHp() {
+  updateMaxHp(num) {
     // 최대 체력
+    this._maxHp += num;
   }
 
-  updateHp(restoreHp) {
+  updateHpByCard(index) {
     // 현재 체력
+    let playingCard = this._hasCardInHand[index];
+    this._hp += playingCard.restoreHp * playingCard.cardPower;
   }
 
-  updateDefense(defense) {
+  updateHpByMonster(num) {
+    this._hp += num + this._defense;
+  }
+
+  updateDefense(index) {
     // 방어도
+    let playingCard = this._hasCardInHand[index];
+    this._defense += playingCard.defense * playingCard.cardPower;
   }
 
-  updateBondingIndex() {
+  updateBondingIndex(num) {
     // 유대감
+    this._bondingIndex += num;
   }
 
   runAway() {
     // 도망친다.
+    battle();
+  }
+
+  set name(value) {
+    // 검증이 완료된 경우에만 setting!
+    this._name = value;
+  }
+
+  get name() {
+    return this._name;
   }
 }
 
 class Card {
-  constructor() {
-    this.actProb = 0;
-    this.cardPower = 1;
-    this.cardTier = '';
-    this.isThisCardPlayed = false;
-    this.attackDmg = 10;
-    this.spellDmg = 10;
-    this.restoreHp = 0;
-    this.defense = 0;
-    this.isThisDrawCard = false;
+  constructor(cardName, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense) {
+    this._cardName = cardName;
+    this._actProb = actProb;
+    this._cardPower = 1;
+    this._cardTier = cardTier;
+    this._isThisCardPlayed = false;
+    this._attackDmg = attackDmg;
+    this._spellDmg = spellDmg;
+    this._restoreHp = restoreHp;
+    this._defense = defense;
+    this._isThisDrawCard = false;
   }
 
-  cardPlay() {
-    monsterLoseHp();
-    updateHp(restoreHp);
-    updateDefense(defense);
+  incCardPower(player) {
+    let cardActProb = this._actProb + player._bondingIndex;
+    if (cardActProb >= 100) {
+      this._cardPower = cardActProb / 100;
+    }
   }
 
-  incCardPower() {
-    if (activateProb >= 100) {
-      this.cardPower = activateProb / 100;
-    } else {
-      return;
-    }    
+  set cardName(value) {
+    // 검증이 완료된 경우에만 setting!
+    this._cardName = value;
+  }
+
+  set cardTier(value) {
+    // 검증이 완료된 경우에만 setting!
+    this._cardTier = value;
+  }
+
+  set attackDmg(value) {
+    // 검증이 완료된 경우에만 setting!
+    this._attackDmg = value;
+  }
+
+  set spellDmg(value) {
+    // 검증이 완료된 경우에만 setting!
+    this._spellDmg = value;
+  }
+
+  set restoreHp(value) {
+    // 검증이 완료된 경우에만 setting!
+    this._srestoreHp = value;
+  }
+
+  set defense(value) {
+    this._defense = value;
+  }
+
+  get cardName() {
+    return this._cardName;
+  }
+
+  get cardTier() {
+    return this._cardTier;
+  }
+
+  get attackDmg() {
+    // 검증이 완료된 경우에만 setting!
+    return this._attackDmg;
+  }
+
+  get spellDmg() {
+    // 검증이 완료된 경우에만 setting!
+    return this._spellDmg;
+  }
+
+  get restoreHp() {
+    // 검증이 완료된 경우에만 setting!
+    return this._srestoreHp;
+  }
+
+  get defense() {
+    return this._defense;
   }
 }
 
-class NormalCard extends Card {
-  constructor() {
-    this.actProb = 75;
-    this.cardTier = 'Normal';
+class NormalAttackCard extends Card {
+  constructor(name) {
+    // name, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense
+    super(name, 'Normal', 75, 10, 0, 0, 0);
   }
 }
 
-class RarelCard extends Card {
-  constructor() {
-    this.actProb = 80;
-    this.cardTier = 'Rare';
+class RareAttackCard extends Card {
+  constructor(name) {
+    super(name, 'Rare', 80, 15, 0, 0, 0);
   }
 }
 
-class EpicCard extends Card {
-  constructor() {
-    this.actProb = 85;
-    this.cardTier = 'Epic';
+class EpicAttackCard extends Card {
+  constructor(name) {
+    super(name, 'Epic', 85, 25, 0, 0, 0);
   }
 }
 
-class LegendaryCard extends Card {
-  constructor() {
-    this.actProb = 90;
-    this.cardTier = 'Legendary';
+class LegendaryAttackCard extends Card {
+  constructor(name) {
+    super(name, 'Legendary', 90, 40, 0, 0, 0);
+  }
+}
+
+class NormalDefenseCard extends Card {
+  constructor(name) {
+    // name, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense
+    super(name, 'Normal', 75, 0, 0, 0, 10);
+  }
+}
+
+class RareDefensekCard extends Card {
+  constructor(name) {
+    super(name, 'Rare', 80, 0, 0, 0, 15);
+  }
+}
+
+class EpicDefenseCard extends Card {
+  constructor(name) {
+    super(name, 'Epic', 85, 0, 0, 0, 25);
+  }
+}
+
+class LegendaryDefenseCard extends Card {
+  constructor(name) {
+    super(name, 'Legendary', 90, 0, 0, 0, 40);
+  }
+}
+
+class StolenGoods {
+  constructor(goodsName, goodsTier) {
+    this._goodsName = goodsName;
+    this._goodsTier = goodsTier;
+  }
+
+  set goodsName(value) {
+    // 검증이 완료된 경우에만 setting!
+    this._goodsName = value;
+  }
+
+  set goodsTier(value) {
+    // 검증이 완료된 경우에만 setting!
+    this._goodsTier = value;
   }
 }
 
 class Monster {
-  constructor() {
-    this.hp = 100;
-    this.attackDmg = 10;
+  constructor(stage) {
+    this.hp = 100 + 100 * (stage / 2);
+    this.attackDmg = 10 + 10 * (stage / 2);
   }
 
-  monsterAttack() {
+  monsterAttack(player) {
     // 몬스터의 공격
-    updateHp();
+    console.log('몬스터가 공격합니다!');
+    player.updateHpByMonster(-this.attackDmg);
   }
-  monsterLoseHp() {
-    this.hp -= (playingCard.attackDmg + playingCard.spellDmg) * playingCard.cardPower;
+  monsterLoseHp(playingCard) {
+    if (playingCard._attackDmg > 0 || playingCard._spellDmg > 0) {
+      console.log('카드를 사용하여 몬스터를 공격합니다.');
+      this.hp -= (playingCard._attackDmg + playingCard._spellDmg) * playingCard._cardPower;
+    }
   }
 }
 
 class NormalMonster extends Monster {
-  constructor() {}
-
-  monsterLoseHp() {
-    this.hp -= (playingCard.attackDmg + playingCard.spellDmg) * playingCard.cardPower;
+  constructor(name) {
+    super(name);
   }
 }
 
 class RareMonster extends Monster {
-  constructor() {
+  constructor(name) {
+    super(name);
     this.hp = 150;
     this.attackDmg = 15;
-  }
-
-  monsterLoseHp() {
-    this.hp -= (playingCard.attackDmg + playingCard.spellDmg) * playingCard.cardPower;
   }
 }
 
 class EpicMonster extends Monster {
-  constructor() {
+  constructor(name) {
+    super(name);
     this.hp = 250;
     this.attackDmg = 25;
-  }
-
-  monsterLoseHp() {
-    this.hp -= (playingCard.attackDmg + playingCard.spellDmg) * playingCard.cardPower;
   }
 }
 
 class LegendaryMonster extends Monster {
-  constructor() {
+  constructor(name) {
+    super(name);
     this.hp = 400;
     this.attackDmg = 40;
-  }
-
-  monsterLoseHp() {
-    this.hp -= (playingCard.attackDmg + playingCard.spellDmg) * playingCard.cardPower;
   }
 }
 
 function displayStatus(stage, player, monster) {
   console.log(chalk.magentaBright(`\n=== Current Status ===`));
   console.log(
-    chalk.cyanBright(`| Stage: ${stage} `) +
-      chalk.blueBright(`| 플레이어 정보`) +
-      chalk.redBright(`| 몬스터 정보 |`),
+    chalk.cyanBright(`| Stage: ${stage}`) +
+      chalk.blueBright(
+        `| 플레이어 정보 | 이름: ${player._name}, HP: ${player._hp}, 방어도: ${player._defense},
+      ) +
+      chalk.redBright( | 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} |`,
+      ),
   );
   console.log(chalk.magentaBright(`=====================\n`));
 }
 
 const battle = async (stage, player, monster) => {
   let logs = [];
+  await player.drawCardRandomly();
+  console.log(chalk.green(`${player._hasCardInHand['_cardName']}`));
 
-  while (player.hp > 0) {
+  while (player._hp > 0) {
     console.clear();
     displayStatus(stage, player, monster);
 
     logs.forEach((log) => console.log(log));
 
-    console.log(chalk.green(`\n1. 공격한다 2. 아무것도 하지않는다.`));
+    console.log(chalk.green(`\n1. 카드를 사용한다. 2. 턴을 넘긴다. 3. 도망친다.`));
     const choice = readlineSync.question('당신의 선택은? ');
-
-    // 플레이어의 선택에 따라 다음 행동 처리
     logs.push(chalk.green(`${choice}를 선택하셨습니다.`));
+
+    if (choice === '1') {
+      console.log(
+        chalk.green(`
+          \n보유 중인 카드 : ${player._hasCardInHand.map((card, index) => index + 1 + '.' + card._cardName).join(', ')}`),
+      );
+      const cardChoice = readlineSync.question('몇 번째 카드를 사용하시겠습니까? : ');
+      console.log(chalk.green(`${cardChoice}번째 카드를 선택하셨습니다.`));
+
+      const cardIndex = Number(cardChoice - 1);
+      const playingCard = player._hasCardInHand[cardIndex];
+      player.cardPlay(playingCard, cardIndex, monster);
+    } else if (choice === '2') {
+      monster.monsterAttack(player);
+    } else if (choice === '3') {
+      player.runAway();
+    } else {
+      console.log(chalk.red('잘못된 입력입니다. 다시 선택해주세요.'));
+    }
   }
 };
 
 export async function startGame() {
   console.clear();
-  const player = new Player();
+  const playerName = readlineSync.question('당신의 이름은? ');
+  const player = new Player(playerName);
+
+  for (let i = 0; i < 5; i++) {
+    let name = '기본 공격'; // 이름 생성 ${i + 1}
+    player._hasCard.push(new NormalAttackCard(name)); // 객체 생성 후 배열에 추가
+  }
+
+  for (let i = 0; i < 4; i++) {
+    let name = '기본 방어'; // 이름 생성 ${i + 1}
+    player._hasCard.push(new NormalDefenseCard(name)); // 객체 생성 후 배열에 추가
+  }
+
   let stage = 1;
 
   while (stage <= 10) {
@@ -217,7 +369,8 @@ export async function startGame() {
     await battle(stage, player, monster);
 
     // 스테이지 클리어 및 게임 종료 조건
-
-    stage++;
+    if (monster.hp <= 0) {
+      stage++;
+    }
   }
 }
