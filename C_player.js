@@ -52,7 +52,7 @@ class Player {
     setMessage('카드를 섞고 손패를 가득 채웠습니다!');
   }
 
-  async cardPlay(playingCard, monster) {
+ cardPlay(playingCard, monster) {
     // 100 미만의 랜덤한 밸류를 구하고 카드 발동 확률이랑 비교해보기
     const randomValue = Math.random() * 100;
 

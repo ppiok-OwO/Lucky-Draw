@@ -15,7 +15,7 @@ class Monster {
     player.updateDefenseByMonster(-this.attackDmg);
   }
   monsterLoseHp(playingCard, cardPower = 1) {
-    if (playingCard.attackDmg > 0 || playingCard.spellDmg > 0) {
+    if (playingCard.attackDmg >= 0 && playingCard.spellDmg >= 0) {
       this.hp -= (playingCard.attackDmg + playingCard.spellDmg) * cardPower;
     }
   }

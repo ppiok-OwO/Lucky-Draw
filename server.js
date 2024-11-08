@@ -7,80 +7,80 @@ import { startGame, typeName } from './game.js';
 
 // 시나리오 스크립트
 async function scenario() {
-  //   console.clear();
-  //   const line = chalk.white('='.repeat(50));
-  //   console.log(line);
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       console.log(
-  //         chalk.red.bold(`
+  // console.clear();
+  // const line = chalk.white('='.repeat(50));
+  // console.log(line);
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log(
+  //       chalk.red.bold(`
   // 10년 전, 마왕의 부활로 인해 세상은 혼돈에 휩싸였습니다.
   //         `),
-  //       );
-  //       resolve(); // 비동기 작업 완료
-  //     }, 1000);
-  //   });
+  //     );
+  //     resolve(); // 비동기 작업 완료
+  //   }, 1000);
+  // });
 
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       console.log(
-  //         chalk.red.bold(`
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log(
+  //       chalk.red.bold(`
   // 포악한 몬스터들이 인류를 약탈하였고 마을은 잿더미가 되었습니다. 그리고, 수많은 용사들이 목숨을 잃고 말았습니다.
   //         `),
-  //       );
-  //       resolve();
-  //     }, 3000);
-  //   });
+  //     );
+  //     resolve();
+  //   }, 3000);
+  // });
 
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       console.log(
-  //         chalk.red.bold(`
-  // 선량한 자는 짓밟히고 악한 자는 타락하는 지금, 인류는 영웅의 탄생을 바라고 있습니다.
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log(
+  //       chalk.red.bold(`
+  // 선량한 자는 무참히 짓밟히고 악한 자가 욕망에 타락하는 지금, 인류는 영웅의 탄생을 바라고 있습니다.
   //         `),
-  //       );
-  //       resolve();
-  //     }, 3000);
-  //   });
+  //     );
+  //     resolve();
+  //   }, 3000);
+  // });
 
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       console.log(
-  //         chalk.red.bold(`
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log(
+  //       chalk.red.bold(`
   // 우리의 희망은 정의로운 영웅이 나타나 몬스터를 물리치고 마왕을 처단하는 것 뿐입니다.
   //         `),
-  //       );
-  //       resolve();
-  //     }, 3000);
-  //   });
+  //     );
+  //     resolve();
+  //   }, 3000);
+  // });
 
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       console.log(
-  //         chalk.red.bold(`
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log(
+  //       chalk.red.bold(`
   // 하지만 누가, 어떻게 영웅이 될 수 있을까요? 어쩌면 당신이 영웅이 될 수 있을지도 모르겠네요. 누구나 정의로울 수는 있으니까요.
   //         `),
-  //       );
-  //       resolve();
-  //     }, 3000);
-  //   });
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       console.log(
-  //         chalk.red.bold(`
+  //     );
+  //     resolve();
+  //   }, 3000);
+  // });
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log(
+  //       chalk.red.bold(`
   // ...비록 당신은 알코올 중독에 걸린 도박꾼이지만 말이죠.
   //         `),
-  //       );
-  //       resolve();
-  //     }, 4000);
-  //   });
+  //     );
+  //     resolve();
+  //   }, 4000);
+  // });
 
-  //   await new Promise((resolve) => {
-  //     setTimeout(() => {
-  //       console.log(line);
-  //       resolve();
-  //     }, 1000);
-  //   });
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log(line);
+  //     resolve();
+  //   }, 1000);
+  // });
 
   await new Promise(() => {
     setTimeout(() => {
@@ -131,7 +131,7 @@ function displayLobby() {
   console.log(line);
 
   // 하단 설명
-  console.log(chalk.gray('1-4 사이의 수를 입력한 뒤 엔터를 누르세요.'));
+  console.log(chalk.gray('\n1-4 사이의 수를 입력한 뒤 엔터를 누르세요.'));
 }
 
 // 유저 입력을 받아 처리하는 함수

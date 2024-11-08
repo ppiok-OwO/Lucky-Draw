@@ -23,7 +23,7 @@ export function typeName() {
   const playerName = readlineSync.question('당신의 이름은? ');
   const player = new Player(playerName);
 
-  // 시작덱 배열에 추가
+  // 시작덱 배열에 카드들을 추가
   addCard(player, 3, 2, 3, 2);
 
   player.drawCardRandomly();
@@ -35,7 +35,6 @@ export async function startGame(player) {
   console.clear();
   while (player.stage <= 10) {
     const monster = new Monster(player.stage);
-    // 카드 셔플, 첫 핸드 가져오기
     battle(player.stage, player, monster);
     // 스테이지 클리어 및 게임 종료 조건
     if (monster.hp <= 0) {
@@ -60,7 +59,7 @@ export async function startGame(player) {
   );
 }
 
-const battle = async (stage, player, monster) => {
+const battle = (stage, player, monster) => {
   while (player.hp > 0 && monster.hp > 0) {
     console.clear();
     displayStatus(stage, player, monster);
@@ -84,7 +83,6 @@ const battle = async (stage, player, monster) => {
       for (let i = 0; i < player.hasCardInHand.length; i++) {
         if (cardChoice === `see${i + 1}`) {
           seeCard(player.hasCardInHand[i]);
-          return;
         } else if (cardChoice === `${i + 1}`) {
           player.cardPlay(playingCard, monster);
 
@@ -135,7 +133,7 @@ const battle = async (stage, player, monster) => {
 
       // 지울 카드 상세보기
       for (let i = 0; i < player.hasCardInHand.length; i++) {
-        if (cardChoice === `see${i + 1}`) {
+        if (cardRemoveAnswer === `see${i + 1}`) {
           seeCard(player.hasCardInHand[i]);
         }
       }
