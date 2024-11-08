@@ -12,6 +12,7 @@ import {
   EpicDefenseCard,
   LegendaryAttackCard,
   LegendaryDefenseCard,
+  seeCard,
 } from './C_card.js';
 import { Monster } from './C_monster.js';
 import { displayStatus, setMessage, selectReward } from './logs.js';
@@ -47,6 +48,16 @@ export async function startGame(player) {
       typeName();
     }
   }
+
+  console.log(
+    chalk.cyan(
+      figlet.textSync('*YOU WIN!*', {
+        font: 'ANSI Shadow',
+        horizontalLayout: 'default',
+        verticalLayout: 'default',
+      }),
+    ),
+  );
 }
 
 const battle = async (stage, player, monster) => {
@@ -68,46 +79,71 @@ const battle = async (stage, player, monster) => {
       const cardChoice = readlineSync.question('몇 번째 카드를 사용하시겠습니까? : ');
       const cardIndex = Number(cardChoice - 1);
       const playingCard = player.hasCardInHand[cardIndex];
-      player.cardPlay(playingCard, monster);
-      monster.monsterAttack(player);
+
+      // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
+      for (let i = 0; i < player.hasCardInHand.length; i++) {
+        if (cardChoice === `see${i + 1}`) {
+          seeCard(player.hasCardInHand[i]);
+          return;
+        } else if (cardChoice === `${i + 1}`) {
+          player.cardPlay(playingCard, monster);
+
+          // 죽였는데 맞는 건 이상하니까.
+          if (monster.hp > 0) monster.monsterAttack(player);
+        }
+      }
 
       // 카드 상세보기 함수
-
     } else if (choice === '2') {
-      let randomValue = Math.random() * 12;
+      let randomValue = Math.random() * 10;
 
-      if (randomValue >= 0 && randomValue < 2) {
-        addCard(player, 1);
-      } else if (randomValue >= 2 && randomValue < 4) {
-        addCard(player, 0, 1);
-      } else if (randomValue >= 4 && randomValue < 6) {
-        addCard(player, 0, 0, 1);
-      } else if (randomValue >= 6 && randomValue < 8) {
-        addCard(player, 0, 0, 0, 1);
-      } else if (randomValue >= 8 && randomValue < 8.8) {
-        addCard(player, 0, 0, 0, 0, 1);
-      } else if (randomValue >= 8.8 && randomValue < 9.5) {
-        addCard(player, 0, 0, 0, 0, 0, 1);
-      } else if (randomValue >= 9.5 && randomValue < 9.75) {
-        addCard(player, 0, 0, 0, 0, 0, 0, 1);
-      } else if (randomValue >= 9.75 && randomValue < 10) {
+      // 확률에 따라 높은 등급의 카드를 얻을 수도 있다!(스탯도)
+      if (randomValue < 0.5) {
         addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 1) {
+        addCard(player, 0, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 2) {
+        addCard(player, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 3) {
+        addCard(player, 0, 0, 0, 0, 1);
+      } else if (randomValue < 4.5) {
+        addCard(player, 0, 0, 0, 1);
+      } else if (randomValue < 6) {
+        addCard(player, 0, 0, 1);
+      } else if (randomValue < 7.5) {
+        addCard(player, 0, 1);
+      } else if (randomValue < 9) {
+        addCard(player, 1);
       } else {
         incPlayerStat(player);
       }
+
       monster.monsterAttack(player);
     } else if (choice === '3') {
-      player.runAway(monster);
+      if (player.stage === 10) {
+        setMessage('보스전에선 도망칠 수 없습니다!');
+      } else {
+        player.runAway(monster);
+      }
     } else if (choice === '4') {
       console.log(
         chalk.magenta(`
           \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
-      const cardRemoveIndex = readlineSync.question('몇 번째 카드를 지우시겠습니까? : ');
+      const cardRemoveAnswer = readlineSync.question('몇 번째 카드를 지우시겠습니까? : ');
+      const cardIndex = Number(cardRemoveAnswer - 1);
+
+      // 지울 카드 상세보기
+      for (let i = 0; i < player.hasCardInHand.length; i++) {
+        if (cardChoice === `see${i + 1}`) {
+          seeCard(player.hasCardInHand[i]);
+        }
+      }
+
       if (player.hasCard.length + player.hasCardInHand.length <= player.handSize) {
         setMessage('손패 크기보다 덱이 더 적을 수 없습니다.');
       } else {
-        removeCard(cardRemoveIndex - 1, player);
+        removeCard(cardIndex, player);
         monster.monsterAttack(player);
       }
     }

@@ -19,7 +19,7 @@ class Card {
 class NormalAttackCard extends Card {
   constructor() {
     // cardName, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense
-    super('기본 공격', 'Normal', 75, 1000, 5, 0, 0);
+    super('기본 공격', 'Normal', 75, 10, 5, 0, 0);
   }
 }
 
@@ -84,6 +84,25 @@ function makeRandomCard() {
   return new randomCardInstance();
 }
 
+// 카드 상세보기
+
+function seeCard(card) {
+  setMessage(`
+  ======| 카드 상세보기 |======
+  
+    >>> ${card.cardName} <<<
+
+  등급 : ${card.cardTier}
+  발동 확률 : ${card.actProb}
+  공격 데미지 : ${card.attackDmg}
+  주문 데미지 : ${card.spellDmg}
+  체력 회복량 : ${card.restoreHp}
+  방어도 : ${card.defense}
+
+  ========| ******* |========
+    `);
+}
+
 export {
   Card,
   NormalAttackCard,
@@ -95,4 +114,5 @@ export {
   LegendaryAttackCard,
   LegendaryDefenseCard,
   makeRandomCard,
+  seeCard,
 };

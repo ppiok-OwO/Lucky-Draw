@@ -12,13 +12,14 @@ import {
   LegendaryAttackCard,
   LegendaryDefenseCard,
   makeRandomCard,
+  seeCard,
 } from './C_card.js';
 import { Player } from './C_player.js';
-import cliui from 'cliui';
 
 // 인게임 안내 메시지를 위한 변수들
-const info = '[TIP]턴을 종료할 때 가진 카드가 모두 섞입니다. 신중하게 플레이해주세요.\n';
-let message = '';
+const info = `[TIP]턴을 종료할 때 가진 카드가 모두 섞입니다. 신중하게 플레이해주세요. 
+전투 중에 카드를 자세히 보시려면 번호 앞에 'see'를 붙여주세요\n`;
+let message;
 
 // 화면에 각종 스탯을 적어보자
 function displayStatus(stage, player, monster) {
@@ -74,59 +75,18 @@ function selectReward(player) {
   const reward2 = makeRandomCard();
   const reward3 = makeRandomCard();
 
-  let rewardName1 = reward1.cardName;
-  let rewardName2 = reward2.cardName;
-  let rewardName3 = reward3.cardName;
-
   console.log(
-    chalk.magenta(`
-  ========================| 카드 보상 |========================
-  |==========================================================|
-  |   1. ${reward1.cardName} |  2. ${reward2.cardName}  |    3. ${reward3.cardName} |
-  | 등급 : ${reward1.cardTier} |    ${reward2.cardTier}    |    ${reward3.cardTier} |
-  | 발동 확률 : ${reward1.actProb} |        ${reward2.actProb}        |          ${reward3.actProb} |
-  | 공격 데미지 : ${reward1.attackDmg} |        ${reward2.attackDmg}        |        ${reward3.attackDmg} |
-  | 주문 데미지 : ${reward1.spellDmg} |        ${reward2.spellDmg}        |        ${reward3.spellDmg} |
-  | 체력 회복량 : ${reward1.restoreHp} |        ${reward2.restoreHp} |        ${reward3.restoreHp} |
-  | 방어도 : ${reward1.defense}   |        ${reward2.defense}        |        ${reward3.defense} |
-  ========================| ******** |========================
+    chalk.redBright(`
+1. ${reward1.cardName}
+2. ${reward2.cardName}
+3. ${reward3.cardName}
     `),
   );
 
-  // console.log(chalk.magenta(`========================| 카드 보상 |========================`));
+  let rewardSelection = readlineSync.question(
+    '몇 번째 카드를 덱에 넣으시겠습니까?(상세보기 불가!!) : ',
+  );
 
-  // ui.div(
-  //   {
-  //     text: chalk.yellow(`
-  //     1. ${reward1.cardName}
-  //     등급 : ${reward1.cardTier}
-  //     발동 확률 : ${reward1.actProb}
-  //     공격 데미지 : ${reward1.attackDmg}
-  //     주문 데미지 : ${reward1.spellDmg}
-  //     체력 회복량 : ${reward1.restoreHp}
-  //     방어도 : ${reward1.defense}
-  //     `),
-  //     width: 20,
-  //     padding: [0, 4, 0, 4],
-  //     border,
-  //   },
-  //   {
-  //     text: chalk.yellow(`
-  //     1. ${reward2.cardName}
-  //     등급 : ${reward2.cardTier}
-  //     발동 확률 : ${reward2.actProb}
-  //     공격 데미지 : ${reward2.attackDmg}
-  //     주문 데미지 : ${reward2.spellDmg}
-  //     체력 회복량 : ${reward2.restoreHp}
-  //     방어도 : ${reward2.defense}
-  //     `),
-  //     width: 20,
-  //     padding: [0, 4, 0, 4],
-  //     border,
-  //   },
-  // );
-
-  let rewardSelection = readlineSync.question('몇 번째 카드를 덱에 넣으시겠습니까? : ');
   switch (rewardSelection) {
     case '1':
       player.hasCard.push(reward1);
