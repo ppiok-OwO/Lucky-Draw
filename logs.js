@@ -26,7 +26,6 @@ function displayStatus(stage, player, monster) {
 }
 
 function combineCardNamesToString(obj) {
-  // _hasCard와 _hasCardInHand 배열에서 '_cardName' 값을 추출하여 합침
   const cardNames = [];
 
   // _hasCard 배열의 각 객체에서 _cardName 값을 추출하여 배열에 추가
@@ -42,8 +41,13 @@ function combineCardNamesToString(obj) {
       cardNames.push(card._cardName);
     }
   });
+  // sort() 메서드에 별다른 `compareFunction`이 제공되지 않는다면 배열의 요소를 문자열로 변환하고 두 요소를 비교한다.
+  // 즉, sort() 메서드에 아무런 함수도 넣지 않는다면 반환값이 '요소a-요소b'인 함수를 콜백함수로 받는 것과 다름없다.
+  // 따라서 오름차순으로 정렬된다.
+  cardNames.sort();
+
   // 배열의 값을 공백으로 구분한 문자열로 변환
-  return cardNames.join(',');
+  return cardNames.join(', ');
 }
 
 function setMessage(newMessage) {
