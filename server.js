@@ -5,6 +5,92 @@ import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
 
+
+// 시나리오 스크립트
+async function scenario() {
+  console.clear();
+  const line = chalk.white('='.repeat(50));
+  console.log(line);
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(
+        chalk.red.bold(`
+10년 전, 마왕의 부활로 인해 이 세상은 혼돈에 휩싸였습니다.
+        `),
+      );
+      resolve(); // 비동기 작업 완료
+    }, 1000);
+  });
+
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(
+        chalk.red.bold(`
+포악한 몬스터들이 인류를 약탈하였고, 수많은 용사들은 목숨을 잃고 말았습니다.
+        `),
+      );
+      resolve();
+    }, 3000);
+  });
+
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(
+        chalk.red.bold(`
+선량한 자는 짓밟히고 악한 자는 타락하는 지금, 인류는 영웅의 탄생을 바라고 있습니다.
+        `),
+      );
+      resolve();
+    }, 3000);
+  });
+
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(
+        chalk.red.bold(`
+만약 정의로운 영웅이 되고자 한다면 몬스터를 무찌르고 마왕을 물리쳐야 합니다.
+        `),
+      );
+      resolve();
+    }, 3000);
+  });
+
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(
+        chalk.red.bold(`
+어쩌면 당신이 영웅이 될 수 있을지도 모르겠네요. 누구나 정의로울 수는 있으니까요.
+        `),
+      );
+      resolve();
+    }, 3000);
+  });
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(
+        chalk.red.bold(`
+...비록 당신은 알코올 중독에 걸린 도박꾼이지만 말이죠.
+        `),
+      );
+      resolve();
+    }, 4000);
+  });
+
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(line);
+      resolve();
+    }, 1000);
+  });
+
+  await new Promise(() => {
+    setTimeout(() => {
+      displayLobby();
+      handleUserInput();
+    }, 2000);
+  });
+}
+
 // 로비 화면을 출력하는 함수
 function displayLobby() {
   console.clear();
@@ -26,11 +112,13 @@ function displayLobby() {
 
   // 게임 이름
   console.log(
-    chalk.yellowBright.bold(`덱빌딩 카드 게임 LuckyDraw!\n도박사가 되어 운빨을 확인해보세요!`),
+    chalk.yellowBright.bold(
+      `덱빌딩 카드 게임 LuckyDraw!\n술주정뱅이 도박꾼이라도 영웅이 될 수 있다?! 당신의 운빨을 확인해보세요!\n`,
+    ),
   );
 
   // 설명 텍스트
-  console.log(chalk.green('옵션을 선택해주세요.'));
+  // console.log(chalk.green('옵션을 선택해주세요.'));
   console.log();
 
   // 옵션들
@@ -79,9 +167,8 @@ function handleUserInput() {
 }
 
 // 게임 시작 함수
-function start() {
-  displayLobby();
-  handleUserInput();
+async function start() {
+  scenario();
 }
 
 // 게임 실행

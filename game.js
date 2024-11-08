@@ -41,7 +41,8 @@ export async function startGame(player) {
       player.stage++;
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
-      player.hp += 30 + player.stage * 10;
+      player.maxHp += 30 + player.stage * 10;
+      player.bondingIndex += 5 + player.stage * 5;
     } else if (player.hp <= 0) {
       typeName();
     }
@@ -69,6 +70,9 @@ const battle = async (stage, player, monster) => {
       const playingCard = player.hasCardInHand[cardIndex];
       player.cardPlay(playingCard, monster);
       monster.monsterAttack(player);
+
+      // 카드 상세보기 함수
+
     } else if (choice === '2') {
       let randomValue = Math.random() * 12;
 

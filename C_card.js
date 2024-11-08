@@ -19,7 +19,7 @@ class Card {
 class NormalAttackCard extends Card {
   constructor() {
     // cardName, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense
-    super('기본 공격', 'Normal', 75, 10, 0, 0, 0);
+    super('기본 공격', 'Normal', 75, 1000, 5, 0, 0);
   }
 }
 
@@ -37,7 +37,7 @@ class EpicAttackCard extends Card {
 
 class LegendaryAttackCard extends Card {
   constructor() {
-    super('말살검', 'Legendary', 90, 30, 25, 10, 10);
+    super('말살검', 'Legendary', 90, 20, 25, 10, 10);
   }
 }
 

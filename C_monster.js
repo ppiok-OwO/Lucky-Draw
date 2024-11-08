@@ -5,7 +5,7 @@ import { displayStatus, setMessage } from './logs.js';
 
 class Monster {
   constructor(stage) {
-    this.hp = 100 + 50 * (stage / 2);
+    this.hp = 150 + 50 * (stage / 2);
     this.attackDmg = 10 + 10 * (stage / 2);
   }
 
