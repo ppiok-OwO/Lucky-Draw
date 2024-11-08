@@ -5,112 +5,63 @@ import { displayStatus, setMessage } from './logs.js';
 
 class Card {
   constructor(cardName, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense) {
-    this._cardName = cardName;
-    this._actProb = actProb;
-    this._cardTier = cardTier;
-    this._isThisCardPlayed = false;
-    this._attackDmg = attackDmg;
-    this._spellDmg = spellDmg;
-    this._restoreHp = restoreHp;
-    this._defense = defense;
-    this._isThisDrawCard = false;
-  }
-
-  set cardName(value) {
-    this._cardName = value;
-  }
-
-  set cardTier(value) {
-    this._cardTier = value;
-  }
-
-  set attackDmg(value) {
-    this._attackDmg = value;
-  }
-
-  set spellDmg(value) {
-    this._spellDmg = value;
-  }
-
-  set restoreHp(value) {
-    this._srestoreHp = value;
-  }
-
-  set defense(value) {
-    this._defense = value;
-  }
-
-  get cardName() {
-    return this._cardName;
-  }
-
-  get cardTier() {
-    return this._cardTier;
-  }
-
-  get attackDmg() {
-    return this._attackDmg;
-  }
-
-  get spellDmg() {
-    return this._spellDmg;
-  }
-
-  get restoreHp() {
-    return this._srestoreHp;
-  }
-
-  get defense() {
-    return this._defense;
+    this.cardName = cardName;
+    this.actProb = actProb;
+    this.cardTier = cardTier;
+    this.isThisCardPlayed = false;
+    this.attackDmg = attackDmg;
+    this.spellDmg = spellDmg;
+    this.restoreHp = restoreHp;
+    this.defense = defense;
   }
 }
 
 class NormalAttackCard extends Card {
-  constructor(name) {
+  constructor() {
     // cardName, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense
-    super(name, 'Normal', 75, 10, 0, 0, 0);
+    super('기본 공격', 'Normal', 75, 10, 0, 0, 0);
   }
 }
 
 class RareAttackCard extends Card {
-  constructor(name) {
-    super(name, 'Rare', 80, 15, 5, 5, 0);
+  constructor() {
+    super('피부 찢기', 'Rare', 80, 20, 5, 5, 0);
   }
 }
 
 class EpicAttackCard extends Card {
-  constructor(name) {
-    super(name, 'Epic', 85, 25, 0, 0, 10);
+  constructor() {
+    super('완벽한 타격', 'Epic', 85, 35, 0, 0, 10);
   }
 }
 
 class LegendaryAttackCard extends Card {
-  constructor(name) {
-    super(name, 'Legendary', 90, 20, 25, 10, 10);
+  constructor() {
+    super('말살검', 'Legendary', 90, 30, 25, 10, 10);
   }
 }
 
 class NormalDefenseCard extends Card {
-  constructor(name) {
-    super(name, 'Normal', 75, 0, 0, 20, 20);
+  constructor() {
+    super('기본 방어', 'Normal', 75, 0, 0, 20, 20);
   }
 }
 
 class RareDefenseCard extends Card {
-  constructor(name) {
-    super(name, 'Rare', 80, 0, 0, 30, 30);
+  constructor() {
+    super('방패 올리기', 'Rare', 80, 0, 0, 30, 30);
   }
 }
 
 class EpicDefenseCard extends Card {
-  constructor(name) {
-    super(name, 'Epic', 85, 0, 0, 30, 45);
+  constructor() {
+    super('바리게이트', 'Epic', 85, 0, 0, 30, 45);
   }
 }
 
 class LegendaryDefenseCard extends Card {
-  constructor(name) {
-    super(name, 'Legendary', 90, 0, 0, 100, 60);
+  constructor() {
+    super('참호', 'Legendary', 90, 0, 0, 100, 60);
   }
 }
 
@@ -127,7 +78,7 @@ function makeRandomCard() {
     LegendaryDefenseCard,
   ];
   // 무작위로 클래스 선택
-  const randomCardInstance = cardClasses[Math.floor(Math.random() * classes.length)];
+  const randomCardInstance = cardClasses[Math.floor(Math.random() * cardClasses.length)];
 
   // 선택된 클래스의 인스턴스 생성
   return new randomCardInstance();

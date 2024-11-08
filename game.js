@@ -14,7 +14,7 @@ import {
   LegendaryDefenseCard,
 } from './C_card.js';
 import { Monster } from './C_monster.js';
-import { displayStatus, setMessage } from './logs.js';
+import { displayStatus, setMessage, selectReward } from './logs.js';
 
 export function typeName() {
   console.clear();
@@ -32,24 +32,24 @@ export function typeName() {
 
 export async function startGame(player) {
   console.clear();
-  while (player._stage <= 10) {
-    const monster = new Monster(player._stage);
+  while (player.stage <= 10) {
+    const monster = new Monster(player.stage);
     // 카드 셔플, 첫 핸드 가져오기
-    battle(player._stage, player, monster);
+    battle(player.stage, player, monster);
     // 스테이지 클리어 및 게임 종료 조건
     if (monster.hp <= 0) {
-      player._stage++;
+      player.stage++;
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
-      player._hp += 30 + player._stage * 10;
-    } else if (player._hp <= 0) {
+      player.hp += 30 + player.stage * 10;
+    } else if (player.hp <= 0) {
       typeName();
     }
   }
 }
 
 const battle = async (stage, player, monster) => {
-  while (player._hp > 0 && monster.hp > 0) {
+  while (player.hp > 0 && monster.hp > 0) {
     console.clear();
     displayStatus(stage, player, monster);
     player.shuffleAllCards();
@@ -62,11 +62,11 @@ const battle = async (stage, player, monster) => {
     if (choice === '1') {
       console.log(
         chalk.green(`
-          \n손패에 있는 카드 : ${player._hasCardInHand.map((card, index) => index + 1 + '.' + card._cardName).join(', ')}`),
+          \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
       const cardChoice = readlineSync.question('몇 번째 카드를 사용하시겠습니까? : ');
       const cardIndex = Number(cardChoice - 1);
-      const playingCard = player._hasCardInHand[cardIndex];
+      const playingCard = player.hasCardInHand[cardIndex];
       player.cardPlay(playingCard, monster);
       monster.monsterAttack(player);
     } else if (choice === '2') {
@@ -97,10 +97,10 @@ const battle = async (stage, player, monster) => {
     } else if (choice === '4') {
       console.log(
         chalk.magenta(`
-          \n손패에 있는 카드 : ${player._hasCardInHand.map((card, index) => index + 1 + '.' + card._cardName).join(', ')}`),
+          \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
       const cardRemoveIndex = readlineSync.question('몇 번째 카드를 지우시겠습니까? : ');
-      if (player._hasCard.length + player._hasCardInHand.length <= 5) {
+      if (player.hasCard.length + player.hasCardInHand.length <= player.handSize) {
         setMessage('손패 크기보다 덱이 더 적을 수 없습니다.');
       } else {
         removeCard(cardRemoveIndex - 1, player);
@@ -113,55 +113,55 @@ const battle = async (stage, player, monster) => {
 
 // 플레이어 스탯 랜덤하게 오르는 함수
 function incPlayerStat(player) {
-  // _maxHp, _defense, _bondingIndex, _handSize, _runAwayProb
+  // maxHp, defense, bondingIndex, handSize, runAwayProb
 
   let randomValue = Math.random() * 5;
   if (randomValue >= 0 && randomValue <= 1) {
-    player._maxHp += 10;
-    player._hp += 10;
+    player.maxHp += 10;
+    player.hp += 10;
   } else if (randomValue >= 1 && randomValue <= 2) {
-    player._defense += 10;
+    player.defense += 10;
   } else if (randomValue >= 2 && randomValue <= 3) {
-    player._bondingIndex += 10;
+    player.bondingIndex += 10;
   } else if (randomValue >= 3 && randomValue <= 4) {
-    player._handSize += 1;
-    if (player._handSize > player._hasCard) {
+    player.handSize += 1;
+    if (player.handSize > player.hasCard) {
     }
     player.drawCardRandomly();
   } else if (randomValue >= 4 && randomValue <= 5) {
-    player._runAwayProb += 3;
+    player.runAwayProb += 3;
   }
 }
 
 // 손패에 있는 카드를 지우는 함수
 function removeCard(cardRemoveIndex, player) {
-  player._hasCardInHand.splice(cardRemoveIndex, 1);
+  player.hasCardInHand.splice(cardRemoveIndex, 1);
 }
 
 // 카드를 추가하는 함수
 function addCard(player, NA = 0, ND = 0, RA = 0, RD = 0, EA = 0, ED = 0, LA = 0, LD = 0) {
   for (let i = 0; i < NA; i++) {
-    player._hasCard.push(new NormalAttackCard('기본 공격')); // 객체 생성 후 배열에 추가
+    player.hasCard.push(new NormalAttackCard()); // 객체 생성 후 배열에 추가
   }
   for (let i = 0; i < ND; i++) {
-    player._hasCard.push(new NormalDefenseCard('기본 방어')); // 객체 생성 후 배열에 추가
+    player.hasCard.push(new NormalDefenseCard()); // 객체 생성 후 배열에 추가
   }
   for (let i = 0; i < RA; i++) {
-    player._hasCard.push(new RareAttackCard('방패 밀치기')); // 객체 생성 후 배열에 추가
+    player.hasCard.push(new RareAttackCard()); // 객체 생성 후 배열에 추가
   }
   for (let i = 0; i < RD; i++) {
-    player._hasCard.push(new RareDefenseCard('방패 올리기')); // 객체 생성 후 배열에 추가
+    player.hasCard.push(new RareDefenseCard()); // 객체 생성 후 배열에 추가
   }
   for (let i = 0; i < EA; i++) {
-    player._hasCard.push(new EpicAttackCard('완벽한 타격')); // 객체 생성 후 배열에 추가
+    player.hasCard.push(new EpicAttackCard()); // 객체 생성 후 배열에 추가
   }
   for (let i = 0; i < ED; i++) {
-    player._hasCard.push(new EpicDefenseCard('바리게이트')); // 객체 생성 후 배열에 추가
+    player.hasCard.push(new EpicDefenseCard()); // 객체 생성 후 배열에 추가
   }
   for (let i = 0; i < LA; i++) {
-    player._hasCard.push(new LegendaryAttackCard('말살검')); // 객체 생성 후 배열에 추가
+    player.hasCard.push(new LegendaryAttackCard()); // 객체 생성 후 배열에 추가
   }
   for (let i = 0; i < LD; i++) {
-    player._hasCard.push(new LegendaryDefenseCard('참호')); // 객체 생성 후 배열에 추가
+    player.hasCard.push(new LegendaryDefenseCard()); // 객체 생성 후 배열에 추가
   }
 }

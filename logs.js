@@ -1,7 +1,18 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { makeRandomCard } from './C_card.js';
+import {
+  Card,
+  NormalAttackCard,
+  NormalDefenseCard,
+  RareAttackCard,
+  RareDefenseCard,
+  EpicAttackCard,
+  EpicDefenseCard,
+  LegendaryAttackCard,
+  LegendaryDefenseCard,
+  makeRandomCard,
+} from './C_card.js';
 import { Player } from './C_player.js';
 
 // 인게임 안내 메시지를 위한 변수들
@@ -16,8 +27,8 @@ function displayStatus(stage, player, monster) {
   console.log(
     chalk.cyanBright(`| Stage: ${stage} |\n`) +
       chalk.blueBright(
-        `| 플레이어 정보 | 이름: ${player._name}, HP: ${player._hp}, 방어도: ${player._defense}, 도망확률: ${player._runAwayProb} |
-| 카드와의 유대감: ${player._bondingIndex}, 카드 개수: ${player._hasCard.length + player._hasCardInHand.length}, 손패 크기: ${player._handSize} |
+        `| 플레이어 정보 | 이름: ${player.name}, HP: ${player.hp}/${player.maxHp}, 방어도: ${player.defense}, 도망확률: ${player.runAwayProb} |
+| 카드와의 유대감: ${player.bondingIndex}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} |
       `,
       ) +
       chalk.redBright(`
@@ -30,17 +41,17 @@ function displayStatus(stage, player, monster) {
 function combineCardNamesToString(obj) {
   const cardNames = [];
 
-  // _hasCard 배열의 각 객체에서 _cardName 값을 추출하여 배열에 추가
-  obj._hasCard.forEach((card) => {
-    if (card._cardName) {
-      cardNames.push(card._cardName);
+  // hasCard 배열의 각 객체에서 cardName 값을 추출하여 배열에 추가
+  obj.hasCard.forEach((card) => {
+    if (card.cardName) {
+      cardNames.push(card.cardName);
     }
   });
 
-  // _hasCardInHand 배열의 각 객체에서 _cardName 값을 추출하여 배열에 추가
-  obj._hasCardInHand.forEach((card) => {
-    if (card._cardName) {
-      cardNames.push(card._cardName);
+  // hasCardInHand 배열의 각 객체에서 cardName 값을 추출하여 배열에 추가
+  obj.hasCardInHand.forEach((card) => {
+    if (card.cardName) {
+      cardNames.push(card.cardName);
     }
   });
   // sort() 메서드에 별다른 `compareFunction`이 제공되지 않는다면 배열의 요소를 문자열로 변환하고 두 요소를 비교한다.
@@ -61,22 +72,25 @@ function selectReward(player) {
   const reward2 = makeRandomCard();
   const reward3 = makeRandomCard();
 
+  let rewardName1 = reward1.cardName;
+  let rewardName2 = reward2.cardName;
+  let rewardName3 = reward3.cardName;
+
   console.log(
     chalk.magenta(`
-        | 카드 보상 |
-        ${reward1._cardName}, ${reward2._cardName}, ${reward3._cardName}`),
+    | 카드 보상 |\n
+    1. ${rewardName1}, 2. ${rewardName2}, 3. ${rewardName3}`),
   );
-  const rewardSelection = readlineSync.question('몇 번째 카드를 덱에 넣으시겠습니까? : ');
+  let rewardSelection = readlineSync.question('몇 번째 카드를 덱에 넣으시겠습니까? : ');
   switch (rewardSelection) {
-    case 1:
-      player._hasCard.push(reward1);
-    case 2:
-      player._hasCard.push(reward2);
-    case 3:
-      player._hasCard.push(reward3);
+    case '1':
+      player.hasCard.push(reward1);
       break;
-    default:
-      console.log(chalk.greenBright('보상을 스킵합니다.'));
+    case '2':
+      player.hasCard.push(reward2);
+      break;
+    case '3':
+      player.hasCard.push(reward3);
       break;
   }
 }
