@@ -1,6 +1,8 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
+import { makeRandomCard } from './C_card.js';
+import { Player } from './C_player.js';
 
 // 인게임 안내 메시지를 위한 변수들
 const info = '[TIP]턴을 종료할 때 가진 카드가 모두 섞입니다. 신중하게 플레이해주세요.\n';
@@ -54,4 +56,29 @@ function setMessage(newMessage) {
   message = newMessage;
 }
 
-export { displayStatus, setMessage };
+function selectReward(player) {
+  const reward1 = makeRandomCard();
+  const reward2 = makeRandomCard();
+  const reward3 = makeRandomCard();
+
+  console.log(
+    chalk.magenta(`
+        | 카드 보상 |
+        ${reward1._cardName}, ${reward2._cardName}, ${reward3._cardName}`),
+  );
+  const rewardSelection = readlineSync.question('몇 번째 카드를 덱에 넣으시겠습니까? : ');
+  switch (rewardSelection) {
+    case 1:
+      player._hasCard.push(reward1);
+    case 2:
+      player._hasCard.push(reward2);
+    case 3:
+      player._hasCard.push(reward3);
+      break;
+    default:
+      console.log(chalk.greenBright('보상을 스킵합니다.'));
+      break;
+  }
+}
+
+export { displayStatus, setMessage, selectReward };

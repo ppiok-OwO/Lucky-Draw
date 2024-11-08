@@ -40,6 +40,7 @@ export async function startGame(player) {
     if (monster.hp <= 0) {
       player._stage++;
       // 카드 고르기 기능 넣기(덱/빌/딩)
+      selectReward(player);
       player._hp += 30 + player._stage * 10;
     } else if (player._hp <= 0) {
       typeName();
@@ -102,7 +103,7 @@ const battle = async (stage, player, monster) => {
       if (player._hasCard.length + player._hasCardInHand.length <= 5) {
         setMessage('손패 크기보다 덱이 더 적을 수 없습니다.');
       } else {
-        removeCard(cardRemoveIndex, player);
+        removeCard(cardRemoveIndex - 1, player);
         monster.monsterAttack(player);
       }
     }

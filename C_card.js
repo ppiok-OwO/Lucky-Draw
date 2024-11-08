@@ -114,6 +114,25 @@ class LegendaryDefenseCard extends Card {
   }
 }
 
+// 카드를 무작위로 생성하는 함수
+function makeRandomCard() {
+  const cardClasses = [
+    NormalAttackCard,
+    NormalDefenseCard,
+    RareAttackCard,
+    RareDefenseCard,
+    EpicAttackCard,
+    EpicDefenseCard,
+    LegendaryAttackCard,
+    LegendaryDefenseCard,
+  ];
+  // 무작위로 클래스 선택
+  const randomCardInstance = cardClasses[Math.floor(Math.random() * classes.length)];
+
+  // 선택된 클래스의 인스턴스 생성
+  return new randomCardInstance();
+}
+
 export {
   Card,
   NormalAttackCard,
@@ -124,4 +143,5 @@ export {
   EpicDefenseCard,
   LegendaryAttackCard,
   LegendaryDefenseCard,
+  makeRandomCard,
 };
