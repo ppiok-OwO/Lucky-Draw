@@ -37,16 +37,20 @@ export async function startGame(player) {
     const monster = new Monster(player.stage);
     battle(player.stage, player, monster);
     // 스테이지 클리어 및 게임 종료 조건
-    if (monster.hp <= 0) {
+    if (player.hp <= 0) {
+      typeName();
+    } else if (player.stage === 10) {
+      break;
+    } else if (monster.hp <= 0) {
       player.stage++;
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
       player.maxHp += 30 + player.stage * 10;
       player.bondingIndex += 5 + player.stage * 5;
-    } else if (player.hp <= 0) {
-      typeName();
     }
   }
+
+  console.clear();
 
   console.log(
     chalk.cyan(
