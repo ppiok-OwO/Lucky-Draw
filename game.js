@@ -60,10 +60,14 @@ export async function startGame(player) {
 }
 
 const battle = (stage, player, monster) => {
+  // 새로운 스테이지가 시작되면 카드더미와 손패를 모두 섞는다.
+  player.shuffleAllCards();
   while (player.hp > 0 && monster.hp > 0) {
     console.clear();
+    // 다음 턴이 시작될 때, 손패에 빈자리가 있으면 카드를 보충한다.
+    player.drawCardRandomly();
     displayStatus(stage, player, monster);
-    player.shuffleAllCards();
+
     console.log(
       chalk.green(`\n1. 카드를 사용한다. 2. 소매치기. 3. 도망친다. 4. 손패에 있는 카드 지우기`),
     );
@@ -84,7 +88,7 @@ const battle = (stage, player, monster) => {
         if (cardChoice === `see${i + 1}`) {
           seeCard(player.hasCardInHand[i]);
         } else if (cardChoice === `${i + 1}`) {
-          player.cardPlay(playingCard, monster);
+          player.cardPlay(playingCard, monster, cardIndex);
 
           // 죽였는데 맞는 건 이상하니까.
           if (monster.hp > 0) monster.monsterAttack(player);
@@ -174,6 +178,7 @@ function incPlayerStat(player) {
 // 손패에 있는 카드를 지우는 함수
 function removeCard(cardRemoveIndex, player) {
   player.hasCardInHand.splice(cardRemoveIndex, 1);
+  setMessage('선택하신 카드를 삭제했습니다!');
 }
 
 // 카드를 추가하는 함수

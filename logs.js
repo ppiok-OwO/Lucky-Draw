@@ -17,15 +17,14 @@ import {
 import { Player } from './C_player.js';
 
 // 인게임 안내 메시지를 위한 변수들
-const info = `[TIP]턴을 종료할 때 가진 카드가 모두 섞입니다. 신중하게 플레이해주세요. 
-전투 중에 카드를 자세히 보시려면 번호 앞에 'see'를 붙여주세요\n`;
+const info = `[TIP]전투 중에 카드를 자세히 보시려면 번호 앞에 'see'를 붙여주세요\n`;
 let message;
 
 // 화면에 각종 스탯을 적어보자
 function displayStatus(stage, player, monster) {
   let allCardNames = combineCardNamesToString(player);
-  console.log(chalk.yellowBright(`| 덱 리스트 | ${allCardNames}`));
-  console.log(chalk.magentaBright(`\n====== Current Status ======`));
+  console.log(chalk.green.bold(`| 덱 리스트 | ${allCardNames}`));
+  console.log(chalk.magentaBright.bold(`\n====== Current Status ======`));
   console.log(
     chalk.cyanBright(`\n| Stage: ${stage} |\n`) +
       chalk.blueBright(
@@ -71,20 +70,70 @@ function setMessage(newMessage) {
 }
 
 function selectReward(player) {
+  console.clear();
+
+  console.log(
+    chalk.cyan(
+      figlet.textSync('Stage Clear!*', {
+        font: 'ANSI Shadow',
+        horizontalLayout: 'default',
+        verticalLayout: 'default',
+      }),
+    ),
+  );
+
   const reward1 = makeRandomCard();
   const reward2 = makeRandomCard();
   const reward3 = makeRandomCard();
 
   console.log(
-    chalk.redBright(`
-1. ${reward1.cardName}
-2. ${reward2.cardName}
-3. ${reward3.cardName}
+    chalk.yellow(`
+  1. 
+  ======| 카드 상세보기 |======
+  
+    >>> ${reward1.cardName} <<<
+
+  등급 : ${reward1.cardTier}
+  발동 확률 : ${reward1.actProb}
+  공격 데미지 : ${reward1.attackDmg}
+  주문 데미지 : ${reward1.spellDmg}
+  체력 회복량 : ${reward1.restoreHp}
+  방어도 : ${reward1.defense}
+
+  ========| ******* |========
+
+  2. 
+  ======| 카드 상세보기 |======
+  
+    >>> ${reward2.cardName} <<<
+
+  등급 : ${reward2.cardTier}
+  발동 확률 : ${reward2.actProb}
+  공격 데미지 : ${reward2.attackDmg}
+  주문 데미지 : ${reward2.spellDmg}
+  체력 회복량 : ${reward2.restoreHp}
+  방어도 : ${reward2.defense}
+
+  ========| ******* |========
+
+  3. 
+  ======| 카드 상세보기 |======
+  
+    >>> ${reward3.cardName} <<<
+
+  등급 : ${reward3.cardTier}
+  발동 확률 : ${reward3.actProb}
+  공격 데미지 : ${reward3.attackDmg}
+  주문 데미지 : ${reward3.spellDmg}
+  체력 회복량 : ${reward3.restoreHp}
+  방어도 : ${reward3.defense}
+
+  ========| ******* |========
     `),
   );
 
   let rewardSelection = readlineSync.question(
-    '몇 번째 카드를 덱에 넣으시겠습니까?(상세보기 불가!!) : ',
+    '몇 번째 카드를 덱에 넣으시겠습니까?(보상을 skip하시려면 번호가 아닌 다른 키를 눌러주세요.) : ',
   );
 
   switch (rewardSelection) {

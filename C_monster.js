@@ -5,8 +5,8 @@ import { displayStatus, setMessage } from './logs.js';
 
 class Monster {
   constructor(stage) {
-    this.hp = 150 + 50 * (stage / 2);
-    this.attackDmg = 10 + 10 * (stage / 2);
+    this.hp = Math.round(150 + 50 * (stage / 2));
+    this.attackDmg = Math.round(10 + 10 * (stage / 2));
   }
 
   monsterAttack(player) {
@@ -16,7 +16,7 @@ class Monster {
   }
   monsterLoseHp(playingCard, cardPower = 1) {
     if (playingCard.attackDmg >= 0 && playingCard.spellDmg >= 0) {
-      this.hp -= (playingCard.attackDmg + playingCard.spellDmg) * cardPower;
+      this.hp -= Math.round((playingCard.attackDmg + playingCard.spellDmg) * cardPower);
     }
   }
 }

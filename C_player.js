@@ -18,41 +18,42 @@ class Player {
   }
 
   drawCardRandomly() {
-    // 손패가 몇 자리 비어있나?
+    // 손패가 몇 자리 비어있니?
     let emptyHand = this.handSize - this.hasCardInHand.length;
 
-    // 카드 셔플! Fisher-Yates 방식이라고 하네요
+    // 카드 셔플! Fisher-Yates 방식이라고 한다.
     for (let i = this.hasCard.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.hasCard[i], this.hasCard[j]] = [this.hasCard[j], this.hasCard[i]];
     }
 
-    // 비어있는 손패 사이즈만큼 카드 뽑기
+    // 비어있는 손패 크기만큼 카드를 보충하자
     for (let i = 0; i < emptyHand; i++) {
       this.hasCardInHand.push(this.hasCard.shift());
     }
-    setMessage('손패 크기만큼 카드를 드로우했습니다!');
+    // setMessage('손패를 보충했습니다!');
   }
 
   shuffleAllCards() {
     // 손패 비우기
-    let splicedHand = this.hasCardInHand.splice(0, this.hasCardInHand.length);
+    let splicedHand = this.hasCardInHand.splice(0);
+    // splice는 배열을 반환하므로, hasCard배열과 합쳐줄 때 전개 구문을 사용했다.
     this.hasCard.push(...splicedHand);
 
-    // 셔플(Fisher-Yates 알고리즘)
+    // 카드를 잘 섞어주자(Fisher-Yates 셔플 알고리즘)
     for (let i = this.hasCard.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.hasCard[i], this.hasCard[j]] = [this.hasCard[j], this.hasCard[i]];
     }
 
-    // 손패 채우기
+    // 손패 다시 채우기
     for (let i = 0; i < this.handSize; i++) {
       this.hasCardInHand.push(this.hasCard.shift());
     }
     setMessage('카드를 섞고 손패를 가득 채웠습니다!');
   }
 
- cardPlay(playingCard, monster) {
+  cardPlay(playingCard, monster, cardIndex) {
     // 100 미만의 랜덤한 밸류를 구하고 카드 발동 확률이랑 비교해보기
     const randomValue = Math.random() * 100;
 
@@ -60,7 +61,7 @@ class Player {
     const cardActProb = playingCard.actProb + this.bondingIndex;
 
     // 카드 발동 확률이 랜덤한 숫자를 이기면 발동!
-    if (randomValue <= cardActProb) {
+    if (cardActProb >= randomValue) {
       if (cardActProb > 100) {
         let cardPower = 1 + (cardActProb - 100) / 100;
         monster.monsterLoseHp(playingCard, cardPower);
@@ -72,29 +73,18 @@ class Player {
         this.updateDefenseByCard(playingCard);
       }
       setMessage('카드 발동 성공!');
-    } else if (randomValue > cardActProb) {
+    } else if (cardActProb < randomValue) {
       setMessage('카드 발동 실패!');
     }
-  }
 
-  updateDeckSize(num) {
-    // 덱사이즈
-    this.deckSize += num;
-  }
-
-  updateHandSize(num) {
-    // 핸드 사이즈
-    this.handSize += num;
-  }
-
-  updateMaxHp(num) {
-    // 최대 체력
-    this.maxHp += num;
+    // 사용한 카드는 손패에서 카드더미로(splice, push)
+    const usedCard = this.hasCardInHand.splice(cardIndex, 1)[0];
+    this.hasCard.push(usedCard);
   }
 
   updateHpByCard(playingCard, cardPower = 1) {
     // 현재 체력
-    this.hp += playingCard.restoreHp * cardPower;
+    this.hp += Math.round(playingCard.restoreHp * cardPower);
     // 단, 체력은 최대체력을 넘을 수 없다!
     if (this.hp >= this.maxHp) {
       this.hp = this.maxHp;
@@ -104,13 +94,13 @@ class Player {
   updateHpByMonster(num) {
     const pierceDmg = this.defense + num;
     if (pierceDmg <= 0) {
-      this.hp += pierceDmg;
+      this.hp += Math.round(pierceDmg);
     }
   }
 
   updateDefenseByCard(playingCard, cardPower = 1) {
     // 방어도
-    this.defense += playingCard.defense * cardPower;
+    this.defense += Math.round(playingCard.defense * cardPower);
   }
 
   updateDefenseByMonster(num) {
@@ -118,11 +108,6 @@ class Player {
     if (this.defense <= 0) {
       this.defense = 0;
     }
-  }
-
-  updateBondingIndex(num) {
-    // 유대감
-    this.bondingIndex += num;
   }
 
   runAway(monster) {

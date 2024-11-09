@@ -43,29 +43,29 @@ class LegendaryAttackCard extends Card {
 
 class NormalDefenseCard extends Card {
   constructor() {
-    super('기본 방어', 'Normal', 75, 0, 0, 20, 20);
+    super('기본 방어', 'Normal', 75, 0, 0, 5, 10);
   }
 }
 
 class RareDefenseCard extends Card {
   constructor() {
-    super('방패 올리기', 'Rare', 80, 0, 0, 30, 30);
+    super('방패 올리기', 'Rare', 80, 0, 0, 10, 15);
   }
 }
 
 class EpicDefenseCard extends Card {
   constructor() {
-    super('바리게이트', 'Epic', 85, 0, 0, 30, 45);
+    super('바리게이트', 'Epic', 85, 0, 0, 15, 25);
   }
 }
 
 class LegendaryDefenseCard extends Card {
   constructor() {
-    super('참호', 'Legendary', 90, 0, 0, 100, 60);
+    super('참호', 'Legendary', 90, 0, 0, 20, 30);
   }
 }
 
-// 카드를 무작위로 생성하는 함수
+// 카드의 인스턴스를 무작위로 생성하는 함수
 function makeRandomCard() {
   const cardClasses = [
     NormalAttackCard,
