@@ -87,10 +87,15 @@ class Player {
           cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
         );
       };
+
       attackMonster();
       setMessage('카드 발동 성공!');
     } else {
       setMessage('카드 발동 실패!');
+      monster.monsterLoseHpByIgnite(
+        playingCard,
+        cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
+      );
     }
 
     // 사용한 카드는 손패에서 카드더미로(splice, push)
@@ -106,11 +111,11 @@ class Player {
       this.hp = this.maxHp;
     }
 
-    if (this.blessing === 'Elemental Warrior') {
-      // 정령사의 경우 카드를 통해 회복한 체력만큼 점화를 걸 수 있다.
+    if (this.blessing === 'Chieftain') {
+      // 화염 투사의 경우 카드를 통해 회복한 체력만큼 점화를 걸 수 있다.
       monster.igniteStack += Math.round(playingCard.restoreHp * cardPower);
     } else if (this.blessing === 'Berserker') {
-      // 광전사의 경우 카드를 쓸 때마다 2의 피해를 입고 연속 공격 확률이 5%p 증가하거나 최대 공격 횟수가 0.2 증가한다.
+      // 광전사의 경우 카드를 쓸 때마다 10의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 0.5 증가한다.
       this.hp -= 2;
       let randomValue = Math.round(Math.random * 2);
 
@@ -130,8 +135,9 @@ class Player {
   }
 
   updateDefenseByCard(playingCard, cardPower = 1) {
-    // 가시 수호자의 경우 방어도가 가시 데미지/2만큼 증가
+    // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 그리고 현재 가지고 있는 가시데미지의 절반만큼 방어도를 추가로 얻는다.
     if (this.blessing === 'Spike Defender') {
+      this.spikeDmg += playingCard.defense / 2;
       this.defense += Math.round(playingCard.defense * cardPower + this.spikeDmg / 2);
     } else {
       this.defense += Math.round(playingCard.defense * cardPower);
@@ -142,9 +148,6 @@ class Player {
     this.defense += num;
     if (this.defense <= 0) {
       this.defense = 0;
-    }
-    if (num !== 0 && this.blessing === 'Spike Defender') {
-      this.spikeDmg += 5;
     }
   }
 

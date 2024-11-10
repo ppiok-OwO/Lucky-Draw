@@ -6,7 +6,7 @@ import { displayStatus, setMessage } from './logs.js';
 class Monster {
   constructor(stage) {
     this.hp = Math.round(150 + 50 * stage);
-    this.attackDmg = Math.round(10 + 10 * stage);
+    this.attackDmg = Math.round(15 + 10 * stage);
     this.isIgnited = false;
     this.igniteStack = 0;
   }
@@ -17,7 +17,7 @@ class Monster {
     player.updateDefenseByMonster(-this.attackDmg);
   }
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
-    if (player.blessing === 'Spike Defender') {
+    if (player.blessing === 'Spike Defender' && player.defense > 0) {
       this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
     } else if (player.blessing === 'Berserker') {
       let randomValue = Math.random() * 100;
@@ -31,7 +31,7 @@ class Monster {
       } else {
         this.hp -= Math.round(playingCard.attackDmg * cardPower);
       }
-    } else if (player.blessing === 'Elemental Warrior') {
+    } else if (player.blessing === 'Chieftain') {
       this.hp -= Math.round((playingCard.attackDmg + playingCard.fireDmg) * cardPower);
       this.isIgnited = true;
     }

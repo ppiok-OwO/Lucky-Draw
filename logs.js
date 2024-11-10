@@ -27,15 +27,34 @@ function displayStatus(stage, player, monster) {
   console.log(chalk.hex('#7c7c7c')(`\n====== Current Status ======`));
   console.log(
     chalk.hex('#efc88b').bold(`
-| Stage: ${stage} |
+| Stage: ${stage} | ${player.blessing} |
     `) +
       chalk.hex('#04a777').bold(`
 | 플레이어 정보 | 이름: ${player.name}, HP: ${player.hp}/${player.maxHp}, 방어도: ${player.defense}, 도망확률: ${player.runAwayProb} |
-| 카드와의 유대감: ${player.bondingIndex}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} |
-    `) +
-      chalk.hex('#CD1818').bold(`
+| 카드와의 유대감: ${player.bondingIndex}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} | `),
+  );
+
+  if (player.blessing === 'Spike Defender') {
+    console.log(chalk.hex('#04a777').bold(`가시 데미지 : ${player.spikeDmg} |`));
+  } else if (player.blessing === 'Berserker') {
+    console.log(
+      chalk
+        .hex('#04a777')
+        .bold(
+          ` 연속 공격 확률 : ${player.multiAttackProb}, 최대 공격 횟수 : ${player.maxAttackCount} |`,
+        ),
+    );
+  }
+
+  console.log(
+    chalk.hex('#CD1818').bold(`
 | 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} | "네놈을 추격해주마!" |\n`),
   );
+
+  if (player.blessing === 'Chieftain') {
+    console.log(chalk.hex('#CD1818').bold(`턴당 점화 스택 : ${monster.igniteStack} |`));
+  }
+
   console.log(chalk.hex('#7c7c7c')(`===========================`));
   console.log(chalk.hex('#7678ed')(`\n${info}`));
   console.log(chalk.hex('#f7b801')(`>>알림: ${message}`));
@@ -97,7 +116,7 @@ function selectReward(player) {
   등급 : ${reward1.cardTier}
   발동 확률 : ${reward1.actProb}
   공격 데미지 : ${reward1.attackDmg}
-  주문 데미지 : ${reward1.spellDmg}
+  화염 데미지 : ${reward1.fireDmg}
   체력 회복량 : ${reward1.restoreHp}
   방어도 : ${reward1.defense}
 
@@ -111,7 +130,7 @@ function selectReward(player) {
   등급 : ${reward2.cardTier}
   발동 확률 : ${reward2.actProb}
   공격 데미지 : ${reward2.attackDmg}
-  주문 데미지 : ${reward2.spellDmg}
+  화염 데미지 : ${reward2.fireDmg}
   체력 회복량 : ${reward2.restoreHp}
   방어도 : ${reward2.defense}
 
@@ -125,7 +144,7 @@ function selectReward(player) {
   등급 : ${reward3.cardTier}
   발동 확률 : ${reward3.actProb}
   공격 데미지 : ${reward3.attackDmg}
-  주문 데미지 : ${reward3.spellDmg}
+  화염 데미지 : ${reward3.fireDmg}
   체력 회복량 : ${reward3.restoreHp}
   방어도 : ${reward3.defense}
 

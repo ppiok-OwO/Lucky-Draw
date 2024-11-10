@@ -95,7 +95,7 @@ function seeCard(card) {
   등급 : ${card.cardTier}
   발동 확률 : ${card.actProb}
   공격 데미지 : ${card.attackDmg}
-  화염 데미지 : ${card.spellDmg}
+  화염 데미지 : ${card.fireDmg}
   체력 회복량 : ${card.restoreHp}
   방어도 : ${card.defense}
 

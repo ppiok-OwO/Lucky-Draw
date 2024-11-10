@@ -33,10 +33,10 @@ export function typeName() {
 
   if (blessing === '1') {
     player.blessing = 'Spike Defender';
-  } else if (value === '2') {
+  } else if (blessing === '2') {
     player.blessing = 'Berserker';
-  } else if (value === '3') {
-    player.blessing = 'Elemental Warrior';
+  } else if (blessing === '3') {
+    player.blessing = 'Chieftain';
   }
 
   // 시작덱 배열에 카드들을 추가
@@ -56,15 +56,23 @@ export async function startGame(player) {
     battle(player.stage, player, monster);
     // 스테이지 클리어 및 게임 종료 조건
     if (player.hp <= 0) {
+      // 죽으면 처음부터 다시 시작
       typeName();
     } else if (player.stage === 10) {
+      // 게임을 클리어하면 반복문 탈출하기
       break;
     } else if (monster.hp <= 0) {
       player.stage++;
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
-      player.maxHp += 30 + player.stage * 10;
-      player.bondingIndex += 5 + player.stage * 5;
+      // 최대 체력 증가
+      player.maxHp += player.stage * 10;
+      player.bondingIndex += player.stage * 5;
+      // 스테이지가 끝나면 전투 중에 얻은 스탯들 초기화
+      player.spikeDmg = 20; // 가시 데미지
+      player.multiAttackProb = 30; // 연속 공격 확률
+      player.maxAttackCount = 1; // 최대 공격 횟수
+      player.defense = 0;
     }
   }
 
@@ -183,7 +191,9 @@ const battle = (stage, player, monster) => {
 // 이름과 축복 선택하기
 function chooseBlessing() {
   console.log(
-    chalk.hex('#daca86')('\n1. 가시 수호자의 축복\t\t2. 광전사의 축복\t\t3. 정령사의 축복'),
+    chalk.hex('#daca86')(
+      '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
+    ),
   );
   const blessingChoice = readlineSync.question('\n당신의 선택은? ');
 
