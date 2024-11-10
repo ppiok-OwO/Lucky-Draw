@@ -5,8 +5,10 @@ import { displayStatus, setMessage } from './logs.js';
 
 class Monster {
   constructor(stage) {
-    this.hp = Math.round(150 + 50 * (stage / 2));
-    this.attackDmg = Math.round(10 + 10 * (stage / 2));
+    this.hp = Math.round(150 + 50 * stage);
+    this.attackDmg = Math.round(15 + 10 * stage);
+    this.isIgnited = false;
+    this.igniteStack = 0;
   }
 
   monsterAttack(player) {
@@ -14,9 +16,40 @@ class Monster {
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
   }
-  monsterLoseHp(playingCard, cardPower = 1) {
-    if (playingCard.attackDmg >= 0 && playingCard.spellDmg >= 0) {
-      this.hp -= Math.round((playingCard.attackDmg + playingCard.spellDmg) * cardPower);
+  monsterLoseHpByCard(player, playingCard, cardPower = 1) {
+    if (player.blessing === 'Spike Defender' && player.defense > 0) {
+      this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
+    } else if (player.blessing === 'Berserker') {
+      let randomValue = Math.random() * 100;
+      // 공격 횟수는 플레이어의 최대 공격 횟수 이하의 범위에서 랜덤하게 정한다. 단, 최솟값은 1 이상.
+      let attackCount = Math.round(Math.random() * (player.maxAttackCount - 1) + 1);
+      if (player.multiAttackProb >= randomValue) {
+        for (let i = 0; i < attackCount; i++) {
+          // 위에서 계산된 공격 횟수만큼 공격한다.
+          this.hp -= Math.round(playingCard.attackDmg * cardPower);
+        }
+        // 입힌 데미지의 80퍼센트 만큼 회복
+        player.hp += Math.round(playingCard.attackDmg * cardPower) * attackCount * 0.8;
+        if (player.hp >= player.maxHp) {
+          player.hp = player.maxHp;
+        }
+      } else {
+        this.hp -= Math.round(playingCard.attackDmg * cardPower);
+        player.hp += Math.round(playingCard.attackDmg * cardPower) * 0.8;
+        if (player.hp >= player.maxHp) {
+          player.hp = player.maxHp;
+        }
+      }
+    } else if (player.blessing === 'Chieftain') {
+      this.hp -= Math.round((playingCard.attackDmg + playingCard.fireDmg) * cardPower);
+      this.isIgnited = true;
+    }
+  }
+  monsterLoseHpByIgnite(playingCard, cardPower = 1) {
+    if (this.isIgnited) {
+      this.igniteStack += playingCard.fireDmg * cardPower;
+      this.hp -= this.igniteStack;
+      this.igniteStack--;
     }
   }
 }

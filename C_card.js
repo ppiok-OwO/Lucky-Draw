@@ -4,13 +4,13 @@ import readlineSync from 'readline-sync';
 import { displayStatus, setMessage } from './logs.js';
 
 class Card {
-  constructor(cardName, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense) {
+  constructor(cardName, cardTier, actProb, attackDmg, fireDmg, restoreHp, defense) {
     this.cardName = cardName;
     this.actProb = actProb;
     this.cardTier = cardTier;
     this.isThisCardPlayed = false;
     this.attackDmg = attackDmg;
-    this.spellDmg = spellDmg;
+    this.fireDmg = fireDmg;
     this.restoreHp = restoreHp;
     this.defense = defense;
   }
@@ -18,26 +18,26 @@ class Card {
 
 class NormalAttackCard extends Card {
   constructor() {
-    // cardName, cardTier, actProb, attackDmg, spellDmg, restoreHp, defense
-    super('기본 공격', 'Normal', 75, 10, 5, 0, 0);
+    // cardName, cardTier, actProb, attackDmg, fireDmg, restoreHp, defense
+    super('기본 공격', 'Normal', 75, 10, 5, 5, 0);
   }
 }
 
 class RareAttackCard extends Card {
   constructor() {
-    super('피부 찢기', 'Rare', 80, 20, 5, 5, 0);
+    super('피부 찢기', 'Rare', 80, 20, 10, 5, 5);
   }
 }
 
 class EpicAttackCard extends Card {
   constructor() {
-    super('완벽한 타격', 'Epic', 85, 35, 0, 0, 10);
+    super('완벽한 타격', 'Epic', 85, 35, 15, 15, 5);
   }
 }
 
 class LegendaryAttackCard extends Card {
   constructor() {
-    super('말살검', 'Legendary', 90, 20, 25, 10, 10);
+    super('말살검', 'Legendary', 90, 55, 25, 25, 10);
   }
 }
 
@@ -95,7 +95,7 @@ function seeCard(card) {
   등급 : ${card.cardTier}
   발동 확률 : ${card.actProb}
   공격 데미지 : ${card.attackDmg}
-  주문 데미지 : ${card.spellDmg}
+  화염 데미지 : ${card.fireDmg}
   체력 회복량 : ${card.restoreHp}
   방어도 : ${card.defense}
 

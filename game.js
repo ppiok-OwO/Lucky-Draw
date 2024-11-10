@@ -17,11 +17,30 @@ import {
 import { Monster } from './C_monster.js';
 import { displayStatus, setMessage, selectReward } from './logs.js';
 
+// 이름을 입력하세요. 축복을 선택하세요.
 export function typeName() {
   console.clear();
 
-  const playerName = readlineSync.question('당신의 이름은? ');
+  const playerName = readlineSync.question(
+    '\n결정을 내리셨군요. 마왕에 도전하는 용감한 영웅이여. 당신의 이름은 무엇인가요? \n',
+  );
+  console.log(chalk.hex('#daca86').bold(`\n${playerName}... 좋은 이름이네요.`));
+  console.log(
+    chalk.hex('#daca86')(
+      `\n나는 카드의 여신. 시련과 위협이 도사릴 당신의 여정에 축복을 내려드리죠.\n원하는 축복을 말해보세요.\n`,
+    ),
+  );
+
+  const blessing = chooseBlessing();
   const player = new Player(playerName);
+
+  if (blessing === '1') {
+    player.blessing = 'Spike Defender';
+  } else if (blessing === '2') {
+    player.blessing = 'Berserker';
+  } else if (blessing === '3') {
+    player.blessing = 'Chieftain';
+  }
 
   // 시작덱 배열에 카드들을 추가
   addCard(player, 3, 2, 3, 2);
@@ -31,22 +50,32 @@ export function typeName() {
   startGame(player);
 }
 
+// 스테이지를 증가시키면서 보상 획득, 전투 반복
 export async function startGame(player) {
   console.clear();
+
   while (player.stage <= 10) {
     const monster = new Monster(player.stage);
     battle(player.stage, player, monster);
     // 스테이지 클리어 및 게임 종료 조건
     if (player.hp <= 0) {
+      // 죽으면 처음부터 다시 시작
       typeName();
     } else if (player.stage === 10) {
+      // 게임을 클리어하면 반복문 탈출하기
       break;
     } else if (monster.hp <= 0) {
       player.stage++;
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
-      player.maxHp += 30 + player.stage * 10;
-      player.bondingIndex += 5 + player.stage * 5;
+      // 최대 체력 증가
+      player.maxHp += player.stage * 10;
+      player.bondingIndex += player.stage * 5;
+      // 스테이지가 끝나면 전투 중에 얻은 스탯들 초기화
+      player.spikeDmg = 20; // 가시 데미지
+      player.multiAttackProb = 50; // 연속 공격 확률
+      player.maxAttackCount = 2; // 최대 공격 횟수
+      player.defense = 0;
     }
   }
 
@@ -161,6 +190,20 @@ const battle = (stage, player, monster) => {
     // 잘못된 입력을 하더라도 아무런 일도 일어나지 않고 반복문이 돌아서 자동으로 선택지를 다시 고를 수 있게 된다.
   }
 };
+
+// 이름과 축복 선택하기
+function chooseBlessing() {
+  console.log(
+    chalk.hex('#00AA6C')(
+      '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
+    ),
+  );
+  const blessingChoice = readlineSync.question('\n당신의 선택은? ');
+
+  console.log(chalk.hex('#ffcdbc')(`\n${blessingChoice}번을 선택하셨습니다.`));
+
+  return blessingChoice;
+}
 
 // 플레이어 스탯 랜덤하게 오르는 함수
 function incPlayerStat(player) {
