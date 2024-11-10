@@ -17,11 +17,27 @@ import {
 import { Monster } from './C_monster.js';
 import { displayStatus, setMessage, selectReward } from './logs.js';
 
+// 이름을 입력하세요. 축복을 선택하세요.
 export function typeName() {
   console.clear();
+  const playerName = readlineSync.question('마왕에 도전하는 용사여, 당신의 이름은 무엇인가요? ');
+  console.log(chalk.hex('#daca86')(`${playerName}... 좋은 이름이군요.`));
+  console.log(
+    chalk.hex('#daca86')(
+      `\n나는 카드의 여신. 녹록지 않을 당신의 여정에 축복을 내려드리죠.\n원하는 축복을 말해보세요.\n`,
+    ),
+  );
 
-  const playerName = readlineSync.question('당신의 이름은? ');
+  const blessing = chooseBlessing();
   const player = new Player(playerName);
+
+  if (blessing === '1') {
+    player.blessing = 'Spike Defender';
+  } else if (value === '2') {
+    player.blessing = 'Berserker';
+  } else if (value === '3') {
+    player.blessing = 'Elemental Warrior';
+  }
 
   // 시작덱 배열에 카드들을 추가
   addCard(player, 3, 2, 3, 2);
@@ -31,8 +47,10 @@ export function typeName() {
   startGame(player);
 }
 
+// 스테이지를 증가시키면서 보상 획득, 전투 반복
 export async function startGame(player) {
   console.clear();
+
   while (player.stage <= 10) {
     const monster = new Monster(player.stage);
     battle(player.stage, player, monster);
@@ -161,6 +179,18 @@ const battle = (stage, player, monster) => {
     // 잘못된 입력을 하더라도 아무런 일도 일어나지 않고 반복문이 돌아서 자동으로 선택지를 다시 고를 수 있게 된다.
   }
 };
+
+// 이름과 축복 선택하기
+function chooseBlessing() {
+  console.log(
+    chalk.hex('#daca86')('\n1. 가시 수호자의 축복\t\t2. 광전사의 축복\t\t3. 정령사의 축복'),
+  );
+  const blessingChoice = readlineSync.question('\n당신의 선택은? ');
+
+  console.log(chalk.hex('#ffcdbc')(`\n${blessingChoice}번을 선택하셨습니다.`));
+
+  return blessingChoice;
+}
 
 // 플레이어 스탯 랜덤하게 오르는 함수
 function incPlayerStat(player) {
