@@ -23,21 +23,22 @@ let message;
 // 화면에 각종 스탯을 적어보자
 function displayStatus(stage, player, monster) {
   let allCardNames = combineCardNamesToString(player);
-  console.log(chalk.green.bold(`| 덱 리스트 | ${allCardNames}`));
-  console.log(chalk.magentaBright.bold(`\n====== Current Status ======`));
+  console.log(chalk.hex('#f38d68').bold(`| 덱 리스트 | ${allCardNames}`));
+  console.log(chalk.hex('#7c7c7c')(`\n====== Current Status ======`));
   console.log(
-    chalk.cyanBright(`\n| Stage: ${stage} |\n`) +
-      chalk.blueBright(
-        `| 플레이어 정보 | 이름: ${player.name}, HP: ${player.hp}/${player.maxHp}, 방어도: ${player.defense}, 도망확률: ${player.runAwayProb} |
+    chalk.hex('#efc88b').bold(`
+| Stage: ${stage} |
+    `) +
+      chalk.hex('#04a777').bold(`
+| 플레이어 정보 | 이름: ${player.name}, HP: ${player.hp}/${player.maxHp}, 방어도: ${player.defense}, 도망확률: ${player.runAwayProb} |
 | 카드와의 유대감: ${player.bondingIndex}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} |
-      `,
-      ) +
-      chalk.redBright(`
-| 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} | "네놈을 추격해주마!" |`),
+    `) +
+      chalk.hex('#CD1818').bold(`
+| 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} | "네놈을 추격해주마!" |\n`),
   );
-  console.log(chalk.magentaBright(`===========================`));
-  console.log(chalk.cyanBright(`\n${info}`));
-  console.log(chalk.cyanBright(`>>알림: ${message}`));
+  console.log(chalk.hex('#7c7c7c')(`===========================`));
+  console.log(chalk.hex('#7678ed')(`\n${info}`));
+  console.log(chalk.hex('#f7b801')(`>>알림: ${message}`));
 }
 
 function combineCardNamesToString(obj) {

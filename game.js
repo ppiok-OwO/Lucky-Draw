@@ -73,17 +73,19 @@ const battle = (stage, player, monster) => {
     displayStatus(stage, player, monster);
 
     console.log(
-      chalk.green(`\n1. 카드를 사용한다. 2. 소매치기. 3. 도망친다. 4. 손패에 있는 카드 지우기`),
+      chalk
+        .hex('#daca86')
+        .bold(`\n1. 카드를 사용한다. 2. 소매치기. 3. 도망친다. 4. 손패에 있는 카드 지우기\n`),
     );
-    const choice = readlineSync.question('당신의 선택은? ');
-    console.log(chalk.green(`${choice}를 선택하셨습니다.`));
+    const choice = readlineSync.question('당신의 선택은? \n');
+    console.log(chalk.hex('#ffcdbc')(`\n${choice}번을 선택하셨습니다.`));
 
     if (choice === '1') {
       console.log(
         chalk.green(`
           \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
-      const cardChoice = readlineSync.question('몇 번째 카드를 사용하시겠습니까? : ');
+      const cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
       const cardIndex = Number(cardChoice - 1);
       const playingCard = player.hasCardInHand[cardIndex];
 
@@ -152,6 +154,9 @@ const battle = (stage, player, monster) => {
         removeCard(cardIndex, player);
         monster.monsterAttack(player);
       }
+    } else if (choice === 'test') {
+      monster.hp = 0;
+      break;
     }
     // 잘못된 입력을 하더라도 아무런 일도 일어나지 않고 반복문이 돌아서 자동으로 선택지를 다시 고를 수 있게 된다.
   }
