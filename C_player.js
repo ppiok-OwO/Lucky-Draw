@@ -17,8 +17,8 @@ class Player {
     this.stage = 1;
     this.blessing = ''; // 선택한 축복
     this.spikeDmg = 20; // 가시 데미지
-    this.multiAttackProb = 30; // 연속 공격 확률
-    this.maxAttackCount = 1; // 최대 공격 횟수
+    this.multiAttackProb = 50; // 연속 공격 확률
+    this.maxAttackCount = 2; // 최대 공격 횟수
   }
 
   drawCardRandomly() {
@@ -117,12 +117,12 @@ class Player {
     } else if (this.blessing === 'Berserker') {
       // 광전사의 경우 카드를 쓸 때마다 10의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 0.5 증가한다.
       this.hp -= 2;
-      let randomValue = Math.round(Math.random * 2);
+      let randomValue = Math.random() * 2;
 
-      if (randomValue < 1) {
-        this.multiAttackProb += 5;
+      if (randomValue < 1 && this.multiAttackProb <= 100) {
+        this.multiAttackProb += 10;
       } else {
-        this.maxAttackCount += 0.2;
+        this.maxAttackCount += 0.5;
       }
     }
   }

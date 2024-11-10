@@ -30,29 +30,31 @@ function displayStatus(stage, player, monster) {
 | Stage: ${stage} | ${player.blessing} |
     `) +
       chalk.hex('#04a777').bold(`
-| 플레이어 정보 | 이름: ${player.name}, HP: ${player.hp}/${player.maxHp}, 방어도: ${player.defense}, 도망확률: ${player.runAwayProb} |
-| 카드와의 유대감: ${player.bondingIndex}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} | `),
+| 플레이어 정보 | 이름: ${player.name}, HP: ${Math.round(player.hp)}/${Math.round(player.maxHp)}, 방어도: ${Math.round(player.defense)}, 도망확률: ${Math.round(player.runAwayProb)} |
+| 카드와의 유대감: ${Math.round(player.bondingIndex)}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} | `),
   );
 
   if (player.blessing === 'Spike Defender') {
-    console.log(chalk.hex('#04a777').bold(`가시 데미지 : ${player.spikeDmg} |`));
+    console.log(chalk.hex('#04a777').bold(`| 가시 데미지 : ${Math.round(player.spikeDmg)} |`));
   } else if (player.blessing === 'Berserker') {
     console.log(
       chalk
         .hex('#04a777')
         .bold(
-          ` 연속 공격 확률 : ${player.multiAttackProb}, 최대 공격 횟수 : ${player.maxAttackCount} |`,
+          `| 연속 공격 확률 : ${Math.round(player.multiAttackProb)}, 최대 공격 횟수 : ${Math.round(player.maxAttackCount)} |`,
         ),
     );
   }
 
   console.log(
     chalk.hex('#CD1818').bold(`
-| 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} | "네놈을 추격해주마!" |\n`),
+| 몬스터 정보 | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | "네놈을 추격해주마!" |\n`),
   );
 
   if (player.blessing === 'Chieftain') {
-    console.log(chalk.hex('#CD1818').bold(`턴당 점화 스택 : ${monster.igniteStack} |`));
+    console.log(
+      chalk.hex('#CD1818').bold(`| 턴당 점화 스택 : ${Math.round(monster.igniteStack)} |`),
+    );
   }
 
   console.log(chalk.hex('#7c7c7c')(`===========================`));

@@ -20,8 +20,8 @@ import { displayStatus, setMessage, selectReward } from './logs.js';
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName() {
   console.clear();
-  const playerName = readlineSync.question('마왕에 도전하는 용사여, 당신의 이름은 무엇인가요? ');
-  console.log(chalk.hex('#daca86')(`${playerName}... 좋은 이름이군요.`));
+  const playerName = readlineSync.question('마왕에 도전하는 용사여, 당신의 이름은 무엇인가요? \n');
+  console.log(chalk.hex('#daca86')(`\n${playerName}... 좋은 이름이군요.`));
   console.log(
     chalk.hex('#daca86')(
       `\n나는 카드의 여신. 녹록지 않을 당신의 여정에 축복을 내려드리죠.\n원하는 축복을 말해보세요.\n`,
@@ -70,8 +70,8 @@ export async function startGame(player) {
       player.bondingIndex += player.stage * 5;
       // 스테이지가 끝나면 전투 중에 얻은 스탯들 초기화
       player.spikeDmg = 20; // 가시 데미지
-      player.multiAttackProb = 30; // 연속 공격 확률
-      player.maxAttackCount = 1; // 최대 공격 횟수
+      player.multiAttackProb = 50; // 연속 공격 확률
+      player.maxAttackCount = 2; // 최대 공격 횟수
       player.defense = 0;
     }
   }

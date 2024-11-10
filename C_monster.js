@@ -28,8 +28,17 @@ class Monster {
           // 위에서 계산된 공격 횟수만큼 공격한다.
           this.hp -= Math.round(playingCard.attackDmg * cardPower);
         }
+        // 입힌 데미지의 80퍼센트 만큼 회복
+        player.hp += Math.round(playingCard.attackDmg * cardPower) * attackCount * 0.8;
+        if (player.hp >= player.maxHp) {
+          player.hp = player.maxHp;
+        }
       } else {
         this.hp -= Math.round(playingCard.attackDmg * cardPower);
+        player.hp += Math.round(playingCard.attackDmg * cardPower) * 0.8;
+        if (player.hp >= player.maxHp) {
+          player.hp = player.maxHp;
+        }
       }
     } else if (player.blessing === 'Chieftain') {
       this.hp -= Math.round((playingCard.attackDmg + playingCard.fireDmg) * cardPower);
