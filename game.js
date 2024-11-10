@@ -20,11 +20,14 @@ import { displayStatus, setMessage, selectReward } from './logs.js';
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName() {
   console.clear();
-  const playerName = readlineSync.question('마왕에 도전하는 용사여, 당신의 이름은 무엇인가요? \n');
-  console.log(chalk.hex('#daca86')(`\n${playerName}... 좋은 이름이군요.`));
+
+  const playerName = readlineSync.question(
+    '\n결정을 내리셨군요. 마왕에 도전하는 용감한 영웅이여. 당신의 이름은 무엇인가요? \n',
+  );
+  console.log(chalk.hex('#daca86').bold(`\n${playerName}... 좋은 이름이네요.`));
   console.log(
     chalk.hex('#daca86')(
-      `\n나는 카드의 여신. 녹록지 않을 당신의 여정에 축복을 내려드리죠.\n원하는 축복을 말해보세요.\n`,
+      `\n나는 카드의 여신. 시련과 위협이 도사릴 당신의 여정에 축복을 내려드리죠.\n원하는 축복을 말해보세요.\n`,
     ),
   );
 
@@ -191,7 +194,7 @@ const battle = (stage, player, monster) => {
 // 이름과 축복 선택하기
 function chooseBlessing() {
   console.log(
-    chalk.hex('#daca86')(
+    chalk.hex('#00AA6C')(
       '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
     ),
   );

@@ -33,7 +33,7 @@ function displayLobby() {
 
   // 타이틀 텍스트
   console.log(
-    chalk.hex('#c60124')(
+    chalk.hex('#D51717')(
       figlet.textSync('Lucky Draw=*', {
         font: 'Delta Corps Priest 1',
         horizontalLayout: 'default',
@@ -43,26 +43,26 @@ function displayLobby() {
   );
 
   // 상단 경계선
-  const line = chalk.hex('#96897b')('='.repeat(50));
+  const line = chalk.white('='.repeat(50));
   console.log(line);
 
   // 게임 이름
   console.log(
-    chalk.hex('#daca86').bold(`
-덱빌딩 카드 게임 LuckyDraw!\n술주정뱅이 도박꾼이라도 영웅이 될 수 있다?! 
+    chalk.hex('#00AA6C').bold(`
+덱빌딩 카드 게임 LuckyDraw!\n주정뱅이 도박꾼이라도 영웅이 될 수 있을까?!
 당신의 운빨을 확인해보세요!\n
     `),
   );
 
   // 설명 텍스트
-  console.log(chalk.hex('#adaa00')('옵션을 선택해주세요.'));
+  console.log(chalk.hex('#00C9D0')('옵션을 선택해주세요.'));
   console.log();
 
   // 옵션들
-  console.log(chalk.hex('#e2fcfc')('1.') + chalk.hex('#e2fcfc')(' 새로운 게임 시작'));
-  console.log(chalk.hex('#e2fcfc')('2.') + chalk.hex('#e2fcfc')(' 업적 확인하기'));
-  console.log(chalk.hex('#e2fcfc')('3.') + chalk.hex('#e2fcfc')(' 옵션'));
-  console.log(chalk.hex('#e2fcfc')('4.') + chalk.hex('#e2fcfc')(' 종료\n'));
+  console.log(chalk.hex('#E2D700')('1.') + chalk.hex('#E2D700')(' 새로운 게임 시작'));
+  console.log(chalk.hex('#E2D700')('2.') + chalk.hex('#E2D700')(' 업적 확인하기'));
+  console.log(chalk.hex('#E2D700')('3.') + chalk.hex('#E2D700')(' 옵션'));
+  console.log(chalk.hex('#E2D700')('4.') + chalk.hex('#E2D700')(' 종료\n'));
 
   // 하단 경계선
   console.log(line);
