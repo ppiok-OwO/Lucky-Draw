@@ -31,13 +31,13 @@ class RareAttackCard extends Card {
 
 class EpicAttackCard extends Card {
   constructor() {
-    super('완벽한 타격', 'Epic', 85, 35, 15, 10, 5);
+    super('완벽한 타격', 'Epic', 85, 35, 15, 15, 5);
   }
 }
 
 class LegendaryAttackCard extends Card {
   constructor() {
-    super('말살검', 'Legendary', 90, 40, 25, 20, 10);
+    super('말살검', 'Legendary', 90, 55, 25, 25, 10);
   }
 }
 
