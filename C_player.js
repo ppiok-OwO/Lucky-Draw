@@ -11,7 +11,7 @@ class Player {
     this.defense = 0;
     this.bondingIndex = 5; // 카드와의 유대감
     this.handSize = 5;
-    this.runAwayProb = 50;
+    this.runAwayProb = 20; // 도망칠 확률
     this.hasCard = []; // 덱에 보유한 카드
     this.hasCardInHand = []; // 핸드에 들어오는 카드의 배열
     this.stage = 1;
