@@ -76,11 +76,7 @@ class Player {
         cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
         monster,
       );
-      this.updateDefenseByCard(
-        playingCard,
-        cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
-        monster,
-      );
+      this.updateDefenseByCard(playingCard, cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1);
       monster.monsterLoseHpByIgnite(
         playingCard,
         cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
@@ -138,19 +134,12 @@ class Player {
     }
   }
 
-  updateDefenseByCard(playingCard, cardPower = 1, monster) {
+  updateDefenseByCard(playingCard, cardPower = 1) {
     // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 그리고 현재 가지고 있는 가시데미지의 절반만큼 방어도를 추가로 얻는다.
     if (this.blessing === 'Spike Defender') {
       this.spikeDmg += playingCard.defense / 2;
       this.defense += Math.round(playingCard.defense * cardPower + this.spikeDmg / 2);
-    }
-    // else if (this.blessing === 'Chieftain') {
-    //   // 화염 투사의 경우 카드가 제공하는 방어도의 절반만큼 몬스터에게 점화스택을 남긴다.
-    //   monster.isIgnited = true;
-    //   this.defense += Math.round(playingCard.defense * cardPower);
-    //   monster.igniteStack += Math.round((playingCard.defense / 2) * cardPower);
-    // }
-    else {
+    } else {
       this.defense += Math.round(playingCard.defense * cardPower);
     }
   }

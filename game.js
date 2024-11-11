@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
+import { displayLobby, handleUserInput, loadJson, unlockAchievement, jsonData } from './server.js';
 import { Player } from './C_player.js';
 import {
   Card,
@@ -91,6 +92,14 @@ export async function startGame(player) {
     ),
   );
 
+  if (player.blessing === 'Spike Defender') {
+    unlockAchievement('./data.json', 0);
+  } else if (player.blessing === 'Berserker') {
+    unlockAchievement('./data.json', 1);
+  } else if (player.blessing === 'Chieftain') {
+    unlockAchievement('./data.json', 2);
+  }
+
   restart();
 }
 
@@ -106,7 +115,9 @@ const battle = (stage, player, monster) => {
     console.log(
       chalk
         .hex('#daca86')
-        .bold(`\n1. 카드를 사용한다. 2. 소매치기. 3. 도망친다. 4. 손패에 있는 카드 지우기\n`),
+        .bold(
+          `\n1. 카드를 사용한다.   2. 소매치기.   3. 도망친다.   4. 손패에 있는 카드 지우기   5. 시작 메뉴\n`,
+        ),
     );
     const choice = readlineSync.question('당신의 선택은? \n');
     console.log(chalk.hex('#ffcdbc')(`\n${choice}번을 선택하셨습니다.`));
@@ -185,7 +196,11 @@ const battle = (stage, player, monster) => {
         removeCard(cardIndex, player);
         monster.monsterAttack(player);
       }
+    } else if (choice === '5') {
+      displayLobby();
+      handleUserInput();
     } else if (choice === 'test') {
+      player.stage = 10;
       monster.hp = 0;
       break;
     }

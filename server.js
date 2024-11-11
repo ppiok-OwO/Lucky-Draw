@@ -4,6 +4,62 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
+import fsp from 'fs/promises'; // fs/promises에서 fs를 가져옵니다.
+import fs from 'fs'; // fs 모듈을 가져옵니다.
+
+let jsonData;
+
+// JSON 파일을 로드하는 함수
+let loadJson = async (filePath) => {
+  try {
+    const data = await fsp.readFile(filePath, 'utf8');
+    const jsonData = JSON.parse(data);
+    return jsonData;
+  } catch (err) {
+    console.error('파일 읽기 오류:', err);
+  }
+};
+
+async function getAchievements() {
+  if (!jsonData) {
+    jsonData = await loadJson('./data.json'); // 업적 데이터 파일 경로
+  }
+  if (jsonData && jsonData.achievements) {
+    jsonData.achievements.forEach((achievement) => {
+      if (achievement.isUnlocked) {
+        console.log(
+          chalk.yellow(`==================================================
+
+  업적: ${achievement.name} 
+  설명: ${achievement.description}
+          
+==================================================`),
+        );
+      }
+    });
+  } else {
+    console.log('업적 데이터가 없습니다.');
+  }
+}
+
+let unlockAchievement = async (filePath, index) => {
+  try {
+    let jsonData = await loadJson(filePath);
+
+    // 업적 수정하기 (예: 첫 번째 업적의 isUnlocked를 true로 변경)
+    if (jsonData && jsonData.achievements && jsonData.achievements.length > 0) {
+      jsonData.achievements[index].isUnlocked = true; // 업적을 unlocked로 변경
+    }
+
+    // 수정된 데이터를 다시 JSON 문자열로 변환
+    const updatedData = JSON.stringify(jsonData, null, 2);
+
+    // 파일에 다시 쓰기
+    await fsp.writeFile(filePath, updatedData, 'utf8');
+  } catch (err) {
+    console.error('파일 수정 오류:', err);
+  }
+};
 
 // 시나리오 스크립트
 async function scenario() {
@@ -72,7 +128,7 @@ function displayLobby() {
 }
 
 // 유저 입력을 받아 처리하는 함수
-function handleUserInput() {
+async function handleUserInput() {
   const choice = readlineSync.question('입력: ');
 
   switch (choice) {
@@ -83,20 +139,21 @@ function handleUserInput() {
       // startGame();
       break;
     case '2':
-      console.log(chalk.yellow('구현 준비중입니다.. 게임을 시작하세요'));
+      console.clear();
       // 업적 확인하기 로직을 구현
+      await getAchievements();
+      readlineSync.question('\n메뉴로 되돌아 가기: ');
+      displayLobby();
       handleUserInput();
       break;
     case '3':
       console.log(chalk.blue('구현 준비중입니다.. 게임을 시작하세요'));
       // 옵션 메뉴 로직을 구현
-      handleUserInput();
       break;
     case '4':
       console.log(chalk.red('게임을 종료합니다.'));
       // 게임 종료 로직을 구현
       process.exit(0); // 게임 종료
-      break;
     default:
       console.log(chalk.red('올바른 선택을 하세요.'));
       handleUserInput(); // 유효하지 않은 입력일 경우 다시 입력 받음
@@ -130,3 +187,5 @@ async function printCharacter(lines, lineDelay = 1000) {
 
 // 게임 실행
 start();
+
+export { displayLobby, handleUserInput, loadJson, unlockAchievement, jsonData };
