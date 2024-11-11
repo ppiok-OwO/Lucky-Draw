@@ -24,7 +24,7 @@ export function typeName() {
   console.clear();
 
   const playerName = readlineSync.question(
-    '\n결정을 내리셨군요. 마왕에 도전하는 용감한 영웅이여. 당신의 이름은 무엇인가요? \n',
+    '\n결정을 내리셨군요. 마왕에 도전하는 용감한 영혼이여. 그대의 이름은 무엇인가요? \n',
   );
   console.log(chalk.hex('#daca86').bold(`\n${playerName}... 좋은 이름이네요.`));
   console.log(

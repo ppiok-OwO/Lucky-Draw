@@ -56,7 +56,7 @@ class Monster {
         }
       }
     } else if (player.blessing === 'Chieftain') {
-      this.hp -= Math.round((playingCard.attackDmg + playingCard.fireDmg) * cardPower);
+      this.hp -= Math.round(playingCard.fireDmg * cardPower);
       this.isIgnited = true;
     }
   }

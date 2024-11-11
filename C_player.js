@@ -107,9 +107,9 @@ class Player {
 
   updateHpByCard(playingCard, cardPower = 1, monster) {
     // 현재 체력 += 힐카드 계산식
-    // 화염 투사는 카드의 화염데미지만큼 회복을 추가로 한다.
+    // 화염 투사는 카드의 점화 스택의 절반만큼 회복을 추가로 한다.
     if (this.blessing === 'Chieftain') {
-      this.hp += Math.round((playingCard.restoreHp + playingCard.fireDmg) * cardPower);
+      this.hp += Math.round((playingCard.restoreHp + monster.igniteStack / 2) * cardPower);
     } else {
       this.hp += Math.round(playingCard.restoreHp * cardPower);
     }
@@ -131,7 +131,7 @@ class Player {
       if (randomValue < 1 && this.multiAttackProb <= 100) {
         this.multiAttackProb += 10;
       } else {
-        this.maxAttackCount += 1;
+        this.maxAttackCount += 0.5;
       }
     }
   }
