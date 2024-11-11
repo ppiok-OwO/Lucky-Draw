@@ -67,28 +67,16 @@ class Player {
     // 카드 발동 확률이 랜덤한 숫자를 이기면 발동!
     if (cardActProb >= randomValue) {
       // this 바인딩 문제 때문에 화살표 함수를 사용!!
-      const attackMonster = () => {
-        this.updateHpByCard(
-          playingCard,
-          cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
-          monster,
-        );
-        this.updateDefenseByCard(
-          playingCard,
-          cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
-        );
-        monster.monsterLoseHpByCard(
-          this,
-          playingCard,
-          cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
-        );
-        monster.monsterLoseHpByIgnite(
-          playingCard,
-          cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
-        );
-      };
-
-      attackMonster();
+      if (cardActProb > 100) {
+        let cardPower = 1 + (cardActProb - 100) / 100;
+        monster.monsterLoseHpByCard(this, playingCard, cardPower);
+        this.updateHpByCard(playingCard, cardPower);
+        this.updateDefenseByCard(playingCard, cardPower);
+      } else {
+        monster.monsterLoseHpByCard(this, playingCard);
+        this.updateHpByCard(playingCard);
+        this.updateDefenseByCard(playingCard);
+      }
       setMessage('카드 발동 성공!');
     } else {
       setMessage('카드 발동 실패!');
