@@ -90,6 +90,8 @@ export async function startGame(player) {
       }),
     ),
   );
+
+  restart();
 }
 
 const battle = (stage, player, monster) => {
@@ -260,3 +262,15 @@ function addCard(player, NA = 0, ND = 0, RA = 0, RD = 0, EA = 0, ED = 0, LA = 0,
     player.hasCard.push(new LegendaryDefenseCard()); // 객체 생성 후 배열에 추가
   }
 }
+
+let restart = () => {
+  let choice = readlineSync.question(
+    '축하합니다. 당신은 마왕을 무찌르고 대륙의 영웅이 되었습니다. 다시 새로운 게임을 시작하시겠습니까?(Y/N) \n',
+  );
+
+  if (choice === 'Y' || choice === 'y') {
+    typeName();
+  } else if (choice === 'N' || choice === 'n') {
+    return;
+  }
+};
