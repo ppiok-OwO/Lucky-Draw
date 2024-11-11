@@ -57,14 +57,12 @@ class Monster {
       this.isIgnited = true;
     }
   }
-  monsterLoseHpByIgnite(playingCard, cardPower = 1) {
-    if (this.isIgnited) {
+  monsterLoseHpByIgnite(playingCard, cardPower = 1, player) {
+    if (this.isIgnited && player.blessing === 'Chieftain') {
       this.igniteStack += playingCard.fireDmg * cardPower;
       this.hp -= this.igniteStack;
       this.igniteStack--;
       setBattleText(`적이 불에 타오르고 있습니다.`);
-    } else {
-      setBattleText('');
     }
   }
 }

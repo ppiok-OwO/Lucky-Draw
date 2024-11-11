@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { displayLobby, handleUserInput } from './server.js';
-import { displayStatus, setMessage, selectReward } from './logs.js';
+import { displayStatus, setMessage, selectReward, setBattleText } from './logs.js';
 import { Player } from './C_player.js';
 import {
   Card,
@@ -78,6 +78,8 @@ export async function startGame(player) {
       player.multiAttackProb = 50; // 연속 공격 확률
       player.maxAttackCount = 2; // 최대 공격 횟수
       player.defense = 0;
+      // 전투 로그 초기화
+      setBattleText('');
     }
   }
 
@@ -117,7 +119,7 @@ const battle = (stage, player, monster) => {
       chalk
         .hex('#daca86')
         .bold(
-          `\n1. 카드를 사용한다\t2. 소매치기\t3. 모두 섞고 다시 뽑기\t4. 손패에 있는 카드 지우기\t5. 도망친다\t6. 시작 메뉴\n`,
+          `\n1. 카드를 사용한다    2. 소매치기    3. 모두 섞고 다시 뽑기    4. 손패에 있는 카드 지우기    5. 도망친다    6. 시작 메뉴\n`,
         ),
     );
     const choice = readlineSync.question('당신의 선택은? \n');

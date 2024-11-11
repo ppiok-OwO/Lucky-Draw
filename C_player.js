@@ -80,7 +80,13 @@ class Player {
       monster.monsterLoseHpByIgnite(
         playingCard,
         cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
+        this,
       );
+
+      if (monster.igniteStack <= 0) {
+        monster.isIgnited = false;
+        monster.igniteStack = 0;
+      }
 
       setMessage('카드 발동 성공!');
     } else {
@@ -88,6 +94,7 @@ class Player {
       monster.monsterLoseHpByIgnite(
         playingCard,
         cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
+        this,
       );
     }
 
@@ -130,7 +137,7 @@ class Player {
   updateHpByMonster(num) {
     const pierceDmg = this.defense + num;
     if (pierceDmg <= 0) {
-      this.hp += Math.round(pierceDmg);
+      this.hp += pierceDmg;
     }
   }
 
