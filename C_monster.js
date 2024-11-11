@@ -17,8 +17,12 @@ class Monster {
     player.updateDefenseByMonster(-this.attackDmg);
   }
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
-    if (player.blessing === 'Spike Defender' && player.defense > 0) {
-      this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
+    if (player.blessing === 'Spike Defender') {
+      if (player.defense > 0) {
+        this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
+      } else {
+        this.hp -= Math.round(playingCard.attackDmg * cardPower);
+      }
     } else if (player.blessing === 'Berserker') {
       let randomValue = Math.random() * 100;
       // 공격 횟수는 플레이어의 최대 공격 횟수 이하의 범위에서 랜덤하게 정한다. 단, 최솟값은 1 이상.
