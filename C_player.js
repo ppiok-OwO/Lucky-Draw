@@ -115,8 +115,9 @@ class Player {
     }
     if (this.blessing === 'Chieftain') {
       // 화염 투사의 경우 카드를 통해 회복한 체력만큼 점화를 걸 수 있다.
-      monster.isIgnited = true;
-      monster.igniteStack += Math.round(playingCard.restoreHp * cardPower);
+      if (monster.isIgnited) {
+        monster.igniteStack += Math.round(playingCard.restoreHp * cardPower);
+      }
     } else if (this.blessing === 'Berserker') {
       // 광전사의 경우 카드를 쓸 때마다 5의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 0.5 증가한다.
       this.hp -= 5;
