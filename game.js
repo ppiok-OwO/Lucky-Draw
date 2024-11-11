@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { displayLobby, handleUserInput, loadJson, unlockAchievement, jsonData } from './server.js';
+import { displayLobby, handleUserInput } from './server.js';
 import { Player } from './C_player.js';
 import {
   Card,
@@ -16,7 +16,7 @@ import {
   seeCard,
 } from './C_card.js';
 import { Monster } from './C_monster.js';
-import { displayStatus, setMessage, selectReward } from './logs.js';
+import { jsonData, loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName() {
