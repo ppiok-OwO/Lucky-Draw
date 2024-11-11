@@ -26,7 +26,7 @@ class Monster {
     } else if (player.blessing === 'Berserker') {
       let randomValue = Math.random() * 100;
       // 공격 횟수는 플레이어의 최대 공격 횟수 이하의 범위에서 랜덤하게 정한다. 단, 최솟값은 1 이상.
-      let attackCount = Math.round(Math.random() * (player.maxAttackCount - 1) + 1);
+      let attackCount = Math.floor(Math.random() * player.maxAttackCount) + 1;
       if (player.multiAttackProb >= randomValue) {
         for (let i = 0; i < attackCount; i++) {
           // 위에서 계산된 공격 횟수만큼 공격한다.

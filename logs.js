@@ -28,8 +28,11 @@ function displayStatus(stage, player, monster) {
   console.log(
     chalk.hex('#efc88b').bold(`
 | Stage: ${stage} | ${player.blessing} |
-    `) +
-      chalk.hex('#04a777').bold(`
+    `),
+  );
+  blessingExplain(player);
+  console.log(
+    chalk.hex('#04a777').bold(`
 | 플레이어 정보 | 이름: ${player.name}, HP: ${Math.round(player.hp)}/${Math.round(player.maxHp)}, 방어도: ${Math.round(player.defense)}, 도망확률: ${Math.round(player.runAwayProb)} |
 | 카드와의 유대감: ${Math.round(player.bondingIndex)}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} | `),
   );
@@ -41,7 +44,7 @@ function displayStatus(stage, player, monster) {
       chalk
         .hex('#04a777')
         .bold(
-          `| 연속 공격 확률 : ${Math.round(player.multiAttackProb)}, 최대 공격 횟수 : ${Math.round(player.maxAttackCount)} |`,
+          `| 연속 공격 확률 : ${Math.round(player.multiAttackProb)}, 최대 공격 횟수 : ${Math.floor(player.maxAttackCount)} |`,
         ),
     );
   }
@@ -170,5 +173,33 @@ function selectReward(player) {
       break;
   }
 }
+
+let blessingExplain = (player) => {
+  if (player.blessing === 'Spike Defender') {
+    console.log(
+      chalk
+        .hex('#efc88b')
+        .bold(
+          '가시 수호자는 기본 가시데미지를 20 얻습니다. 방어도를 얻을 때 현재 가시 데미지 수치의 절반만큼을 방어도로 획득합니다. 방어도를 가지고 있을 때에만 공격자에게 가시 데미지를 줄 수 있습니다.',
+        ),
+    );
+  } else if (player.blessing === 'Berserker') {
+    console.log(
+      chalk
+        .hex('#efc88b')
+        .bold(
+          '광전사는 연속으로 공격할 확률을 얻습니다. 이때, 최대 공격 횟수에 따라 여러 번 공격할 수 있습니다. 카드를 쓸 때마다 체력을 5씩 잃지만 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 0.5씩 증가합니다. 가한 피해의 80퍼센트를 흡혈할 수 있습니다.',
+        ),
+    );
+  } else if (player.blessing === 'Chieftain') {
+    console.log(
+      chalk
+        .hex('#efc88b')
+        .bold(
+          '화염 투사는 카드의 화염 데미지만큼 적에게 점화를 걸 수 있습니다. 점화 스택은 턴이 끝날 때마다 1씩 감소합니다. 카드를 통해 HP를 회복할 때 직접 가한 화염 데미지만큼 추가로 회복할 수 있으며, 회복한 체력만큼 점화 스택이 증가합니다.',
+        ),
+    );
+  }
+};
 
 export { displayStatus, setMessage, selectReward };
