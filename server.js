@@ -100,7 +100,7 @@ async function handleUserInput() {
       // 게임 종료 로직을 구현
       process.exit(0); // 게임 종료
     default:
-      console.log(chalk.red('올바른 선택을 하세요.'));
+      console.log(chalk.red('올바르지 않은 입력입니다.'));
       handleUserInput(); // 유효하지 않은 입력일 경우 다시 입력 받음
   }
 }

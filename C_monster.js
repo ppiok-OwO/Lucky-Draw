@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { displayStatus, setMessage } from './logs.js';
+import { displayStatus, setMessage, setBattleText } from './logs.js';
 
 class Monster {
   constructor(stage) {
@@ -20,8 +20,10 @@ class Monster {
     if (player.blessing === 'Spike Defender') {
       if (player.defense > 0) {
         this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
+        setBattleText(`몬스터에게 ${player.spikeDmg}만큼의 가시 데미지를 주었습니다.`);
       } else {
         this.hp -= Math.round(playingCard.attackDmg * cardPower);
+        setBattleText('');
       }
     } else if (player.blessing === 'Berserker') {
       let randomValue = Math.random() * 100;
@@ -32,6 +34,12 @@ class Monster {
           // 위에서 계산된 공격 횟수만큼 공격한다.
           this.hp -= Math.round(playingCard.attackDmg * cardPower);
         }
+        if (attackCount >= 2) {
+          setBattleText(`미쳐 날뛰고 있습니다. ${attackCount}회 연속 공격!`);
+        } else {
+          setBattleText('');
+        }
+
         // 입힌 데미지의 80퍼센트 만큼 회복
         player.hp += Math.round(playingCard.attackDmg * cardPower) * attackCount * 0.8;
         if (player.hp >= player.maxHp) {
@@ -54,6 +62,9 @@ class Monster {
       this.igniteStack += playingCard.fireDmg * cardPower;
       this.hp -= this.igniteStack;
       this.igniteStack--;
+      setBattleText(`적이 불에 타오르고 있습니다.`);
+    } else {
+      setBattleText('');
     }
   }
 }

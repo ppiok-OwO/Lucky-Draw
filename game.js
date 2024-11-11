@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { displayLobby, handleUserInput } from './server.js';
+import { displayStatus, setMessage, selectReward } from './logs.js';
 import { Player } from './C_player.js';
 import {
   Card,
@@ -116,7 +117,7 @@ const battle = (stage, player, monster) => {
       chalk
         .hex('#daca86')
         .bold(
-          `\n1. 카드를 사용한다.   2. 소매치기.   3. 도망친다.   4. 손패에 있는 카드 지우기   5. 시작 메뉴\n`,
+          `\n1. 카드를 사용한다\t2. 소매치기\t3. 모두 섞고 다시 뽑기\t4. 손패에 있는 카드 지우기\t5. 도망친다\t6. 시작 메뉴\n`,
         ),
     );
     const choice = readlineSync.question('당신의 선택은? \n');
@@ -170,11 +171,8 @@ const battle = (stage, player, monster) => {
 
       monster.monsterAttack(player);
     } else if (choice === '3') {
-      if (player.stage === 10) {
-        setMessage('보스전에선 도망칠 수 없습니다!');
-      } else {
-        player.runAway(monster);
-      }
+      player.shuffleAllCards();
+      monster.monsterAttack(player);
     } else if (choice === '4') {
       console.log(
         chalk.magenta(`
@@ -185,20 +183,36 @@ const battle = (stage, player, monster) => {
 
       // 지울 카드 상세보기
       for (let i = 0; i < player.hasCardInHand.length; i++) {
-        if (cardRemoveAnswer === `see${i + 1}`) {
-          seeCard(player.hasCardInHand[i]);
+        if (i + 1 > 0) {
+          if (cardRemoveAnswer === `see${i + 1}`) {
+            seeCard(player.hasCardInHand[i]);
+          }
         }
       }
 
       if (player.hasCard.length + player.hasCardInHand.length <= player.handSize) {
         setMessage('손패 크기보다 덱이 더 적을 수 없습니다.');
+      } else if (cardIndex < 0) {
+        setMessage('올바르지 않은 입력입니다.');
       } else {
         removeCard(cardIndex, player);
         monster.monsterAttack(player);
       }
     } else if (choice === '5') {
-      displayLobby();
-      handleUserInput();
+      if (player.stage === 10) {
+        setMessage('보스전에선 도망칠 수 없습니다!');
+      } else {
+        player.runAway(monster);
+      }
+    } else if (choice === '6') {
+      let escape = readlineSync.question(
+        '게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ',
+      );
+
+      if (escape === 'Y' || escape === 'y') {
+        displayLobby();
+        handleUserInput();
+      }
     } else if (choice === 'test') {
       player.stage = 10;
       monster.hp = 0;
@@ -211,9 +225,11 @@ const battle = (stage, player, monster) => {
 // 이름과 축복 선택하기
 function chooseBlessing() {
   console.log(
-    chalk.hex('#00AA6C')(
-      '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
-    ),
+    chalk
+      .hex('#00AA6C')
+      .bold(
+        '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
+      ),
   );
   const blessingChoice = readlineSync.question('\n당신의 선택은? ');
 

@@ -18,7 +18,8 @@ import { Player } from './C_player.js';
 
 // 인게임 안내 메시지를 위한 변수들
 const info = `[TIP]전투 중에 카드를 자세히 보시려면 번호 앞에 'see'를 붙여주세요\n`;
-let message;
+let message = '';
+let battleText = '';
 
 // 화면에 각종 스탯을 적어보자
 function displayStatus(stage, player, monster) {
@@ -62,7 +63,8 @@ function displayStatus(stage, player, monster) {
 
   console.log(chalk.hex('#7c7c7c')(`===========================`));
   console.log(chalk.hex('#7678ed')(`\n${info}`));
-  console.log(chalk.hex('#f7b801')(`>>알림: ${message}`));
+  console.log(chalk.hex('#f7b801')(`>> 알림 로그: ${message}`));
+  console.log(chalk.hex('#f7b801')(`>> 전투 로그: ${battleText}`));
 }
 
 function combineCardNamesToString(obj) {
@@ -92,6 +94,9 @@ function combineCardNamesToString(obj) {
 
 function setMessage(newMessage) {
   message = newMessage;
+}
+function setBattleText(newText) {
+  battleText = newText;
 }
 
 function selectReward(player) {
@@ -202,4 +207,4 @@ let blessingExplain = (player) => {
   }
 };
 
-export { displayStatus, setMessage, selectReward };
+export { displayStatus, setMessage, selectReward, setBattleText };
