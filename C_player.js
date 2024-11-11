@@ -66,17 +66,26 @@ class Player {
 
     // 카드 발동 확률이 랜덤한 숫자를 이기면 발동!
     if (cardActProb >= randomValue) {
-      // this 바인딩 문제 때문에 화살표 함수를 사용!!
-      if (cardActProb > 100) {
-        let cardPower = 1 + (cardActProb - 100) / 100;
-        monster.monsterLoseHpByCard(this, playingCard, cardPower);
-        this.updateHpByCard(playingCard, cardPower);
-        this.updateDefenseByCard(playingCard, cardPower);
-      } else {
-        monster.monsterLoseHpByCard(this, playingCard);
-        this.updateHpByCard(playingCard);
-        this.updateDefenseByCard(playingCard);
-      }
+      monster.monsterLoseHpByCard(
+        this,
+        playingCard,
+        cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
+      ); // 카드 발동 확률이 100보다 높아지면 그 초과분을 cardPower에 반영한다.(20이 초과하면 cardPower=1.2, 결국 카드 데미지 x 1.2)
+      this.updateHpByCard(
+        playingCard,
+        cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
+        monster,
+      );
+      this.updateDefenseByCard(
+        playingCard,
+        cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
+        monster,
+      );
+      monster.monsterLoseHpByIgnite(
+        playingCard,
+        cardActProb > 100 ? 1 + (cardActProb - 100) / 100 : 1,
+      );
+
       setMessage('카드 발동 성공!');
     } else {
       setMessage('카드 발동 실패!');
@@ -93,18 +102,24 @@ class Player {
 
   updateHpByCard(playingCard, cardPower = 1, monster) {
     // 현재 체력 += 힐카드 계산식
-    this.hp += Math.round(playingCard.restoreHp * cardPower);
+    // 화염 투사는 카드의 화염데미지만큼 회복을 추가로 한다.
+    if (this.blessing === 'Chieftain') {
+      this.hp += Math.round((playingCard.restoreHp + playingCard.fireDmg) * cardPower);
+    } else {
+      this.hp += Math.round(playingCard.restoreHp * cardPower);
+    }
+
     // 단, 체력은 최대체력을 넘을 수 없다!
     if (this.hp >= this.maxHp) {
       this.hp = this.maxHp;
     }
-
     if (this.blessing === 'Chieftain') {
       // 화염 투사의 경우 카드를 통해 회복한 체력만큼 점화를 걸 수 있다.
+      monster.isIgnited = true;
       monster.igniteStack += Math.round(playingCard.restoreHp * cardPower);
     } else if (this.blessing === 'Berserker') {
-      // 광전사의 경우 카드를 쓸 때마다 10의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 0.5 증가한다.
-      this.hp -= 2;
+      // 광전사의 경우 카드를 쓸 때마다 5의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 0.5 증가한다.
+      this.hp -= 5;
       let randomValue = Math.random() * 2;
 
       if (randomValue < 1 && this.multiAttackProb <= 100) {
@@ -122,12 +137,19 @@ class Player {
     }
   }
 
-  updateDefenseByCard(playingCard, cardPower = 1) {
+  updateDefenseByCard(playingCard, cardPower = 1, monster) {
     // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 그리고 현재 가지고 있는 가시데미지의 절반만큼 방어도를 추가로 얻는다.
     if (this.blessing === 'Spike Defender') {
       this.spikeDmg += playingCard.defense / 2;
       this.defense += Math.round(playingCard.defense * cardPower + this.spikeDmg / 2);
-    } else {
+    }
+    // else if (this.blessing === 'Chieftain') {
+    //   // 화염 투사의 경우 카드가 제공하는 방어도의 절반만큼 몬스터에게 점화스택을 남긴다.
+    //   monster.isIgnited = true;
+    //   this.defense += Math.round(playingCard.defense * cardPower);
+    //   monster.igniteStack += Math.round((playingCard.defense / 2) * cardPower);
+    // }
+    else {
       this.defense += Math.round(playingCard.defense * cardPower);
     }
   }
