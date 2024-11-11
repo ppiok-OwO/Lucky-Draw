@@ -65,6 +65,9 @@ export async function startGame(player) {
       typeName();
     } else if (player.stage === 10) {
       // 게임을 클리어하면 반복문 탈출하기
+      player.isWon = true;
+      break;
+    } else if (player.isEscape) {
       break;
     } else if (monster.hp <= 0) {
       player.stage++;
@@ -83,27 +86,34 @@ export async function startGame(player) {
     }
   }
 
-  console.clear();
+  if (player.isWon) {
+    console.clear();
+    if (player.blessing === 'Spike Defender') {
+      await unlockAchievement('./data.json', 0);
+    } else if (player.blessing === 'Berserker') {
+      await unlockAchievement('./data.json', 1);
+    } else if (player.blessing === 'Chieftain') {
+      await unlockAchievement('./data.json', 2);
+    }
+    console.log(
+      chalk.cyan(
+        figlet.textSync('*YOU WIN!*', {
+          font: 'ANSI Shadow',
+          horizontalLayout: 'default',
+          verticalLayout: 'default',
+        }),
+      ),
+    );
 
-  console.log(
-    chalk.cyan(
-      figlet.textSync('*YOU WIN!*', {
-        font: 'ANSI Shadow',
-        horizontalLayout: 'default',
-        verticalLayout: 'default',
-      }),
-    ),
-  );
+    console.log(
+      chalk.greenBright.bold('축하합니다. 당신은 마왕을 무찌르고 대륙의 영웅이 되었습니다!'),
+    );
 
-  if (player.blessing === 'Spike Defender') {
-    unlockAchievement('./data.json', 0);
-  } else if (player.blessing === 'Berserker') {
-    unlockAchievement('./data.json', 1);
-  } else if (player.blessing === 'Chieftain') {
-    unlockAchievement('./data.json', 2);
+    restart();
+  } else if (player.isEscape) {
+    displayLobby();
+    handleUserInput();
   }
-
-  restart();
 }
 
 const battle = (stage, player, monster) => {
@@ -212,8 +222,8 @@ const battle = (stage, player, monster) => {
       );
 
       if (escape === 'Y' || escape === 'y') {
-        displayLobby();
-        handleUserInput();
+        player.isEscape = true;
+        break;
       }
     } else if (choice === 'test') {
       player.stage = 10;
@@ -297,9 +307,7 @@ function addCard(player, NA = 0, ND = 0, RA = 0, RD = 0, EA = 0, ED = 0, LA = 0,
 }
 
 let restart = () => {
-  let choice = readlineSync.question(
-    '축하합니다. 당신은 마왕을 무찌르고 대륙의 영웅이 되었습니다. 다시 새로운 게임을 시작하시겠습니까?(Y/N) \n',
-  );
+  let choice = readlineSync.question('\n새로운 게임을 시작하시겠습니까?(Y/N) \n');
 
   if (choice === 'Y' || choice === 'y') {
     typeName();

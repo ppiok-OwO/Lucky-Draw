@@ -19,6 +19,8 @@ class Player {
     this.spikeDmg = 20; // 가시 데미지
     this.multiAttackProb = 50; // 연속 공격 확률
     this.maxAttackCount = 2; // 최대 공격 횟수
+    this.isEscape = false;
+    this.isWon = false;
   }
 
   drawCardRandomly() {
@@ -129,7 +131,7 @@ class Player {
       if (randomValue < 1 && this.multiAttackProb <= 100) {
         this.multiAttackProb += 10;
       } else {
-        this.maxAttackCount += 0.5;
+        this.maxAttackCount += 1;
       }
     }
   }

@@ -64,7 +64,7 @@ function displayStatus(stage, player, monster) {
   console.log(chalk.hex('#7c7c7c')(`===========================`));
   console.log(chalk.hex('#7678ed')(`\n${info}`));
   console.log(chalk.hex('#f7b801')(`>> 알림 로그: ${message}`));
-  console.log(chalk.hex('#f7b801')(`>> 전투 로그: ${battleText}`));
+  console.log(chalk.red.bold(`>> 전투 로그: ${battleText}`));
 }
 
 function combineCardNamesToString(obj) {
@@ -193,7 +193,7 @@ let blessingExplain = (player) => {
       chalk
         .hex('#efc88b')
         .bold(
-          '광전사는 연속으로 공격할 확률을 얻습니다. 이때, 최대 공격 횟수에 따라 여러 번 공격할 수 있습니다. 카드를 쓸 때마다 체력을 5씩 잃지만 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 0.5씩 증가합니다. 가한 피해의 80퍼센트를 흡혈할 수 있습니다.',
+          '광전사는 연속으로 공격할 확률을 얻습니다. 이때, 최대 공격 횟수에 따라 여러 번 공격할 수 있습니다. 카드를 쓸 때마다 체력을 5씩 잃지만 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1씩 증가합니다. 가한 피해만큼 흡혈할 수 있습니다.',
         ),
     );
   } else if (player.blessing === 'Chieftain') {
