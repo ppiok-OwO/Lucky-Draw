@@ -11,9 +11,9 @@ const colors = {
   green4: (str) => chalk.hex('#347928').bold(`${str}`),
   monster: (str) => chalk.hex('#F31559').bold(`${str}`),
   warning: (str) => chalk.yellow(`${str}`),
-  info: (str) => chalk.hex('#EEE2DE').italic(`${str}`),
-  message: (str) => chalk.hex('#EA906C')(`${str}`),
-  battleLog: (str) => chalk.hex('#B31312').bold(`${str}`),
+  info: (str) => chalk.hex('#FBD288').italic(`${str}`),
+  message: (str) => chalk.hex('#FF9C73')(`${str}`),
+  battleLog: (str) => chalk.hex('#FF4545').bold(`${str}`),
   cardChoice: (str) => chalk.hex('#E8B86D')(`${str}`),
   monsterDebuff: (str) => chalk.hex('#FFCFB3')(`${str}`),
 };

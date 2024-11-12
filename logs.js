@@ -275,7 +275,9 @@ function DisplayBattleStatus(player, monster) {
   }
 
   const monsterHealthBar = CreateHealthBar(monster, '#F31559');
-  console.log(`${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} |\n`)}`);
+  console.log(
+    `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} |\n`)}`,
+  );
   console.log(
     monsterHealthBar +
       chalk.yellow.bold(` ${Math.round(monster.hp)}/${Math.round(monster.maxHp)}\n`),

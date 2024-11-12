@@ -179,7 +179,7 @@ class Player {
     if (randomValue <= this.runAwayProb) {
       setMessage('도망 성공!');
       this.stage++;
-      incPlayerStat(this);
+      this.incPlayerStat();
       startGame(this);
     } else {
       setMessage('이런! 불행하게도 도망치지 못했습니다.');
@@ -189,22 +189,20 @@ class Player {
 
   incPlayerStat() {
     // maxHp, defense, bondingIndex, handSize, runAwayProb
-  
-    let randomValue = Math.random() * 5;
-    if (randomValue >= 0 && randomValue <= 1) {
-      player.maxHp += 10;
-      player.hp += 10;
-    } else if (randomValue >= 1 && randomValue <= 2) {
-      player.defense += 10;
-    } else if (randomValue >= 2 && randomValue <= 3) {
-      player.bondingIndex += 10;
-    } else if (randomValue >= 3 && randomValue <= 4) {
-      player.handSize += 1;
-      if (player.handSize > player.hasCard) {
+
+    let randomValue = Math.random() * 4;
+    if (randomValue >= 0 && randomValue < 1) {
+      this.maxHp += 10;
+      this.hp += 10;
+    } else if (randomValue >= 1 && randomValue < 2) {
+      this.bondingIndex += 10;
+    } else if (randomValue >= 2 && randomValue < 3) {
+      this.handSize += 1;
+      if (this.handSize > this.hasCard) {
       }
-      player.drawCardRandomly();
-    } else if (randomValue >= 4 && randomValue <= 5) {
-      player.runAwayProb += 3;
+      this.drawCardRandomly();
+    } else if (randomValue >= 3 && randomValue < 4) {
+      this.runAwayProb += 3;
     }
   }
 }
