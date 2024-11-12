@@ -10,6 +10,9 @@ class Monster {
     if (player.isEliteStage) {
       this.hp = Math.round(150 + 60 * player.stage * this.difficulty);
       this.attackDmg = Math.round(15 + 15 * player.stage * this.difficulty);
+    } else if (player.isBossStage) {
+      this.hp = Math.round(200 + 80 * player.stage * this.difficulty);
+      this.attackDmg = Math.round(15 + 35 * player.stage * this.difficulty);
     } else {
       this.hp = Math.round(150 + 50 * player.stage * this.difficulty);
       this.attackDmg = Math.round(15 + 10 * player.stage * this.difficulty);
@@ -105,9 +108,7 @@ class Ogre extends Monster {
 
 class Boss extends Monster {
   constructor(player) {
-    super('만물의 종결자', '너흰 아직 준비가 안 되었다!');
-    this.hp = Math.round(200 + 70 * player.stage * this.difficulty);
-    this.attackDmg = Math.round(15 + 25 * player.stage * this.difficulty);
+    super('만물의 종결자', '너흰 아직 준비가 안 되었다!', player);
   }
 } // 10스테이지는 마왕
 

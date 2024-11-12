@@ -66,7 +66,8 @@ class LegendaryDefenseCard extends Card {
 }
 
 // 카드의 인스턴스를 무작위로 생성하는 함수
-function makeRandomCard() {
+function makeRandomCard(player) {
+  let randomCardInstance;
   const cardClasses = [
     NormalAttackCard,
     NormalDefenseCard,
@@ -77,8 +78,20 @@ function makeRandomCard() {
     LegendaryAttackCard,
     LegendaryDefenseCard,
   ];
+
+  const eliteCardClasses = [
+    EpicAttackCard,
+    EpicDefenseCard,
+    LegendaryAttackCard,
+    LegendaryDefenseCard,
+  ];
+
   // 무작위로 클래스 선택
-  const randomCardInstance = cardClasses[Math.floor(Math.random() * cardClasses.length)];
+  if (player.isEliteStage) {
+    randomCardInstance = eliteCardClasses[Math.floor(Math.random() * eliteCardClasses.length)];
+  } else {
+    randomCardInstance = cardClasses[Math.floor(Math.random() * cardClasses.length)];
+  }
 
   // 선택된 클래스의 인스턴스 생성
   return new randomCardInstance();

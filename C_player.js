@@ -22,6 +22,7 @@ class Player {
     this.isEscape = false;
     this.isWon = false;
     this.isEliteStage = false;
+    this.isBossStage = false;
   }
 
   drawCardRandomly() {

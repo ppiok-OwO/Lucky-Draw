@@ -35,9 +35,9 @@ export function typeName() {
   const playerName = readlineSync.question(
     '\n결정을 내리셨군요. 마왕에 도전하는 용감한 영혼이여. 그대의 이름은 무엇인가요? \n',
   );
-  console.log(chalk.hex('#daca86').bold(`\n${playerName}... 좋은 이름이네요.`));
+  console.log(chalk.hex('#CAF4FF').bold(`\n${playerName}... 좋은 이름이네요.`));
   console.log(
-    chalk.hex('#daca86')(
+    chalk.hex('#A0DEFF')(
       `\n나는 카드의 여신. 시련과 위협이 도사릴 당신의 여정에 축복을 내려드리죠.\n원하는 축복을 말해보세요.\n`,
     ),
   );
@@ -70,6 +70,7 @@ export async function startGame(player) {
     let monster;
 
     if (player.stage === 10) {
+      player.isBossStage = true;
       monster = new Boss(player);
     } else {
       monster = makeRandomMonster(player);
@@ -244,7 +245,6 @@ const battle = (stage, player, monster) => {
       }
     } else if (choice === 'test') {
       player.stage = 10;
-      monster.hp = 0;
       break;
     }
     // 잘못된 입력을 하더라도 아무런 일도 일어나지 않고 반복문이 돌아서 자동으로 선택지를 다시 고를 수 있게 된다.
@@ -255,7 +255,7 @@ const battle = (stage, player, monster) => {
 function chooseBlessing() {
   console.log(
     chalk
-      .hex('#00AA6C')
+      .hex('#5AB2FF')
       .bold(
         '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
       ),

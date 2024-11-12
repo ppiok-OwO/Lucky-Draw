@@ -25,7 +25,7 @@ async function getAchievements() {
     jsonData.achievements.forEach((achievement) => {
       if (achievement.isUnlocked) {
         console.log(
-          chalk.yellow(`====================|*****|====================
+          chalk.hex('#E8B86D')(`====================|**⁂**|====================
 
   업적: ${achievement.name} 
   설명: ${achievement.description}
