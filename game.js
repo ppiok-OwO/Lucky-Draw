@@ -29,7 +29,7 @@ import {
 import { jsonData, loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
-export function typeName() {
+export function typeName(difficulty) {
   console.clear();
 
   const playerName = readlineSync.question(
@@ -43,7 +43,7 @@ export function typeName() {
   );
 
   const blessing = chooseBlessing();
-  const player = new Player(playerName);
+  const player = new Player(playerName, difficulty);
 
   if (blessing === '1') {
     player.blessing = 'Spike Defender';
@@ -76,7 +76,7 @@ export async function startGame(player) {
       monster = makeRandomMonster(player);
     }
 
-    battle(player.stage, player, monster);
+    battle(player, monster);
     // 스테이지 클리어 및 게임 종료 조건
     if (player.hp <= 0) {
       // 죽으면 처음부터 다시 시작
@@ -134,14 +134,14 @@ export async function startGame(player) {
   }
 }
 
-const battle = (stage, player, monster) => {
+const battle = (player, monster) => {
   // 새로운 스테이지가 시작되면 카드더미와 손패를 모두 섞는다.
   player.shuffleAllCards();
   while (player.hp > 0 && monster.hp > 0) {
     console.clear();
     // 다음 턴이 시작될 때, 손패에 빈자리가 있으면 카드를 보충한다.
     player.drawCardRandomly();
-    displayStatus(stage, player, monster);
+    displayStatus(player, monster);
 
     console.log(
       chalk
@@ -176,6 +176,7 @@ const battle = (stage, player, monster) => {
 
       // 카드 상세보기 함수
     } else if (choice === '2') {
+      setBattleText('손은 눈보다 빠르지!');
       let randomValue = Math.random() * 10;
 
       // 확률에 따라 높은 등급의 카드를 얻을 수도 있다!(스탯도)
@@ -225,12 +226,14 @@ const battle = (stage, player, monster) => {
       } else if (cardIndex < 0) {
         setMessage('올바르지 않은 입력입니다.');
       } else {
+        setBattleText('');
         removeCard(cardIndex, player);
         monster.monsterAttack(player);
       }
     } else if (choice === '5') {
       if (player.stage === 10) {
         setMessage('보스전에선 도망칠 수 없습니다!');
+        setBattleText('');
       } else {
         player.runAway(monster);
       }

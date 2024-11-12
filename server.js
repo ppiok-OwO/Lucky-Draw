@@ -6,6 +6,9 @@ import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
 import { jsonData, loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
 
+let difficultyChoice = 'NORMAL';
+let difficulty = 1;
+
 // 시나리오 스크립트
 async function scenario() {
   console.clear();
@@ -56,7 +59,7 @@ function displayLobby() {
   );
 
   // 설명 텍스트
-  console.log(chalk.hex('#FFD09B')('옵션을 선택해주세요.'));
+  console.log(chalk.hex('#FFD09B')(`옵션을 선택해주세요.(현재 난이도 : ${difficultyChoice})`));
   console.log();
 
   // 옵션들
@@ -80,7 +83,7 @@ async function handleUserInput() {
     case '1':
       console.log(chalk.green('게임을 시작합니다.'));
       // 여기에서 새로운 게임 시작 로직을 구현
-      typeName();
+      typeName(difficulty);
       // startGame();
       break;
     case '2':
@@ -92,9 +95,30 @@ async function handleUserInput() {
       handleUserInput();
       break;
     case '3':
-      console.log(chalk.blue('구현 준비중입니다.. 게임을 시작하세요'));
-      // 옵션 메뉴 로직을 구현
-      break;
+      let input = readlineSync.question('\n난이도 선택 [ NORMAL / HARD / HELL ] : ');
+      input = input.toUpperCase();
+
+      if (input === 'NORMAL') {
+        difficultyChoice = input;
+        difficulty = 1.5;
+        displayLobby();
+        handleUserInput();
+      } else if (input === 'HARD') {
+        difficultyChoice = input;
+        difficulty = 1.2;
+        displayLobby();
+        handleUserInput();
+      } else if (input === 'HELL') {
+        difficultyChoice = input;
+        difficulty = 1;
+        displayLobby();
+        handleUserInput();
+      } else {
+        console.log(chalk.red('올바르지 않은 입력입니다.'));
+        displayLobby();
+        handleUserInput();
+      }
+    // 옵션 메뉴 로직을 구현
     case '4':
       console.log(chalk.red('게임을 종료합니다.'));
       // 게임 종료 로직을 구현

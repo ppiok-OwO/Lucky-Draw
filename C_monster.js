@@ -6,16 +6,15 @@ import { displayStatus, setMessage, setBattleText } from './logs.js';
 class Monster {
   constructor(name, threat, player) {
     this.name = name;
-    this.difficulty = 1;
-    if (player.isEliteStage) {
-      this.hp = Math.round(150 + 60 * player.stage * this.difficulty);
-      this.attackDmg = Math.round(15 + 15 * player.stage * this.difficulty);
-    } else if (player.isBossStage) {
-      this.hp = Math.round(200 + 80 * player.stage * this.difficulty);
-      this.attackDmg = Math.round(15 + 35 * player.stage * this.difficulty);
+    if (player.isBossStage) {
+      this.hp = Math.round(200 + ((80 * player.stage) / 2) * player.difficulty);
+      this.attackDmg = Math.round(30 * player.stage * player.difficulty);
+    } else if (player.isEliteStage) {
+      this.hp = Math.round(150 + ((60 * player.stage) / 2) * player.difficulty);
+      this.attackDmg = Math.round(20 * player.stage * player.difficulty);
     } else {
-      this.hp = Math.round(150 + 50 * player.stage * this.difficulty);
-      this.attackDmg = Math.round(15 + 10 * player.stage * this.difficulty);
+      this.hp = Math.round(100 + ((50 * player.stage) / 2) * player.difficulty);
+      this.attackDmg = Math.round(10 * player.stage * player.difficulty);
     }
     this.isIgnited = false;
     this.igniteStack = 0;
@@ -26,6 +25,7 @@ class Monster {
     // 몬스터의 공격
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
+    this.attackDmg += 1;
   }
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
     if (player.blessing === 'Spike Defender') {
@@ -116,6 +116,7 @@ class Boss extends Monster {
 function makeRandomMonster(player) {
   // 3, 6, 9 턴은 player.isEliteStage = true;
   player.isEliteStage = player.stage % 3 === 0;
+  player.isBossStage = player.stage === 10;
   const monsterClasses = [Slime, Skelleton, Harpy, Ork, Ogre];
   // 무작위로 클래스 선택
   const randomMonsterInstance = monsterClasses[Math.floor(Math.random() * monsterClasses.length)];

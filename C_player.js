@@ -4,7 +4,7 @@ import readlineSync from 'readline-sync';
 import { displayStatus, setMessage } from './logs.js';
 
 class Player {
-  constructor(name) {
+  constructor(name, difficulty = 1) {
     this.name = name;
     this.hp = 100;
     this.maxHp = 100;
@@ -23,6 +23,7 @@ class Player {
     this.isWon = false;
     this.isEliteStage = false;
     this.isBossStage = false;
+    this.difficulty = difficulty;
   }
 
   drawCardRandomly() {

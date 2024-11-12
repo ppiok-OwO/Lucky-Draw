@@ -22,38 +22,44 @@ let message = '';
 let battleText = '';
 
 // 화면에 각종 스탯을 적어보자
-function displayStatus(stage, player, monster) {
+function displayStatus(player, monster) {
   let allCardNames = combineCardNamesToString(player);
   console.log(chalk.hex('#FCF596').bold(`| 덱 리스트 | ${allCardNames}`));
   console.log(chalk.hex('#7c7c7c')(`\n====== Current Status ======`));
 
-  if (player.isEliteStage) {
+  if (player.isBossStage) {
     console.log(
       chalk.red.bold(`
-| Stage: ${stage}(ELITE!!) | ${player.blessing} |
+| Stage: ${player.stage}(BOSS!!) | ${player.blessing} |
+      `),
+    );
+  } else if (player.isEliteStage) {
+    console.log(
+      chalk.hex('#D67BFF').bold(`
+| Stage: ${player.stage}(ELITE!!) | ${player.blessing} |
       `),
     );
   } else {
     console.log(
       chalk.hex('#FBD288').bold(`
-| Stage: ${stage} | ${player.blessing} |
+| Stage: ${player.stage} | ${player.blessing} |
       `),
     );
   }
 
   blessingExplain(player);
   console.log(
-    chalk.hex('#A5DD9B').bold(`
+    chalk.hex('#38E54D').bold(`
 | 플레이어 정보 | ${player.name} | HP: ${Math.round(player.hp)}/${Math.round(player.maxHp)}, 방어도: ${Math.round(player.defense)}, 도망확률: ${Math.round(player.runAwayProb)} |
 | 카드와의 유대감: ${Math.round(player.bondingIndex)}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} | `),
   );
 
   if (player.blessing === 'Spike Defender') {
-    console.log(chalk.hex('#A5DD9B').bold(`| 가시 데미지 : ${Math.round(player.spikeDmg)} |`));
+    console.log(chalk.hex('#38E54D').bold(`| 가시 데미지 : ${Math.round(player.spikeDmg)} |`));
   } else if (player.blessing === 'Berserker') {
     console.log(
       chalk
-        .hex('#A5DD9B')
+        .hex('#38E54D')
         .bold(
           `| 연속 공격 확률 : ${Math.round(player.multiAttackProb)}, 최대 공격 횟수 : ${Math.floor(player.maxAttackCount)} |`,
         ),
