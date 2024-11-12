@@ -25,7 +25,7 @@ class Monster {
     // 몬스터의 공격
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
-    this.attackDmg += 1;
+    this.attackDmg += player.difficulty;
   }
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
     if (player.blessing === 'Spike Defender') {
