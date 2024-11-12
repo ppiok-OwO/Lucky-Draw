@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { displayLobby, handleUserInput } from './server.js';
-import { displayStatus, setMessage, selectReward, setBattleText } from './logs.js';
+import { largeUI, compactUI, setMessage, selectReward, setBattleText } from './logs.js';
 import { Player } from './C_player.js';
 import {
   Card,
@@ -29,15 +29,15 @@ import {
 import { jsonData, loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
-export function typeName(difficulty) {
+export function typeName(difficulty, uiStyle) {
   console.clear();
 
   const playerName = readlineSync.question(
     '\n결정을 내리셨군요. 마왕에 도전하는 용감한 영혼이여. 그대의 이름은 무엇인가요? \n',
   );
-  console.log(chalk.hex('#CAF4FF').bold(`\n${playerName}... 좋은 이름이네요.`));
+  console.log(chalk.hex('#FFFDD7').bold(`\n${playerName}... 좋은 이름이네요.`));
   console.log(
-    chalk.hex('#A0DEFF')(
+    chalk.hex('#FFE4CF')(
       `\n나는 카드의 여신. 시련과 위협이 도사릴 당신의 여정에 축복을 내려드리죠.\n원하는 축복을 말해보세요.\n`,
     ),
   );
@@ -58,11 +58,11 @@ export function typeName(difficulty) {
 
   player.drawCardRandomly();
 
-  startGame(player);
+  startGame(player, uiStyle);
 }
 
 // 스테이지를 증가시키면서 보상 획득, 전투 반복
-export async function startGame(player) {
+export async function startGame(player, uiStyle) {
   console.clear();
 
   while (player.stage <= 10) {
@@ -76,7 +76,7 @@ export async function startGame(player) {
       monster = makeRandomMonster(player);
     }
 
-    battle(player, monster);
+    battle(player, monster, uiStyle);
     // 스테이지 클리어 및 게임 종료 조건
     if (player.hp <= 0) {
       // 죽으면 처음부터 다시 시작
@@ -134,18 +134,23 @@ export async function startGame(player) {
   }
 }
 
-const battle = (player, monster) => {
+const battle = (player, monster, uiStyle) => {
   // 새로운 스테이지가 시작되면 카드더미와 손패를 모두 섞는다.
   player.shuffleAllCards();
   while (player.hp > 0 && monster.hp > 0) {
     console.clear();
     // 다음 턴이 시작될 때, 손패에 빈자리가 있으면 카드를 보충한다.
     player.drawCardRandomly();
-    displayStatus(player, monster);
+
+    if (uiStyle === 'LARGE') {
+      largeUI(player, monster);
+    } else if (uiStyle === 'COMPACT') {
+      compactUI(player, monster);
+    }
 
     console.log(
       chalk
-        .hex('#daca86')
+        .hex('#FFECAF')
         .bold(
           `\n1. 카드를 사용한다    2. 소매치기    3. 모두 섞고 다시 뽑기    4. 손패에 있는 카드 지우기    5. 도망친다    6. 시작 메뉴\n`,
         ),
@@ -155,7 +160,7 @@ const battle = (player, monster) => {
 
     if (choice === '1') {
       console.log(
-        chalk.green(`
+        chalk.hex('#FAA300')(`
           \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
       const cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
@@ -233,7 +238,6 @@ const battle = (player, monster) => {
     } else if (choice === '5') {
       if (player.stage === 10) {
         setMessage('보스전에선 도망칠 수 없습니다!');
-        setBattleText('');
       } else {
         player.runAway(monster);
       }
@@ -258,7 +262,7 @@ const battle = (player, monster) => {
 function chooseBlessing() {
   console.log(
     chalk
-      .hex('#5AB2FF')
+      .hex('#FF5BAE')
       .bold(
         '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
       ),

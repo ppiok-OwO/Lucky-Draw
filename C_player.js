@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { displayStatus, setMessage } from './logs.js';
+import { largeUI, compactUI, setMessage } from './logs.js';
 
 class Player {
   constructor(name, difficulty = 1) {

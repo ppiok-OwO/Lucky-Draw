@@ -22,9 +22,9 @@ let message = '';
 let battleText = '';
 
 // 화면에 각종 스탯을 적어보자
-function displayStatus(player, monster) {
+function largeUI(player, monster) {
   let allCardNames = combineCardNamesToString(player);
-  console.log(chalk.hex('#FCF596').bold(`| 덱 리스트 | ${allCardNames}`));
+  console.log(chalk.hex('#D2FF72').bold(`| 덱 리스트 | ${allCardNames}`));
   console.log(chalk.hex('#7c7c7c')(`\n====== Current Status ======`));
 
   if (player.isBossStage) {
@@ -41,7 +41,7 @@ function displayStatus(player, monster) {
     );
   } else {
     console.log(
-      chalk.hex('#FBD288').bold(`
+      chalk.hex('#73EC8B').bold(`
 | Stage: ${player.stage} | ${player.blessing} |
       `),
     );
@@ -49,17 +49,17 @@ function displayStatus(player, monster) {
 
   blessingExplain(player);
   console.log(
-    chalk.hex('#38E54D').bold(`
+    chalk.hex('#15B392').bold(`
 | 플레이어 정보 | ${player.name} | HP: ${Math.round(player.hp)}/${Math.round(player.maxHp)}, 방어도: ${Math.round(player.defense)}, 도망확률: ${Math.round(player.runAwayProb)} |
 | 카드와의 유대감: ${Math.round(player.bondingIndex)}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} | `),
   );
 
   if (player.blessing === 'Spike Defender') {
-    console.log(chalk.hex('#38E54D').bold(`| 가시 데미지 : ${Math.round(player.spikeDmg)} |`));
+    console.log(chalk.hex('#15B392').bold(`| 가시 데미지 : ${Math.round(player.spikeDmg)} |`));
   } else if (player.blessing === 'Berserker') {
     console.log(
       chalk
-        .hex('#38E54D')
+        .hex('#15B392')
         .bold(
           `| 연속 공격 확률 : ${Math.round(player.multiAttackProb)}, 최대 공격 횟수 : ${Math.floor(player.maxAttackCount)} |`,
         ),
@@ -67,20 +67,20 @@ function displayStatus(player, monster) {
   }
 
   console.log(
-    chalk.hex('#FA7070').bold(`
+    chalk.hex('#F31559').bold(`
 | 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | ${monster.threat} |\n`),
   );
 
   if (player.blessing === 'Chieftain') {
     console.log(
-      chalk.hex('#CD1818').bold(`| 턴당 점화 스택 : ${Math.round(monster.igniteStack)} |`),
+      chalk.hex('#F31559').bold(`| 턴당 점화 스택 : ${Math.round(monster.igniteStack)} |`),
     );
   }
 
   console.log(chalk.hex('#7c7c7c')(`===========================`));
-  console.log(chalk.hex('#7EA1FF')(`\n${info}`));
-  console.log(chalk.hex('#f7b801')(`>> 알림 로그: ${message}`));
-  console.log(chalk.red.bold(`>> 전투 로그: ${battleText}`));
+  console.log(chalk.hex('#FF52A2')(`\n${info}`));
+  console.log(chalk.hex('#FFB07F')(`>> 알림 로그: ${message}`));
+  console.log(chalk.hex('#F31559').bold(`>> 전투 로그: ${battleText}`));
 }
 
 function combineCardNamesToString(obj) {
@@ -133,7 +133,7 @@ function selectReward(player) {
   const reward3 = makeRandomCard(player);
 
   console.log(
-    chalk.yellow(`
+    chalk.hex('#E8B86D')(`
   1. 
   ======| 카드 상세보기 |======
   
@@ -198,23 +198,99 @@ function selectReward(player) {
 let blessingExplain = (player) => {
   if (player.blessing === 'Spike Defender') {
     console.log(
-      chalk.hex('#7BD3EA')(
-        '|> 가시 수호자는 기본 가시데미지를 20 얻습니다. 방어도를 얻을 때 현재 가시 데미지 수치의 절반만큼을 방어도로 획득합니다. 방어도를 가지고 있을 때에만 공격자에게 가시 데미지를 줄 수 있습니다.',
+      chalk.hex('#73EC8B')(
+        '| 가시 수호자는 기본 가시데미지를 20 얻습니다. 방어도를 얻을 때 현재 가시 데미지 수치의 절반만큼을 방어도로 획득합니다. 방어도를 가지고 있을 때에만 공격자에게 가시 데미지를 줄 수 있습니다.',
       ),
     );
   } else if (player.blessing === 'Berserker') {
     console.log(
-      chalk.hex('#7BD3EA')(
-        '|> 광전사는 연속으로 공격할 확률을 얻습니다. 이때, 최대 공격 횟수에 따라 여러 번 공격할 수 있습니다. 카드를 쓸 때마다 체력을 5씩 잃지만 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1씩 증가합니다. 가한 피해만큼 흡혈할 수 있습니다.',
+      chalk.hex('#73EC8B')(
+        '| 광전사는 연속으로 공격할 확률을 얻습니다. 이때, 최대 공격 횟수에 따라 여러 번 공격할 수 있습니다. 카드를 쓸 때마다 체력을 5씩 잃지만 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1씩 증가합니다. 가한 피해만큼 흡혈할 수 있습니다.',
       ),
     );
   } else if (player.blessing === 'Chieftain') {
     console.log(
-      chalk.hex('#7BD3EA')(
-        '|> 화염 투사는 카드의 화염 데미지만큼 적에게 점화를 걸 수 있습니다. 점화 스택은 턴이 끝날 때마다 1씩 감소합니다. 카드를 통해 HP를 회복할 때 직접 가한 화염 데미지만큼 추가로 회복할 수 있으며, 회복한 체력만큼 점화 스택이 증가합니다.',
+      chalk.hex('#73EC8B')(
+        '| 화염 투사는 카드의 화염 데미지만큼 적에게 점화를 걸 수 있습니다. 점화 스택은 턴이 끝날 때마다 1씩 감소합니다. 카드를 통해 HP를 회복할 때 직접 가한 화염 데미지만큼 추가로 회복할 수 있으며, 회복한 체력만큼 점화 스택이 증가합니다.',
       ),
     );
   }
 };
 
-export { displayStatus, setMessage, selectReward, setBattleText };
+let compactUI = (player, monster) => {
+  let allCardNames = combineCardNamesToString(player);
+  console.log(chalk.hex('#D2FF72').bold(`| 덱 리스트 | ${allCardNames}`));
+  console.log(chalk.hex('#7c7c7c')(`\n====== Current Status ======`));
+
+  if (player.isBossStage) {
+    console.log(
+      chalk.red.bold(`
+| Stage: ${player.stage}(BOSS!!) | ${player.blessing} |
+      `),
+    );
+  } else if (player.isEliteStage) {
+    console.log(
+      chalk.hex('#D67BFF').bold(`
+| Stage: ${player.stage}(ELITE!!) | ${player.blessing} |
+      `),
+    );
+  } else {
+    console.log(
+      chalk.hex('#73EC8B').bold(`
+| Stage: ${player.stage} | ${player.blessing} |
+      `),
+    );
+  }
+
+  blessingExplain(player);
+  DisplayBattleStatus(player, monster);
+
+  console.log(chalk.hex('#7c7c7c')(`\n===========================`));
+  console.log(chalk.hex('#FF52A2')(`\n${info}`));
+  console.log(chalk.hex('#FFB07F')(`>> 알림 로그: ${message}`));
+  console.log(chalk.hex('#F31559').bold(`>> 전투 로그: ${battleText}`));
+};
+
+// 체력바 생성 함수
+function CreateHealthBar(player, color, length = 20) {
+  const filledLength = Math.round((player.hp / player.maxHp) * length);
+  const emptyLength = length - filledLength;
+  return chalk.hex(color)('█'.repeat(filledLength)) + chalk.white('░'.repeat(emptyLength));
+}
+
+// 전투 상태 표시 함수
+function DisplayBattleStatus(player, monster) {
+  const playerHealthBar = CreateHealthBar(player, '#15B392');
+  console.log(
+    `${chalk.hex('#15B392').bold(`\n| 플레이어 | ${player.name} | 방어도${Math.round(player.defense)} | 유대감${Math.round(player.bondingIndex)} |\n`)}`,
+  );
+  console.log(
+    playerHealthBar + chalk.yellow.bold(` ${Math.round(player.hp)}/${Math.round(player.maxHp)}\n`),
+  );
+
+  if (player.blessing === 'Spike Defender') {
+    console.log(chalk.hex('#BACDDB')(`가시:${player.spikeDmg}`));
+  } else if (player.blessing === 'Berserker') {
+    console.log(
+      chalk.hex('#BACDDB')(
+        `연속공격확률:${player.multiAttackProb}, 최대공격횟수:${player.maxAttackCount}`,
+      ),
+    );
+  }
+
+  const monsterHealthBar = CreateHealthBar(monster, '#F31559');
+  console.log(`${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} |\n`)}`);
+  console.log(
+    monsterHealthBar +
+      chalk.yellow.bold(` ${Math.round(monster.hp)}/${Math.round(monster.maxHp)}\n`),
+  );
+  if (player.blessing === 'Chieftain') {
+    console.log(
+      chalk.hex('#BACDDB')(`점화:${monster.igniteStack}스택, 공격력: ${monster.attackDmg}`),
+    );
+  } else {
+    console.log(chalk.hex('#BACDDB')(`공격력: ${monster.attackDmg}`));
+  }
+}
+
+export { largeUI, compactUI, setMessage, selectReward, setBattleText };

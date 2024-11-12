@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { displayStatus, setMessage } from './logs.js';
+import { largeUI, compactUI, setMessage } from './logs.js';
 
 class Card {
   constructor(cardName, cardTier, actProb, attackDmg, fireDmg, restoreHp, defense) {

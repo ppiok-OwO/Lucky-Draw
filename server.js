@@ -8,6 +8,7 @@ import { jsonData, loadJson, getAchievements, unlockAchievement } from './jsonFu
 
 let difficultyChoice = 'NORMAL';
 let difficulty = 1;
+let uiStyle = 'COMPACT';
 
 // 시나리오 스크립트
 async function scenario() {
@@ -59,14 +60,19 @@ function displayLobby() {
   );
 
   // 설명 텍스트
-  console.log(chalk.hex('#FFD09B')(`옵션을 선택해주세요.(현재 난이도 : ${difficultyChoice})`));
+  console.log(
+    chalk.hex('#FFD09B')(
+      `옵션을 선택해주세요.(현재 난이도 : ${difficultyChoice} / UI 스타일 : ${uiStyle})`,
+    ),
+  );
   console.log();
 
   // 옵션들
   console.log(chalk.hex('#FFB0B0')('1.') + chalk.hex('#FFB0B0')(' 새로운 게임 시작'));
   console.log(chalk.hex('#FFB0B0')('2.') + chalk.hex('#FFB0B0')(' 업적 확인하기'));
-  console.log(chalk.hex('#FFB0B0')('3.') + chalk.hex('#FFB0B0')(' 옵션'));
-  console.log(chalk.hex('#FFB0B0')('4.') + chalk.hex('#FFB0B0')(' 종료\n'));
+  console.log(chalk.hex('#FFB0B0')('3.') + chalk.hex('#FFB0B0')(' 난이도'));
+  console.log(chalk.hex('#FFB0B0')('4.') + chalk.hex('#FFB0B0')(' 옵션'));
+  console.log(chalk.hex('#FFB0B0')('5.') + chalk.hex('#FFB0B0')(' 종료\n'));
 
   // 하단 경계선
   console.log(line);
@@ -83,7 +89,7 @@ async function handleUserInput() {
     case '1':
       console.log(chalk.green('게임을 시작합니다.'));
       // 여기에서 새로운 게임 시작 로직을 구현
-      typeName(difficulty);
+      typeName(difficulty, uiStyle);
       // startGame();
       break;
     case '2':
@@ -118,8 +124,23 @@ async function handleUserInput() {
         displayLobby();
         handleUserInput();
       }
+      break;
     // 옵션 메뉴 로직을 구현
     case '4':
+      let selectUI = readlineSync.question('\nUI 스타일 [ LARGE / COMPACT ] : ');
+      selectUI = selectUI.toUpperCase();
+
+      if (selectUI === 'LARGE' || selectUI === 'COMPACT') {
+        uiStyle = selectUI;
+        displayLobby();
+        handleUserInput();
+      } else {
+        console.log(chalk.red('올바르지 않은 입력입니다.'));
+        displayLobby();
+        handleUserInput();
+      }
+      break;
+    case '5':
       console.log(chalk.red('게임을 종료합니다.'));
       // 게임 종료 로직을 구현
       process.exit(0); // 게임 종료

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { displayStatus, setMessage, setBattleText } from './logs.js';
+import { largeUI, compactUI, setMessage, setBattleText } from './logs.js';
 
 class Monster {
   constructor(name, threat, player) {
@@ -16,6 +16,7 @@ class Monster {
       this.hp = Math.round(100 + ((50 * player.stage) / 2) * player.difficulty);
       this.attackDmg = Math.round(10 * player.stage * player.difficulty);
     }
+    this.maxHp = this.hp;
     this.isIgnited = false;
     this.igniteStack = 0;
     this.threat = threat;
