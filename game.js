@@ -16,7 +16,16 @@ import {
   LegendaryDefenseCard,
   seeCard,
 } from './C_card.js';
-import { Monster } from './C_monster.js';
+import {
+  Monster,
+  Slime,
+  Skelleton,
+  Harpy,
+  Ork,
+  Ogre,
+  Boss,
+  makeRandomMonster,
+} from './C_monster.js';
 import { jsonData, loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
@@ -57,7 +66,15 @@ export async function startGame(player) {
   console.clear();
 
   while (player.stage <= 10) {
-    const monster = new Monster(player.stage);
+    // const monster = new Monster(player.stage);
+    let monster;
+
+    if (player.stage === 10) {
+      monster = new Boss(player);
+    } else {
+      monster = makeRandomMonster(player);
+    }
+
     battle(player.stage, player, monster);
     // 스테이지 클리어 및 게임 종료 조건
     if (player.hp <= 0) {

@@ -21,6 +21,7 @@ class Player {
     this.maxAttackCount = 2; // 최대 공격 횟수
     this.isEscape = false;
     this.isWon = false;
+    this.isEliteStage = false;
   }
 
   drawCardRandomly() {

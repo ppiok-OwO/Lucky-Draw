@@ -4,14 +4,19 @@ import readlineSync from 'readline-sync';
 import { displayStatus, setMessage, setBattleText } from './logs.js';
 
 class Monster {
-  constructor(stage, name, threat) {
+  constructor(name, threat, player) {
     this.name = name;
-    this.hp = Math.round(150 + 50 * stage);
-    this.attackDmg = Math.round(15 + 10 * stage);
+    this.difficulty = 1;
+    if (player.isEliteStage) {
+      this.hp = Math.round(150 + 60 * player.stage * this.difficulty);
+      this.attackDmg = Math.round(15 + 15 * player.stage * this.difficulty);
+    } else {
+      this.hp = Math.round(150 + 50 * player.stage * this.difficulty);
+      this.attackDmg = Math.round(15 + 10 * player.stage * this.difficulty);
+    }
     this.isIgnited = false;
     this.igniteStack = 0;
     this.threat = threat;
-    this.isElite = false;
   }
 
   monsterAttack(player) {
@@ -71,39 +76,51 @@ class Monster {
 }
 
 class Slime extends Monster {
-  constructor(stage) {
-    // stage, name, threat
-    super(stage, '킹슬라임', '뽀잉! 뽀잉!');
+  constructor(player) {
+    // name, threat, hp, attackDmg
+    super('킹슬라임', '뽀잉! 뽀잉!', player);
   }
 }
 class Skelleton extends Monster {
-  constructor(stage) {
-    // stage, name, threat
-    super(stage, '눈이 파란 해골', 'WA! 샌즈 아시는구나!');
+  constructor(player) {
+    super('눈이 파란 해골', 'WA! 샌즈 아시는구나!', player);
   }
 }
 class Harpy extends Monster {
-  constructor(stage) {
-    super(stage, '높은 바위 하피', '깃털 총공격!');
+  constructor(player) {
+    super('높은 바위 하피', '깃털 총공격!', player);
   }
 }
 class Ork extends Monster {
-  constructor(stage) {
-    super(stage, '렉사르', '사냥을 시작하지! 네놈을 추격해주마!');
+  constructor(player) {
+    super('렉사르', '사냥을 시작하지! 네놈을 추격해주마!', player);
   }
 }
 class Ogre extends Monster {
-  constructor(stage) {
-    super(stage, '오우거 마법사', '준비됐어! 난 아직인데?');
+  constructor(player) {
+    super('오우거 마법사', '준비됐어! 난 아직인데?', player);
   }
 }
-// 얘네들로 랜덤 뽑기.
-// 3, 6, 9 턴은 isElite = true;
+// 여기까지가 1~9스테이지 몬스터
 
 class Boss extends Monster {
-  constructor(stage) {
-    super(stage, '만물의 종결자', '너흰 아직 준비가 안 되었다!');
+  constructor(player) {
+    super('만물의 종결자', '너흰 아직 준비가 안 되었다!');
+    this.hp = Math.round(200 + 70 * player.stage * this.difficulty);
+    this.attackDmg = Math.round(15 + 25 * player.stage * this.difficulty);
   }
+} // 10스테이지는 마왕
+
+// 몬스터의 인스턴스를 무작위로 생성하는 함수
+function makeRandomMonster(player) {
+  // 3, 6, 9 턴은 player.isEliteStage = true;
+  player.isEliteStage = player.stage % 3 === 0;
+  const monsterClasses = [Slime, Skelleton, Harpy, Ork, Ogre];
+  // 무작위로 클래스 선택
+  const randomMonsterInstance = monsterClasses[Math.floor(Math.random() * monsterClasses.length)];
+
+  // 선택된 클래스의 인스턴스 생성
+  return new randomMonsterInstance(player);
 }
 
-export { Monster };
+export { Monster, Slime, Skelleton, Harpy, Ork, Ogre, Boss, makeRandomMonster };

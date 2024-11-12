@@ -26,15 +26,25 @@ function displayStatus(stage, player, monster) {
   let allCardNames = combineCardNamesToString(player);
   console.log(chalk.hex('#f38d68').bold(`| 덱 리스트 | ${allCardNames}`));
   console.log(chalk.hex('#7c7c7c')(`\n====== Current Status ======`));
-  console.log(
-    chalk.hex('#efc88b').bold(`
-| Stage: ${stage} | ${player.blessing} |
-    `),
-  );
+
+  if (player.isEliteStage) {
+    console.log(
+      chalk.bule.bold(`
+  | Stage: ${stage}(ELITE!!) | ${player.blessing} |
+      `),
+    );
+  } else {
+    console.log(
+      chalk.red.bold(`
+  | Stage: ${stage} | ${player.blessing} |
+      `),
+    );
+  }
+
   blessingExplain(player);
   console.log(
     chalk.hex('#04a777').bold(`
-| 플레이어 정보 | 이름: ${player.name}, HP: ${Math.round(player.hp)}/${Math.round(player.maxHp)}, 방어도: ${Math.round(player.defense)}, 도망확률: ${Math.round(player.runAwayProb)} |
+| 플레이어 정보 | ${player.name} | HP: ${Math.round(player.hp)}/${Math.round(player.maxHp)}, 방어도: ${Math.round(player.defense)}, 도망확률: ${Math.round(player.runAwayProb)} |
 | 카드와의 유대감: ${Math.round(player.bondingIndex)}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} | `),
   );
 
@@ -52,7 +62,7 @@ function displayStatus(stage, player, monster) {
 
   console.log(
     chalk.hex('#CD1818').bold(`
-| 몬스터 정보 | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | "네놈을 추격해주마!" |\n`),
+| 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | ${monster.threat} |\n`),
   );
 
   if (player.blessing === 'Chieftain') {
