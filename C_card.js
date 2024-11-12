@@ -98,7 +98,6 @@ function makeRandomCard(player) {
 }
 
 // 카드 상세보기
-
 function seeCard(card) {
   setMessage(`
   ======| 카드 상세보기 |======

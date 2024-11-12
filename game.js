@@ -26,14 +26,14 @@ import {
   Boss,
   makeRandomMonster,
 } from './C_monster.js';
-import { jsonData, loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
+import { loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName(difficulty, uiStyle) {
   console.clear();
 
   const playerName = readlineSync.question(
-    '\n결정을 내리셨군요. 마왕에 도전하는 용감한 영혼이여. 그대의 이름은 무엇인가요? \n',
+    '\n결정을 내렸군요, 용감한 영혼이여. 그대의 이름은 무엇인가요? \n',
   );
   console.log(chalk.hex('#FFFDD7').bold(`\n${playerName}... 좋은 이름이네요.`));
   console.log(
@@ -80,7 +80,8 @@ export async function startGame(player, uiStyle) {
     // 스테이지 클리어 및 게임 종료 조건
     if (player.hp <= 0) {
       // 죽으면 처음부터 다시 시작
-      typeName();
+      displayLobby();
+      handleUserInput();
     } else if (player.stage === 10) {
       // 게임을 클리어하면 반복문 탈출하기
       player.isWon = true;
@@ -126,14 +127,23 @@ export async function startGame(player, uiStyle) {
     console.log(
       chalk.greenBright.bold('축하합니다. 당신은 마왕을 무찌르고 대륙의 영웅이 되었습니다!'),
     );
+    let choice = readlineSync.question('새로운 여정에 도전하시겠습니까?(Y/N)');
 
-    restart();
+    if (choice === 'Y' || choice === 'y') {
+      displayLobby();
+      handleUserInput();
+    } else if (choice === 'N' || choice === 'n') {
+      process.exit(0);
+    } else {
+      return;
+    }
   } else if (player.isEscape) {
     displayLobby();
     handleUserInput();
   }
 }
 
+// 전투!
 const battle = (player, monster, uiStyle) => {
   // 새로운 스테이지가 시작되면 카드더미와 손패를 모두 섞는다.
   player.shuffleAllCards();
@@ -152,7 +162,7 @@ const battle = (player, monster, uiStyle) => {
       chalk
         .hex('#FFECAF')
         .bold(
-          `\n1. 카드를 사용한다    2. 소매치기    3. 모두 섞고 다시 뽑기    4. 손패에 있는 카드 지우기    5. 도망친다    6. 시작 메뉴\n`,
+          `\n1. 카드를 사용한다    2. 소매치기    3. 모두 섞고 다시 뽑기    4. 손패에 있는 카드 지우기    5. 도망친다    6. 시작 메뉴로 나가기\n`,
         ),
     );
     const choice = readlineSync.question('당신의 선택은? \n');
@@ -175,7 +185,9 @@ const battle = (player, monster, uiStyle) => {
           player.cardPlay(playingCard, monster, cardIndex);
 
           // 죽였는데 맞는 건 이상하니까.
-          if (monster.hp > 0) monster.monsterAttack(player);
+          if (monster.hp > 0) {
+            monster.monsterAttack(player);
+          }
         }
       }
 
@@ -202,7 +214,7 @@ const battle = (player, monster, uiStyle) => {
       } else if (randomValue < 9) {
         addCard(player, 1);
       } else {
-        incPlayerStat(player);
+        player.incPlayerStat();
       }
 
       monster.monsterAttack(player);
@@ -274,28 +286,6 @@ function chooseBlessing() {
   return blessingChoice;
 }
 
-// 플레이어 스탯 랜덤하게 오르는 함수
-function incPlayerStat(player) {
-  // maxHp, defense, bondingIndex, handSize, runAwayProb
-
-  let randomValue = Math.random() * 5;
-  if (randomValue >= 0 && randomValue <= 1) {
-    player.maxHp += 10;
-    player.hp += 10;
-  } else if (randomValue >= 1 && randomValue <= 2) {
-    player.defense += 10;
-  } else if (randomValue >= 2 && randomValue <= 3) {
-    player.bondingIndex += 10;
-  } else if (randomValue >= 3 && randomValue <= 4) {
-    player.handSize += 1;
-    if (player.handSize > player.hasCard) {
-    }
-    player.drawCardRandomly();
-  } else if (randomValue >= 4 && randomValue <= 5) {
-    player.runAwayProb += 3;
-  }
-}
-
 // 손패에 있는 카드를 지우는 함수
 function removeCard(cardRemoveIndex, player) {
   player.hasCardInHand.splice(cardRemoveIndex, 1);
@@ -329,13 +319,3 @@ function addCard(player, NA = 0, ND = 0, RA = 0, RD = 0, EA = 0, ED = 0, LA = 0,
     player.hasCard.push(new LegendaryDefenseCard()); // 객체 생성 후 배열에 추가
   }
 }
-
-let restart = () => {
-  let choice = readlineSync.question('\n새로운 게임을 시작하시겠습니까?(Y/N) \n');
-
-  if (choice === 'Y' || choice === 'y') {
-    typeName();
-  } else if (choice === 'N' || choice === 'n') {
-    return;
-  }
-};

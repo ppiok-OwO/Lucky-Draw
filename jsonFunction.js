@@ -4,8 +4,6 @@ import readlineSync from 'readline-sync';
 import fsp from 'fs/promises'; // fs/promises에서 fs를 가져옵니다.
 import fs from 'fs'; // fs 모듈을 가져옵니다.
 
-let jsonData;
-
 // JSON 파일을 로드하는 함수
 let loadJson = async (filePath) => {
   try {
@@ -17,7 +15,9 @@ let loadJson = async (filePath) => {
   }
 };
 
+// 완료한 업적 불러오기
 async function getAchievements() {
+  let jsonData;
   if (!jsonData) {
     jsonData = await loadJson('./data.json'); // 업적 데이터 파일 경로
   }
@@ -39,6 +39,7 @@ async function getAchievements() {
   }
 }
 
+// 업적 완료하기
 let unlockAchievement = async (filePath, index) => {
   try {
     let jsonData = await loadJson(filePath);
@@ -58,4 +59,4 @@ let unlockAchievement = async (filePath, index) => {
   }
 };
 
-export { jsonData, loadJson, getAchievements, unlockAchievement };
+export { loadJson, getAchievements, unlockAchievement };

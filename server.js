@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
-import { jsonData, loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
+import { loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
 
 let difficultyChoice = 'NORMAL';
 let difficulty = 1;

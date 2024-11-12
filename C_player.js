@@ -4,6 +4,7 @@ import readlineSync from 'readline-sync';
 import { largeUI, compactUI, setMessage } from './logs.js';
 
 class Player {
+  // 생성자
   constructor(name, difficulty = 1) {
     this.name = name;
     this.hp = 100;
@@ -26,6 +27,7 @@ class Player {
     this.difficulty = difficulty;
   }
 
+  // 카드 드로우
   drawCardRandomly() {
     // 손패가 몇 자리 비어있니?
     let emptyHand = this.handSize - this.hasCardInHand.length;
@@ -43,6 +45,7 @@ class Player {
     // setMessage('손패를 보충했습니다!');
   }
 
+  // 모두 섞기
   shuffleAllCards() {
     // 손패 비우기
     let splicedHand = this.hasCardInHand.splice(0);
@@ -62,6 +65,7 @@ class Player {
     setMessage('카드를 섞고 손패를 가득 채웠습니다!');
   }
 
+  // 카드 사용
   cardPlay(playingCard, monster, cardIndex) {
     // 100 미만의 랜덤한 밸류를 구하고 카드 발동 확률이랑 비교해보기
     const randomValue = Math.random() * 100;
@@ -108,6 +112,7 @@ class Player {
     this.hasCard.push(usedCard);
   }
 
+  // 카드에 의한 HP 업데이트
   updateHpByCard(playingCard, cardPower = 1, monster) {
     // 현재 체력 += 힐카드 계산식
     // 화염 투사는 카드의 점화 스택의 절반만큼 회복을 추가로 한다.
@@ -127,18 +132,19 @@ class Player {
         monster.igniteStack += Math.round(playingCard.restoreHp * cardPower);
       }
     } else if (this.blessing === 'Berserker') {
-      // 광전사의 경우 카드를 쓸 때마다 5의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 0.5 증가한다.
+      // 광전사의 경우 카드를 쓸 때마다 5의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1 증가한다.
       this.hp -= 5;
       let randomValue = Math.random() * 2;
 
       if (randomValue < 1 && this.multiAttackProb <= 100) {
         this.multiAttackProb += 10;
       } else {
-        this.maxAttackCount += 0.5;
+        this.maxAttackCount += 1;
       }
     }
   }
 
+  // 몬스터에 의한 HP 업데이트
   updateHpByMonster(num) {
     const pierceDmg = this.defense + num;
     if (pierceDmg <= 0) {
@@ -146,6 +152,7 @@ class Player {
     }
   }
 
+  // 카드에 의한 방어도 업데이트
   updateDefenseByCard(playingCard, cardPower = 1) {
     // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 그리고 현재 가지고 있는 가시데미지의 절반만큼 방어도를 추가로 얻는다.
     if (this.blessing === 'Spike Defender') {
@@ -156,6 +163,7 @@ class Player {
     }
   }
 
+  // 몬스터에 의한 방어도 업데이트
   updateDefenseByMonster(num) {
     this.defense += num;
     if (this.defense <= 0) {
@@ -163,6 +171,7 @@ class Player {
     }
   }
 
+  // 도망치기
   runAway(monster) {
     // 도망친다.
     let randomValue = Math.random() * 100;
@@ -175,6 +184,27 @@ class Player {
     } else {
       setMessage('이런! 불행하게도 도망치지 못했습니다.');
       monster.monsterAttack(this);
+    }
+  }
+
+  incPlayerStat() {
+    // maxHp, defense, bondingIndex, handSize, runAwayProb
+  
+    let randomValue = Math.random() * 5;
+    if (randomValue >= 0 && randomValue <= 1) {
+      player.maxHp += 10;
+      player.hp += 10;
+    } else if (randomValue >= 1 && randomValue <= 2) {
+      player.defense += 10;
+    } else if (randomValue >= 2 && randomValue <= 3) {
+      player.bondingIndex += 10;
+    } else if (randomValue >= 3 && randomValue <= 4) {
+      player.handSize += 1;
+      if (player.handSize > player.hasCard) {
+      }
+      player.drawCardRandomly();
+    } else if (randomValue >= 4 && randomValue <= 5) {
+      player.runAwayProb += 3;
     }
   }
 }
