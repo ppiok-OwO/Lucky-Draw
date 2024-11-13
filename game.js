@@ -27,6 +27,7 @@ import {
   makeRandomMonster,
 } from './C_monster.js';
 import { loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
+import { tavern, shopping, mergeCard } from './shop.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName(difficulty, uiStyle) {
@@ -102,6 +103,7 @@ export async function startGame(player, uiStyle) {
       player.defense = 0;
       // 전투 로그 초기화
       setBattleText('');
+      tavern(player);
     }
   }
 
