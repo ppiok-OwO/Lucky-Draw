@@ -147,6 +147,7 @@ async function handleUserInput() {
     default:
       console.log(chalk.red('올바르지 않은 입력입니다.'));
       handleUserInput(); // 유효하지 않은 입력일 경우 다시 입력 받음
+      break;
   }
 }
 

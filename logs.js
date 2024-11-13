@@ -293,4 +293,4 @@ function DisplayBattleStatus(player, monster) {
   }
 }
 
-export { largeUI, compactUI, setMessage, selectReward, setBattleText };
+export { largeUI, compactUI, setMessage, selectReward, setBattleText, combineCardNamesToString };

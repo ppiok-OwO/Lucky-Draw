@@ -27,7 +27,7 @@ import {
   makeRandomMonster,
 } from './C_monster.js';
 import { loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
-import { tavern, shopping, mergeCard } from './shop.js';
+import { tavern, shop, shopping, mergeCard } from './shop.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName(difficulty, uiStyle) {
@@ -129,15 +129,22 @@ export async function startGame(player, uiStyle) {
     console.log(
       chalk.greenBright.bold('축하합니다. 당신은 마왕을 무찌르고 대륙의 영웅이 되었습니다!'),
     );
-    let choice = readlineSync.question('새로운 여정에 도전하시겠습니까?(Y/N)');
+    // let choice = readlineSync.question('새로운 여정에 도전하시겠습니까?(Y/N)');
 
-    if (choice === 'Y' || choice === 'y') {
+    // if (choice === 'Y' || choice === 'y') {
+    //   displayLobby();
+    //   handleUserInput();
+    // } else if (choice === 'N' || choice === 'n') {
+    //   process.exit(0);
+    // } else {
+    //   return;
+    // }
+
+    if (readlineSync.keyInYN('새로운 여정에 도전하시겠습니까?(Y/N) ')) {
       displayLobby();
       handleUserInput();
-    } else if (choice === 'N' || choice === 'n') {
-      process.exit(0);
     } else {
-      return;
+      process.exit(0);
     }
   } else if (player.isEscape) {
     displayLobby();
@@ -256,11 +263,18 @@ const battle = (player, monster, uiStyle) => {
         player.runAway(monster);
       }
     } else if (choice === '6') {
-      let escape = readlineSync.question(
-        '게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ',
-      );
+      // let escape = readlineSync.question(
+      //   '게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ',
+      // );
 
-      if (escape === 'Y' || escape === 'y') {
+      // if (escape === 'Y' || escape === 'y') {
+      //   player.isEscape = true;
+      //   break;
+      // }
+
+      if (
+        readlineSync.keyInYN('게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ')
+      ) {
         player.isEscape = true;
         break;
       }
