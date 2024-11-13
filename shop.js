@@ -2,21 +2,25 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { colors } from './functions.js';
-import { makeRandomCard, seeCard } from './C_card.js';
-import { combineCardNamesToString } from './logs.js';
+import { makeRandomCard, countCard } from './C_card.js';
+import { combineCardNamesToString, displayDeckList } from './logs.js';
 
 let tavern = (player) => {
   console.clear();
-  const card1 = makeRandomCard(player);
-  const card2 = makeRandomCard(player);
-  const card3 = makeRandomCard(player);
+  let card1 = makeRandomCard(player);
+  let card2 = makeRandomCard(player);
+  let card3 = makeRandomCard(player);
 
-  let allCardNames = combineCardNamesToString(player);
-  console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
+  displayDeckList(player);
 
-  console.log(colors.elite('\n=============| 여관 |============='));
+  console.log(colors.elite('\n=============| 여관 |=============\n'));
   console.log(colors.elite('\n어서오세요! 꽤 보고 싶었다구요?\n'));
-  let choice = readlineSync.question('\n1. 상점 이용하기   2. 중복 카드 합치기   3. 나가기\n');
+  console.log(colors.elite('\n=============|******|=============\n'));
+
+  let choice;
+  do {
+    choice = readlineSync.question('\n1. 상점 이용하기   2. 중복 카드 합치기   3. 나가기\n');
+  } while (!['1', '2', '3'].includes(choice)); // 1, 2, 3 외의 입력을 방지
 
   switch (choice) {
     case '1':
@@ -26,9 +30,6 @@ let tavern = (player) => {
       mergeCard(player);
       break;
     case '3':
-      break;
-    default:
-      tavern(player);
       break;
   }
 };
@@ -52,29 +53,17 @@ let shop = (player, card1, card2, card3) => {
       tavern(player);
       break;
     default:
-      shop(player);
+      tavern(player);
       break;
   }
 };
 
 let mergeCard = (player) => {
   console.clear();
-
-  let allCardNames = combineCardNamesToString(player);
-  console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
-
-  // 카드 한 배열로 모으고 정렬
-  player.collectAllCard();
-  let cardCounts = {};
-
+  // 덱 리스트 보여주고
+  displayDeckList(player);
   // 카드 개수 세기
-  player.hasCard.forEach((card) => {
-    if (cardCounts[card.cardName]) {
-      cardCounts[card.cardName]++;
-    } else {
-      cardCounts[card.cardName] = 1;
-    }
-  });
+  let cardCounts = countCard(player);
 
   let canMerge = [];
   for (let cardName in cardCounts) {
@@ -84,9 +73,10 @@ let mergeCard = (player) => {
   }
 
   if (canMerge.length > 0) {
-    const cardNameIndex = readlineSync.keyInSelect(
+    let cardNameIndex = readlineSync.keyInSelect(
       canMerge,
       '세 장 이상 소유하고 있는 카드들입니다! 어떤 카드를 합치시겠습니까? ',
+      { cancel: '취소하기' },
     );
 
     if (cardNameIndex === -1) {
@@ -94,11 +84,23 @@ let mergeCard = (player) => {
       return; // 선택 취소 시 함수 종료
     }
 
-    const cardName = canMerge[cardNameIndex];
+    let cardName = canMerge[cardNameIndex];
 
     // player.hasCard에서 선택한 카드 제거 및 변경
     if (canMerge.includes(cardName)) {
       let removedCards = [];
+      let potentialHandSizeAfterMerge = player.hasCard.length - 2; // 합친 후 예상되는 카드 수
+
+      if (potentialHandSizeAfterMerge < player.handSize) {
+        console.log(
+          colors.error(
+            '카드의 개수는 손패 크기보다 작아질 수 없습니다. 카드 합치기가 취소되었습니다.',
+          ),
+        );
+        readlineSync.keyInPause();
+        return; // 조건이 충족되지 않으면 함수 종료
+      }
+
       player.hasCard = player.hasCard.filter((card) => {
         if (card.cardName === cardName && removedCards.length < 3) {
           removedCards.push(card); // 제거한 카드를 저장
@@ -133,15 +135,14 @@ let mergeCard = (player) => {
 
 let shopping = (card1, card2, card3, player) => {
   console.clear();
-  let allCardNames = combineCardNamesToString(player);
-  console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
-  
+  displayDeckList(player);
+
   console.log(
     colors.cardChoice(`
   1. 
   ======| 카드 상세보기 |======
   
-    >>> ${card1.cardName} <<<
+  >>> ${card1.cardName}
 
   등급 : ${card1.cardTier}
   발동 확률 : ${card1.actProb}
@@ -155,7 +156,7 @@ let shopping = (card1, card2, card3, player) => {
   2. 
   ======| 카드 상세보기 |======
   
-    >>> ${card2.cardName} <<<
+  >>> ${card2.cardName}
 
   등급 : ${card2.cardTier}
   발동 확률 : ${card2.actProb}
@@ -169,7 +170,7 @@ let shopping = (card1, card2, card3, player) => {
   3. 
   ======| 카드 상세보기 |======
   
-    >>> ${card3.cardName} <<<
+  >>> ${card3.cardName}
 
   등급 : ${card3.cardTier}
   발동 확률 : ${card3.actProb}
@@ -183,12 +184,13 @@ let shopping = (card1, card2, card3, player) => {
   );
 
   console.log(
-    colors.info(`
+    colors.green2(`
 아주 흥미로운 카드들이네요! 어떤 카드를 구매하시겠습니까?
+(나가시려면 아무 키나 눌러주세요)
   `),
   );
 
-  const cardName = readlineSync.question('번호로 입력 : ');
+  let cardName = readlineSync.question('번호로 입력 : ');
 
   return cardName;
 };

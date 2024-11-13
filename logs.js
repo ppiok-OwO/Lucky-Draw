@@ -12,10 +12,9 @@ let battleText = '';
 
 // LARGE UI
 function largeUI(player, monster) {
-  let allCardNames = combineCardNamesToString(player);
   let difficultyInfo =
     player.difficulty === 1 ? 'NORMAL' : player.difficulty === 1.2 ? 'HARD' : 'HELL';
-  console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
+  displayDeckList(player);
   console.log(colors.grey(`\n====== Current Status ======`));
 
   if (player.isBossStage) {
@@ -72,10 +71,9 @@ function largeUI(player, monster) {
 
 // COMPACT UI
 let compactUI = (player, monster) => {
-  let allCardNames = combineCardNamesToString(player);
   let difficultyInfo =
     player.difficulty === 1 ? 'NORMAL' : player.difficulty === 1.2 ? 'HARD' : 'HELL';
-  console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
+  displayDeckList(player);
   console.log(colors.grey(`\n====== Current Status ======`));
 
   if (player.isBossStage) {
@@ -147,6 +145,10 @@ function setBattleText(newText) {
 function selectReward(player) {
   console.clear();
 
+  const reward1 = makeRandomCard(player);
+  const reward2 = makeRandomCard(player);
+  const reward3 = makeRandomCard(player);
+
   console.log(
     chalk.cyan(
       figlet.textSync('Stage Clear!*', {
@@ -157,16 +159,12 @@ function selectReward(player) {
     ),
   );
 
-  const reward1 = makeRandomCard(player);
-  const reward2 = makeRandomCard(player);
-  const reward3 = makeRandomCard(player);
-
   console.log(
     colors.cardChoice(`
   1. 
   ======| 카드 상세보기 |======
   
-    >>> ${reward1.cardName} <<<
+  >>> ${reward1.cardName}
 
   등급 : ${reward1.cardTier}
   발동 확률 : ${reward1.actProb}
@@ -180,7 +178,7 @@ function selectReward(player) {
   2. 
   ======| 카드 상세보기 |======
   
-    >>> ${reward2.cardName} <<<
+  >>> ${reward2.cardName}
 
   등급 : ${reward2.cardTier}
   발동 확률 : ${reward2.actProb}
@@ -194,7 +192,7 @@ function selectReward(player) {
   3. 
   ======| 카드 상세보기 |======
   
-    >>> ${reward3.cardName} <<<
+  >>> ${reward3.cardName}
 
   등급 : ${reward3.cardTier}
   발동 확률 : ${reward3.actProb}
@@ -293,4 +291,17 @@ function DisplayBattleStatus(player, monster) {
   }
 }
 
-export { largeUI, compactUI, setMessage, selectReward, setBattleText, combineCardNamesToString };
+let displayDeckList = (player) => {
+  let allCardNames = combineCardNamesToString(player);
+  console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
+};
+
+export {
+  largeUI,
+  compactUI,
+  setMessage,
+  selectReward,
+  setBattleText,
+  combineCardNamesToString,
+  displayDeckList,
+};

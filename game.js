@@ -2,7 +2,14 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { displayLobby, handleUserInput } from './server.js';
-import { largeUI, compactUI, setMessage, selectReward, setBattleText } from './logs.js';
+import {
+  largeUI,
+  compactUI,
+  setMessage,
+  selectReward,
+  setBattleText,
+  displayDeckList,
+} from './logs.js';
 import { Player } from './C_player.js';
 import {
   Card,
@@ -177,6 +184,7 @@ const battle = (player, monster, uiStyle) => {
     const choice = readlineSync.question('당신의 선택은? \n');
     console.log(chalk.hex('#ffcdbc')(`\n${choice}번을 선택하셨습니다.`));
 
+    // 카드를 사용한다.
     if (choice === '1') {
       console.log(
         chalk.hex('#FAA300')(`
@@ -200,7 +208,7 @@ const battle = (player, monster, uiStyle) => {
         }
       }
 
-      // 카드 상세보기 함수
+      // 소매치기
     } else if (choice === '2') {
       setBattleText('손은 눈보다 빠르지!');
       let randomValue = Math.random() * 10;
@@ -225,11 +233,14 @@ const battle = (player, monster, uiStyle) => {
       } else {
         player.incPlayerStat();
       }
-
       monster.monsterAttack(player);
+
+      // 카드 셔플
     } else if (choice === '3') {
       player.shuffleAllCards();
       monster.monsterAttack(player);
+
+      // 카드 지우기
     } else if (choice === '4') {
       console.log(
         chalk.magenta(`
@@ -256,12 +267,16 @@ const battle = (player, monster, uiStyle) => {
         removeCard(cardIndex, player);
         monster.monsterAttack(player);
       }
+
+      // 도망치기
     } else if (choice === '5') {
       if (player.stage === 10) {
         setMessage('보스전에선 도망칠 수 없습니다!');
       } else {
         player.runAway(monster);
       }
+
+      // 게임 메뉴로 나가기
     } else if (choice === '6') {
       // let escape = readlineSync.question(
       //   '게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ',
