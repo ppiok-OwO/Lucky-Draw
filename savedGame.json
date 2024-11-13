@@ -2,7 +2,7 @@
   "save": {
     "player": {
       "name": "1",
-      "hp": 100,
+      "hp": 120,
       "maxHp": 120,
       "defense": 0,
       "bondingIndex": 15,
@@ -10,24 +10,14 @@
       "runAwayProb": 20,
       "hasCard": [
         {
-          "cardName": "기본 공격",
+          "cardName": "기본 방어",
           "actProb": 75,
           "cardTier": "Normal",
           "isThisCardPlayed": false,
-          "attackDmg": 10,
-          "fireDmg": 5,
+          "attackDmg": 0,
+          "fireDmg": 0,
           "restoreHp": 5,
-          "defense": 0
-        },
-        {
-          "cardName": "기본 공격",
-          "actProb": 75,
-          "cardTier": "Normal",
-          "isThisCardPlayed": false,
-          "attackDmg": 10,
-          "fireDmg": 5,
-          "restoreHp": 5,
-          "defense": 0
+          "defense": 10
         },
         {
           "cardName": "방패 올리기",
@@ -50,78 +40,47 @@
           "defense": 10
         },
         {
-          "cardName": "기본 방어",
-          "actProb": 75,
-          "cardTier": "Normal",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 5,
-          "defense": 10
-        },
-        {
-          "cardName": "피부 찢기",
+          "cardName": "방패 올리기",
           "actProb": 80,
           "cardTier": "Rare",
           "isThisCardPlayed": false,
-          "attackDmg": 20,
-          "fireDmg": 10,
-          "restoreHp": 5,
-          "defense": 5
+          "attackDmg": 0,
+          "fireDmg": 0,
+          "restoreHp": 10,
+          "defense": 15
         },
         {
-          "cardName": "바리게이트",
+          "cardName": "기본 공격+",
           "actProb": 85,
-          "cardTier": "Epic",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 15,
-          "defense": 25
-        }
-      ],
-      "hasCardInHand": [
-        {
-          "cardName": "피부 찢기",
-          "actProb": 80,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 20,
-          "fireDmg": 10,
-          "restoreHp": 5,
-          "defense": 5
-        },
-        {
-          "cardName": "피부 찢기",
-          "actProb": 80,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 20,
-          "fireDmg": 10,
-          "restoreHp": 5,
-          "defense": 5
-        },
-        {
-          "cardName": "기본 공격",
-          "actProb": 75,
           "cardTier": "Normal",
           "isThisCardPlayed": false,
-          "attackDmg": 10,
-          "fireDmg": 5,
-          "restoreHp": 5,
+          "attackDmg": 15,
+          "fireDmg": 7.5,
+          "restoreHp": 7.5,
           "defense": 0
         },
         {
-          "cardName": "방패 올리기",
-          "actProb": 80,
+          "cardName": "피부 찢기+",
+          "actProb": 90,
           "cardTier": "Rare",
+          "isThisCardPlayed": false,
+          "attackDmg": 30,
+          "fireDmg": 15,
+          "restoreHp": 7.5,
+          "defense": 7.5
+        },
+        {
+          "cardName": "참호+",
+          "actProb": 100,
+          "cardTier": "Legendary",
           "isThisCardPlayed": false,
           "attackDmg": 0,
           "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15
+          "restoreHp": 30,
+          "defense": 45
         }
       ],
+      "hasCardInHand": [],
       "stage": 2,
       "blessing": "Spike Defender",
       "spikeDmg": 20,

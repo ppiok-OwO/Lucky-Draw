@@ -6,37 +6,39 @@ import { makeRandomCard, countCard } from './C_card.js';
 import { combineCardNamesToString, displayDeckList, miniUI } from './logs.js';
 
 let tavern = (player) => {
-  console.clear();
   let tavernChoice;
   let card1 = makeRandomCard(player);
   let card2 = makeRandomCard(player);
   let card3 = makeRandomCard(player);
 
-  displayDeckList(player);
-  miniUI(player);
+  while (tavernChoice !== '4') {
+    console.clear();
+    displayDeckList(player);
+    miniUI(player);
 
-  console.log(colors.elite('\n=============| 여관 |=============\n'));
-  console.log(colors.elite('\n어서오세요! 꽤 보고 싶었다구요?\n'));
-  console.log(colors.elite('\n=============|******|=============\n'));
+    console.log(colors.elite('\n=============| 여관 |=============\n'));
+    console.log(colors.elite('\n어서오세요! 꽤 보고 싶었다구요?\n'));
+    console.log(colors.elite('\n=============|******|=============\n'));
 
-  do {
-    tavernChoice = readlineSync.question(
-      '\n1. 체력 회복하기    2. 상점 이용하기    3. 중복 카드 합치기    4. 다음 전투로!\n',
-    );
-  } while (!['1', '2', '3', '4'].includes(tavernChoice)); // 1, 2, 3 외의 입력을 방지
+    do {
+      tavernChoice = readlineSync.question(
+        '\n1. 체력 회복하기    2. 상점 이용하기    3. 중복 카드 합치기    4. 다음 전투로(자동저장)!\n',
+      );
+    } while (!['1', '2', '3', '4'].includes(tavernChoice)); // 1, 2, 3 외의 입력을 방지
 
-  switch (tavernChoice) {
-    case '1':
-      player.updateHpByTavern(30);
-      tavern(player);
-    case '2':
-      shop(player, card1, card2, card3);
-      break;
-    case '3':
-      mergeCard(player);
-      break;
-    case '4':
-      break;
+    switch (tavernChoice) {
+      case '1':
+        player.updateHpByTavern(30);
+        break;
+      case '2':
+        shop(player, card1, card2, card3);
+        break;
+      case '3':
+        mergeCard(player);
+        break;
+      case '4':
+        break;
+    }
   }
 };
 
@@ -48,18 +50,14 @@ let shop = (player, card1, card2, card3) => {
   switch (cardName) {
     case '1':
       player.hasCard.push(card1);
-      tavern(player);
       break;
     case '2':
       player.hasCard.push(card2);
-      tavern(player);
       break;
     case '3':
       player.hasCard.push(card3);
-      tavern(player);
       break;
     default:
-      tavern(player);
       break;
   }
 };
@@ -87,7 +85,6 @@ let mergeCard = (player) => {
 
     if (cardNameIndex === -1) {
       console.log(colors.error('카드 합치기가 취소되었습니다.'));
-      mergeCard(player);
     }
 
     let cardName = canMerge[cardNameIndex];
@@ -104,7 +101,6 @@ let mergeCard = (player) => {
           ),
         );
         readlineSync.keyInPause();
-        tavern(player); // 조건이 충족되지 않으면 함수 종료
       }
 
       player.hasCard = player.hasCard.filter((card) => {
@@ -129,7 +125,6 @@ let mergeCard = (player) => {
 
         console.log(colors.success(`${cardName} 카드가 업그레이드되었습니다!`));
         readlineSync.keyInPause();
-        tavern(player);
       }
     } else {
       console.log(colors.error('유효하지 않은 카드입니다.'));
@@ -139,7 +134,6 @@ let mergeCard = (player) => {
     console.log(colors.error('합칠 수 있는 카드가 없습니다.'));
     readlineSync.keyInPause();
   }
-  return;
 };
 
 let shopping = (card1, card2, card3, player) => {

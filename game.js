@@ -118,8 +118,8 @@ export async function startGame(player, uiStyle) {
       player.defense = 0;
       // 전투 로그 초기화
       setBattleText('');
-      await saveAndExit('./savedGame.json', player, uiStyle);
       tavern(player);
+      await saveAndExit('./savedGame.json', player, uiStyle);
     }
   }
 

@@ -6,10 +6,15 @@ import fs from 'fs'; // fs 모듈을 가져옵니다.
 import { colors } from './functions.js';
 import { displayDeckList } from './logs.js';
 
+// fs 모듈이란?
+// Node.js의 기본 파일 시스템 모듈. 파일 읽고 쓰기, 콜백 함수 데이터 전달 받기, 디렉토리 작업 등 다양한 기능을 제공한다. fsp는 바로 이 fs의 프로미스(promises) 버전이다. fs를 비동기식으로 처리해준다.
+
 // JSON 파일을 로드하는 함수
 let loadJson = async (filePath) => {
   try {
+    // filePath 경로에 있는 파일을 UTF-8 인코딩 방식으로 읽어오고
     const data = await fsp.readFile(filePath, 'utf8');
+    // data 문자열을 JavaScript 객체로 파싱한 후 반환한다.
     return JSON.parse(data);
   } catch (err) {
     console.error('파일 읽기 오류:', err);
@@ -44,6 +49,7 @@ async function getAchievements() {
 // 업적 완료하기
 let unlockAchievement = async (filePath, index) => {
   try {
+    // loadJson 함수를 통해 json파일에 문자열로 저장되어 있던 데이터를 JavaScript 객체로 변환하여 jsonData에 저장
     let jsonData = await loadJson(filePath);
 
     // 업적 수정하기 (예: 첫 번째 업적의 isUnlocked를 true로 변경)
