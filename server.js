@@ -1,11 +1,12 @@
 // 한글이 깨진다면 chcp 65001
 
-import chalk from 'chalk';
+import chalk, { colorNames } from 'chalk';
 import { db } from './db.js';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
-import { loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
+import { loadJson, getAchievements, unlockAchievement, loadSaveFile } from './jsonFunction.js';
+import { colors } from './functions.js';
 
 let difficultyChoice = 'NORMAL';
 let difficulty = 1;
@@ -72,8 +73,9 @@ function displayLobby() {
   console.log(chalk.hex('#FFB0B0')('1.') + chalk.hex('#FFB0B0')(' 새로운 게임 시작'));
   console.log(chalk.hex('#FFB0B0')('2.') + chalk.hex('#FFB0B0')(' 업적 확인하기'));
   console.log(chalk.hex('#FFB0B0')('3.') + chalk.hex('#FFB0B0')(' 난이도'));
-  console.log(chalk.hex('#FFB0B0')('4.') + chalk.hex('#FFB0B0')(' 옵션'));
-  console.log(chalk.hex('#FFB0B0')('5.') + chalk.hex('#FFB0B0')(' 종료\n'));
+  console.log(chalk.hex('#FFB0B0')('4.') + chalk.hex('#FFB0B0')(' UI 옵션'));
+  console.log(chalk.hex('#FFB0B0')('5.') + chalk.hex('#FFB0B0')(' 세이브 파일'));
+  console.log(chalk.hex('#FFB0B0')('6.') + chalk.hex('#FFB0B0')(' 종료\n'));
 
   // 하단 경계선
   console.log(line);
@@ -97,7 +99,7 @@ async function handleUserInput() {
       console.clear();
       // 업적 확인하기 로직을 구현
       await getAchievements();
-      readlineSync.question('\n메뉴로 되돌아 가기: ');
+      readlineSync.keyInPause('\n메뉴로 되돌아 가기: ');
       displayLobby();
       handleUserInput();
       break;
@@ -142,6 +144,23 @@ async function handleUserInput() {
       }
       break;
     case '5':
+      console.clear();
+      let saveData = await loadSaveFile();
+
+      if (saveData) {
+        if (readlineSync.keyInYN('\n해당 세이브 파일을 이어서 진행하시겠습니까?: ')) {
+          typeName(saveData.save.player.difficulty, saveData.save.uiStyle, saveData);
+        } else {
+          displayLobby();
+          handleUserInput();
+        }
+      } else {
+        console.log(colors.battleLog('세이브 파일이 존재하지 않습니다.'));
+        readlineSync.keyInPause();
+      }
+
+      break;
+    case '6':
       console.log(chalk.red('게임을 종료합니다.'));
       // 게임 종료 로직을 구현
       process.exit(0); // 게임 종료

@@ -291,6 +291,26 @@ function DisplayBattleStatus(player, monster) {
   }
 }
 
+let miniUI = (player) => {
+  const playerHealthBar = CreateHealthBar(player, '#15B392');
+  console.log(
+    `${chalk.hex('#15B392').bold(`\n| 플레이어 | ${player.name} | 방어도${Math.round(player.defense)} | 유대감${Math.round(player.bondingIndex)} |\n`)}`,
+  );
+  console.log(
+    playerHealthBar + chalk.yellow.bold(` ${Math.round(player.hp)}/${Math.round(player.maxHp)}\n`),
+  );
+
+  if (player.blessing === 'Spike Defender') {
+    console.log(colors.green4(`가시:${player.spikeDmg}`));
+  } else if (player.blessing === 'Berserker') {
+    console.log(
+      colors.green4(
+        `연속공격확률:${player.multiAttackProb}, 최대공격횟수:${player.maxAttackCount}`,
+      ),
+    );
+  }
+};
+
 let displayDeckList = (player) => {
   let allCardNames = combineCardNamesToString(player);
   console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
@@ -304,4 +324,5 @@ export {
   setBattleText,
   combineCardNamesToString,
   displayDeckList,
+  miniUI,
 };

@@ -3,33 +3,39 @@ import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { colors } from './functions.js';
 import { makeRandomCard, countCard } from './C_card.js';
-import { combineCardNamesToString, displayDeckList } from './logs.js';
+import { combineCardNamesToString, displayDeckList, miniUI } from './logs.js';
 
 let tavern = (player) => {
   console.clear();
+  let tavernChoice;
   let card1 = makeRandomCard(player);
   let card2 = makeRandomCard(player);
   let card3 = makeRandomCard(player);
 
   displayDeckList(player);
+  miniUI(player);
 
-  console.log(colors.green1('\n=============| 여관 |=============\n'));
-  console.log(colors.green2('\n어서오세요! 꽤 보고 싶었다구요?\n'));
-  console.log(colors.green3('\n=============|******|=============\n'));
+  console.log(colors.elite('\n=============| 여관 |=============\n'));
+  console.log(colors.elite('\n어서오세요! 꽤 보고 싶었다구요?\n'));
+  console.log(colors.elite('\n=============|******|=============\n'));
 
-  let choice;
   do {
-    choice = readlineSync.question('\n1. 상점 이용하기   2. 중복 카드 합치기   3. 나가기\n');
-  } while (!['1', '2', '3'].includes(choice)); // 1, 2, 3 외의 입력을 방지
+    tavernChoice = readlineSync.question(
+      '\n1. 체력 회복하기    2. 상점 이용하기    3. 중복 카드 합치기    4. 다음 전투로!\n',
+    );
+  } while (!['1', '2', '3', '4'].includes(tavernChoice)); // 1, 2, 3 외의 입력을 방지
 
-  switch (choice) {
+  switch (tavernChoice) {
     case '1':
+      player.updateHpByTavern(30);
+      tavern(player);
+    case '2':
       shop(player, card1, card2, card3);
       break;
-    case '2':
+    case '3':
       mergeCard(player);
       break;
-    case '3':
+    case '4':
       break;
   }
 };
@@ -81,7 +87,7 @@ let mergeCard = (player) => {
 
     if (cardNameIndex === -1) {
       console.log(colors.error('카드 합치기가 취소되었습니다.'));
-      mergeCard(player); // 선택 취소 시 함수 종료
+      mergeCard(player);
     }
 
     let cardName = canMerge[cardNameIndex];
@@ -127,10 +133,13 @@ let mergeCard = (player) => {
       }
     } else {
       console.log(colors.error('유효하지 않은 카드입니다.'));
+      readlineSync.keyInPause();
     }
   } else {
     console.log(colors.error('합칠 수 있는 카드가 없습니다.'));
+    readlineSync.keyInPause();
   }
+  return;
 };
 
 let shopping = (card1, card2, card3, player) => {

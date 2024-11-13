@@ -33,12 +33,20 @@ import {
   Boss,
   makeRandomMonster,
 } from './C_monster.js';
-import { loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
+import { loadJson, getAchievements, unlockAchievement, saveAndExit } from './jsonFunction.js';
 import { tavern, shop, shopping, mergeCard } from './shop.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
-export function typeName(difficulty, uiStyle) {
+export function typeName(difficulty, uiStyle, saveData = null) {
   console.clear();
+
+  if (saveData) {
+    const player = new Player(saveData.save.player.name, difficulty);
+    player.updateData(saveData.save.player);
+    startGame(player, uiStyle);
+
+    return;
+  }
 
   const playerName = readlineSync.question(
     '\n결정을 내렸군요, 용감한 영혼이여. 그대의 이름은 무엇인가요? \n',
@@ -110,6 +118,7 @@ export async function startGame(player, uiStyle) {
       player.defense = 0;
       // 전투 로그 초기화
       setBattleText('');
+      await saveAndExit('./savedGame.json', player, uiStyle);
       tavern(player);
     }
   }

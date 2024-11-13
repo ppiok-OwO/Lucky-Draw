@@ -4,19 +4,19 @@
       "id": 1,
       "name": "가시 달린 영웅",
       "description": "가시 수호자로 승리하기",
-      "isUnlocked": true
+      "isUnlocked": false
     },
     {
       "id": 2,
       "name": "분노 조절 문제",
       "description": "광전사로 승리하기",
-      "isUnlocked": true
+      "isUnlocked": false
     },
     {
       "id": 3,
       "name": "실례지만 지금 불타고 계십니다.",
       "description": "화염 투사로 승리하기",
-      "isUnlocked": true
+      "isUnlocked": false
     },
     {
       "id": 4,
