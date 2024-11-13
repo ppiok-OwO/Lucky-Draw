@@ -1,6 +1,7 @@
 // 한글이 깨진다면 chcp 65001
 
 import chalk from 'chalk';
+import { db } from './db.js';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';

@@ -206,8 +206,8 @@ class Player {
     } else if (randomValue >= 2 && randomValue < 3) {
       this.handSize += 1;
       if (this.handSize > this.hasCard) {
+        this.drawCardRandomly();
       }
-      this.drawCardRandomly();
     } else if (randomValue >= 3 && randomValue < 4) {
       this.runAwayProb += 3;
     }

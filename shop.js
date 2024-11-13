@@ -13,9 +13,9 @@ let tavern = (player) => {
 
   displayDeckList(player);
 
-  console.log(colors.elite('\n=============| 여관 |=============\n'));
-  console.log(colors.elite('\n어서오세요! 꽤 보고 싶었다구요?\n'));
-  console.log(colors.elite('\n=============|******|=============\n'));
+  console.log(colors.green1('\n=============| 여관 |=============\n'));
+  console.log(colors.green2('\n어서오세요! 꽤 보고 싶었다구요?\n'));
+  console.log(colors.green3('\n=============|******|=============\n'));
 
   let choice;
   do {
@@ -81,7 +81,7 @@ let mergeCard = (player) => {
 
     if (cardNameIndex === -1) {
       console.log(colors.error('카드 합치기가 취소되었습니다.'));
-      return; // 선택 취소 시 함수 종료
+      mergeCard(player); // 선택 취소 시 함수 종료
     }
 
     let cardName = canMerge[cardNameIndex];
@@ -98,7 +98,7 @@ let mergeCard = (player) => {
           ),
         );
         readlineSync.keyInPause();
-        return; // 조건이 충족되지 않으면 함수 종료
+        tavern(player); // 조건이 충족되지 않으면 함수 종료
       }
 
       player.hasCard = player.hasCard.filter((card) => {

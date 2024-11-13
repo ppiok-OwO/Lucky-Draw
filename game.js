@@ -136,16 +136,6 @@ export async function startGame(player, uiStyle) {
     console.log(
       chalk.greenBright.bold('축하합니다. 당신은 마왕을 무찌르고 대륙의 영웅이 되었습니다!'),
     );
-    // let choice = readlineSync.question('새로운 여정에 도전하시겠습니까?(Y/N)');
-
-    // if (choice === 'Y' || choice === 'y') {
-    //   displayLobby();
-    //   handleUserInput();
-    // } else if (choice === 'N' || choice === 'n') {
-    //   process.exit(0);
-    // } else {
-    //   return;
-    // }
 
     if (readlineSync.keyInYN('새로운 여정에 도전하시겠습니까?(Y/N) ')) {
       displayLobby();
@@ -181,7 +171,11 @@ const battle = (player, monster, uiStyle) => {
           `\n1. 카드를 사용한다    2. 소매치기    3. 모두 섞고 다시 뽑기    4. 손패에 있는 카드 지우기    5. 도망친다    6. 시작 메뉴로 나가기\n`,
         ),
     );
-    const choice = readlineSync.question('당신의 선택은? \n');
+    let choice;
+    do {
+      choice = readlineSync.question('당신의 선택은? \n');
+    } while (!['1', '2', '3', '4', '5', '6'].includes(choice));
+
     console.log(chalk.hex('#ffcdbc')(`\n${choice}번을 선택하셨습니다.`));
 
     // 카드를 사용한다.
@@ -278,15 +272,6 @@ const battle = (player, monster, uiStyle) => {
 
       // 게임 메뉴로 나가기
     } else if (choice === '6') {
-      // let escape = readlineSync.question(
-      //   '게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ',
-      // );
-
-      // if (escape === 'Y' || escape === 'y') {
-      //   player.isEscape = true;
-      //   break;
-      // }
-
       if (
         readlineSync.keyInYN('게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ')
       ) {
@@ -297,7 +282,6 @@ const battle = (player, monster, uiStyle) => {
       player.stage = 10;
       break;
     }
-    // 잘못된 입력을 하더라도 아무런 일도 일어나지 않고 반복문이 돌아서 자동으로 선택지를 다시 고를 수 있게 된다.
   }
 };
 
