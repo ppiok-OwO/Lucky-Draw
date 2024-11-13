@@ -32,7 +32,7 @@ class Monster {
     if (player.blessing === 'Spike Defender') {
       if (player.defense > 0) {
         this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
-        setBattleText(`몬스터에게 ${player.spikeDmg}만큼의 가시 데미지를 주었습니다.`);
+        setBattleText(`몬스터에게 ${Math.round(player.spikeDmg)}만큼의 가시 데미지를 주었습니다.`);
       } else {
         this.hp -= Math.round(playingCard.attackDmg * cardPower);
         setBattleText('');
@@ -71,7 +71,7 @@ class Monster {
   }
   monsterLoseHpByIgnite(playingCard, cardPower = 1, player) {
     if (this.isIgnited && player.blessing === 'Chieftain') {
-      this.igniteStack += playingCard.fireDmg * cardPower;
+      this.igniteStack += Math.round(playingCard.fireDmg * cardPower);
       this.hp -= this.igniteStack;
       this.igniteStack--;
       setBattleText(`적이 불에 타오르고 있습니다.`);

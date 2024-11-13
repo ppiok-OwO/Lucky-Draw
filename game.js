@@ -2,7 +2,14 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { displayLobby, handleUserInput } from './server.js';
-import { largeUI, compactUI, setMessage, selectReward, setBattleText } from './logs.js';
+import {
+  largeUI,
+  compactUI,
+  setMessage,
+  selectReward,
+  setBattleText,
+  displayDeckList,
+} from './logs.js';
 import { Player } from './C_player.js';
 import {
   Card,
@@ -27,6 +34,7 @@ import {
   makeRandomMonster,
 } from './C_monster.js';
 import { loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
+import { tavern, shop, shopping, mergeCard } from './shop.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName(difficulty, uiStyle) {
@@ -102,6 +110,7 @@ export async function startGame(player, uiStyle) {
       player.defense = 0;
       // 전투 로그 초기화
       setBattleText('');
+      tavern(player);
     }
   }
 
@@ -127,15 +136,12 @@ export async function startGame(player, uiStyle) {
     console.log(
       chalk.greenBright.bold('축하합니다. 당신은 마왕을 무찌르고 대륙의 영웅이 되었습니다!'),
     );
-    let choice = readlineSync.question('새로운 여정에 도전하시겠습니까?(Y/N)');
 
-    if (choice === 'Y' || choice === 'y') {
+    if (readlineSync.keyInYN('새로운 여정에 도전하시겠습니까?(Y/N) ')) {
       displayLobby();
       handleUserInput();
-    } else if (choice === 'N' || choice === 'n') {
-      process.exit(0);
     } else {
-      return;
+      process.exit(0);
     }
   } else if (player.isEscape) {
     displayLobby();
@@ -165,9 +171,14 @@ const battle = (player, monster, uiStyle) => {
           `\n1. 카드를 사용한다    2. 소매치기    3. 모두 섞고 다시 뽑기    4. 손패에 있는 카드 지우기    5. 도망친다    6. 시작 메뉴로 나가기\n`,
         ),
     );
-    const choice = readlineSync.question('당신의 선택은? \n');
+    let choice;
+    do {
+      choice = readlineSync.question('당신의 선택은? \n');
+    } while (!['1', '2', '3', '4', '5', '6'].includes(choice));
+
     console.log(chalk.hex('#ffcdbc')(`\n${choice}번을 선택하셨습니다.`));
 
+    // 카드를 사용한다.
     if (choice === '1') {
       console.log(
         chalk.hex('#FAA300')(`
@@ -191,7 +202,7 @@ const battle = (player, monster, uiStyle) => {
         }
       }
 
-      // 카드 상세보기 함수
+      // 소매치기
     } else if (choice === '2') {
       setBattleText('손은 눈보다 빠르지!');
       let randomValue = Math.random() * 10;
@@ -216,11 +227,14 @@ const battle = (player, monster, uiStyle) => {
       } else {
         player.incPlayerStat();
       }
-
       monster.monsterAttack(player);
+
+      // 카드 셔플
     } else if (choice === '3') {
       player.shuffleAllCards();
       monster.monsterAttack(player);
+
+      // 카드 지우기
     } else if (choice === '4') {
       console.log(
         chalk.magenta(`
@@ -247,18 +261,20 @@ const battle = (player, monster, uiStyle) => {
         removeCard(cardIndex, player);
         monster.monsterAttack(player);
       }
+
+      // 도망치기
     } else if (choice === '5') {
       if (player.stage === 10) {
         setMessage('보스전에선 도망칠 수 없습니다!');
       } else {
         player.runAway(monster);
       }
-    } else if (choice === '6') {
-      let escape = readlineSync.question(
-        '게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ',
-      );
 
-      if (escape === 'Y' || escape === 'y') {
+      // 게임 메뉴로 나가기
+    } else if (choice === '6') {
+      if (
+        readlineSync.keyInYN('게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ')
+      ) {
         player.isEscape = true;
         break;
       }
@@ -266,7 +282,6 @@ const battle = (player, monster, uiStyle) => {
       player.stage = 10;
       break;
     }
-    // 잘못된 입력을 하더라도 아무런 일도 일어나지 않고 반복문이 돌아서 자동으로 선택지를 다시 고를 수 있게 된다.
   }
 };
 

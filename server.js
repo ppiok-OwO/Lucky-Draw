@@ -1,6 +1,7 @@
 // 한글이 깨진다면 chcp 65001
 
 import chalk from 'chalk';
+import { db } from './db.js';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
@@ -147,6 +148,7 @@ async function handleUserInput() {
     default:
       console.log(chalk.red('올바르지 않은 입력입니다.'));
       handleUserInput(); // 유효하지 않은 입력일 경우 다시 입력 받음
+      break;
   }
 }
 

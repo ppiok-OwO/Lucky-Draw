@@ -65,6 +65,13 @@ class Player {
     setMessage('카드를 섞고 손패를 가득 채웠습니다!');
   }
 
+  collectAllCard() {
+    let splicedHand = this.hasCardInHand.splice(0);
+    // splice는 배열을 반환하므로, hasCard배열과 합쳐줄 때 전개 구문을 사용했다.
+    this.hasCard.push(...splicedHand);
+    this.hasCard.sort();
+  }
+
   // 카드 사용
   cardPlay(playingCard, monster, cardIndex) {
     // 100 미만의 랜덤한 밸류를 구하고 카드 발동 확률이랑 비교해보기
@@ -199,8 +206,8 @@ class Player {
     } else if (randomValue >= 2 && randomValue < 3) {
       this.handSize += 1;
       if (this.handSize > this.hasCard) {
+        this.drawCardRandomly();
       }
-      this.drawCardRandomly();
     } else if (randomValue >= 3 && randomValue < 4) {
       this.runAwayProb += 3;
     }

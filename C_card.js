@@ -102,7 +102,7 @@ function seeCard(card) {
   setMessage(`
   ======| 카드 상세보기 |======
   
-    >>> ${card.cardName} <<<
+  >>> ${card.cardName}
 
   등급 : ${card.cardTier}
   발동 확률 : ${card.actProb}
@@ -114,6 +114,23 @@ function seeCard(card) {
   ========| ******* |========
     `);
 }
+
+let countCard = (player) => {
+  // 카드 한 배열로 모으고 정렬
+  player.collectAllCard();
+
+  // 카드 개수 세기
+  let cardCounts = {};
+  player.hasCard.forEach((card) => {
+    if (cardCounts[card.cardName]) {
+      cardCounts[card.cardName]++;
+    } else {
+      cardCounts[card.cardName] = 1;
+    }
+  });
+
+  return cardCounts;
+};
 
 export {
   Card,
@@ -127,4 +144,5 @@ export {
   LegendaryDefenseCard,
   makeRandomCard,
   seeCard,
+  countCard
 };
