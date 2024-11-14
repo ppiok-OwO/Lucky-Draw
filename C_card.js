@@ -4,7 +4,7 @@ import readlineSync from 'readline-sync';
 import { largeUI, compactUI, setMessage } from './logs.js';
 
 class Card {
-  constructor(cardName, cardTier, actProb, attackDmg, fireDmg, restoreHp, defense) {
+  constructor(cardName, cardTier, actProb, attackDmg, fireDmg, restoreHp, defense, price) {
     this.cardName = cardName;
     this.actProb = actProb;
     this.cardTier = cardTier;
@@ -13,55 +13,56 @@ class Card {
     this.fireDmg = fireDmg;
     this.restoreHp = restoreHp;
     this.defense = defense;
+    this.price = price;
   }
 }
 
 class NormalAttackCard extends Card {
   constructor() {
-    // cardName, cardTier, actProb, attackDmg, fireDmg, restoreHp, defense
-    super('기본 공격', 'Normal', 75, 10, 5, 5, 0);
+    // cardName, cardTier, actProb, attackDmg, fireDmg, restoreHp, defense, price
+    super('기본 공격', 'Normal', 75, 10, 5, 5, 0, 20);
   }
 }
 
 class RareAttackCard extends Card {
   constructor() {
-    super('피부 찢기', 'Rare', 80, 20, 10, 5, 5);
+    super('피부 찢기', 'Rare', 80, 20, 10, 5, 5, 40);
   }
 }
 
 class EpicAttackCard extends Card {
   constructor() {
-    super('완벽한 타격', 'Epic', 85, 35, 15, 15, 5);
+    super('완벽한 타격', 'Epic', 85, 35, 15, 15, 5, 80);
   }
 }
 
 class LegendaryAttackCard extends Card {
   constructor() {
-    super('말살검', 'Legendary', 90, 55, 25, 25, 10);
+    super('말살검', 'Legendary', 90, 55, 25, 25, 10, 160);
   }
 }
 
 class NormalDefenseCard extends Card {
   constructor() {
-    super('기본 방어', 'Normal', 75, 0, 0, 5, 10);
+    super('기본 방어', 'Normal', 75, 0, 0, 5, 10, 20);
   }
 }
 
 class RareDefenseCard extends Card {
   constructor() {
-    super('방패 올리기', 'Rare', 80, 0, 0, 10, 15);
+    super('방패 올리기', 'Rare', 80, 0, 0, 10, 15, 40);
   }
 }
 
 class EpicDefenseCard extends Card {
   constructor() {
-    super('바리게이트', 'Epic', 85, 0, 0, 15, 25);
+    super('바리게이트', 'Epic', 85, 0, 0, 15, 25, 80);
   }
 }
 
 class LegendaryDefenseCard extends Card {
   constructor() {
-    super('참호', 'Legendary', 90, 0, 0, 20, 30);
+    super('참호', 'Legendary', 90, 0, 0, 20, 30, 160);
   }
 }
 
@@ -144,5 +145,5 @@ export {
   LegendaryDefenseCard,
   makeRandomCard,
   seeCard,
-  countCard
+  countCard,
 };

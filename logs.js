@@ -20,19 +20,19 @@ function largeUI(player, monster) {
   if (player.isBossStage) {
     console.log(
       colors.danger(`
-| Stage: ${player.stage}(BOSS!!) | ${player.blessing} | ${difficultyInfo} |
+| Stage: ${player.stage}(BOSS!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
       `),
     );
   } else if (player.isEliteStage) {
     console.log(
       colors.elite(`
-| Stage: ${player.stage}(ELITE!!) | ${player.blessing} | ${difficultyInfo} |
+| Stage: ${player.stage}(ELITE!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
       `),
     );
   } else {
     console.log(
       colors.green2(`
-| Stage: ${player.stage} | ${player.blessing} | ${difficultyInfo} |
+| Stage: ${player.stage} | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
       `),
     );
   }
@@ -79,19 +79,19 @@ let compactUI = (player, monster) => {
   if (player.isBossStage) {
     console.log(
       colors.danger(`
-| Stage: ${player.stage}(BOSS!!) | ${player.blessing} | ${difficultyInfo} |
+| Stage: ${player.stage}(BOSS!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
       `),
     );
   } else if (player.isEliteStage) {
     console.log(
       colors.elite(`
-| Stage: ${player.stage}(ELITE!!) | ${player.blessing} | ${difficultyInfo} |
+| Stage: ${player.stage}(ELITE!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
       `),
     );
   } else {
     console.log(
       colors.green2(`
-| Stage: ${player.stage} | ${player.blessing} | ${difficultyInfo} |
+| Stage: ${player.stage} | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
       `),
     );
   }
@@ -294,7 +294,7 @@ function DisplayBattleStatus(player, monster) {
 let miniUI = (player) => {
   const playerHealthBar = CreateHealthBar(player, '#15B392');
   console.log(
-    `${chalk.hex('#15B392').bold(`\n| 플레이어 | ${player.name} | 방어도${Math.round(player.defense)} | 유대감${Math.round(player.bondingIndex)} |\n`)}`,
+    `${chalk.hex('#15B392').bold(`| 플레이어 | ${player.name} | 방어도 ${Math.round(player.defense)} | 유대감 ${Math.round(player.bondingIndex)} | 보유골드 ${player.gold} |`)}`,
   );
   console.log(
     playerHealthBar + chalk.yellow.bold(` ${Math.round(player.hp)}/${Math.round(player.maxHp)}\n`),

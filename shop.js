@@ -42,30 +42,119 @@ let tavern = (player) => {
   }
 };
 
+// 카드 상점
 let shop = (player, card1, card2, card3) => {
   console.clear();
+  displayDeckList(player);
+  miniUI(player);
 
   let cardName = shopping(card1, card2, card3, player);
 
   switch (cardName) {
     case '1':
-      player.hasCard.push(card1);
+      if (player.gold >= card1.price) {
+        player.hasCard.push(card1);
+        player.gold -= card1.price;
+      } else {
+        console.log(colors.error('보유 금액이 부족합니다!'));
+        readlineSync.keyInPause();
+      }
       break;
     case '2':
-      player.hasCard.push(card2);
+      if (player.gold >= card2.price) {
+        player.hasCard.push(card2);
+        player.gold -= card2.price;
+      } else {
+        console.log(colors.error('보유 금액이 부족합니다!'));
+        readlineSync.keyInPause();
+      }
       break;
     case '3':
-      player.hasCard.push(card3);
+      if (player.gold >= card3.price) {
+        player.hasCard.push(card3);
+        player.gold -= card3.price;
+      } else {
+        console.log(colors.error('보유 금액이 부족합니다!'));
+        readlineSync.keyInPause();
+      }
       break;
     default:
       break;
   }
+};
+let shopping = (card1, card2, card3, player) => {
+  console.clear();
+  displayDeckList(player);
+
+  console.log(
+    colors.cardChoice(`
+  1. 
+  ======| 카드 상세보기 |======
+  
+  >>> ${card1.cardName}
+
+  등급 : ${card1.cardTier}
+  발동 확률 : ${card1.actProb}
+  공격 데미지 : ${card1.attackDmg}
+  화염 데미지 : ${card1.fireDmg}
+  체력 회복량 : ${card1.restoreHp}
+  방어도 : ${card1.defense}
+
+  가격 : ${card1.price}
+
+  ========| ******* |========
+
+  2. 
+  ======| 카드 상세보기 |======
+  
+  >>> ${card2.cardName}
+
+  등급 : ${card2.cardTier}
+  발동 확률 : ${card2.actProb}
+  공격 데미지 : ${card2.attackDmg}
+  화염 데미지 : ${card2.fireDmg}
+  체력 회복량 : ${card2.restoreHp}
+  방어도 : ${card2.defense}
+
+  가격 : ${card2.price}
+
+  ========| ******* |========
+
+  3. 
+  ======| 카드 상세보기 |======
+  
+  >>> ${card3.cardName}
+
+  등급 : ${card3.cardTier}
+  발동 확률 : ${card3.actProb}
+  공격 데미지 : ${card3.attackDmg}
+  화염 데미지 : ${card3.fireDmg}
+  체력 회복량 : ${card3.restoreHp}
+  방어도 : ${card3.defense}
+
+  가격 : ${card3.price}
+
+  ========| ******* |========
+    `),
+  );
+
+  console.log(
+    colors.green2(`
+아주 흥미로운 카드들이네요! 어떤 카드를 구매하시겠습니까?
+(나가시려면 엔터를 넣어주세요)
+  `),
+  );
+
+  let cardName = readlineSync.question('번호로 입력 : ');
+
+  return cardName;
 };
 
 let mergeCard = (player) => {
   console.clear();
   // 덱 리스트 보여주고
   displayDeckList(player);
+  miniUI(player);
   // 카드 개수 세기
   let cardCounts = countCard(player);
 
@@ -134,68 +223,6 @@ let mergeCard = (player) => {
     console.log(colors.error('합칠 수 있는 카드가 없습니다.'));
     readlineSync.keyInPause();
   }
-};
-
-let shopping = (card1, card2, card3, player) => {
-  console.clear();
-  displayDeckList(player);
-
-  console.log(
-    colors.cardChoice(`
-  1. 
-  ======| 카드 상세보기 |======
-  
-  >>> ${card1.cardName}
-
-  등급 : ${card1.cardTier}
-  발동 확률 : ${card1.actProb}
-  공격 데미지 : ${card1.attackDmg}
-  화염 데미지 : ${card1.fireDmg}
-  체력 회복량 : ${card1.restoreHp}
-  방어도 : ${card1.defense}
-
-  ========| ******* |========
-
-  2. 
-  ======| 카드 상세보기 |======
-  
-  >>> ${card2.cardName}
-
-  등급 : ${card2.cardTier}
-  발동 확률 : ${card2.actProb}
-  공격 데미지 : ${card2.attackDmg}
-  화염 데미지 : ${card2.fireDmg}
-  체력 회복량 : ${card2.restoreHp}
-  방어도 : ${card2.defense}
-
-  ========| ******* |========
-
-  3. 
-  ======| 카드 상세보기 |======
-  
-  >>> ${card3.cardName}
-
-  등급 : ${card3.cardTier}
-  발동 확률 : ${card3.actProb}
-  공격 데미지 : ${card3.attackDmg}
-  화염 데미지 : ${card3.fireDmg}
-  체력 회복량 : ${card3.restoreHp}
-  방어도 : ${card3.defense}
-
-  ========| ******* |========
-    `),
-  );
-
-  console.log(
-    colors.green2(`
-아주 흥미로운 카드들이네요! 어떤 카드를 구매하시겠습니까?
-(나가시려면 아무 키나 눌러주세요)
-  `),
-  );
-
-  let cardName = readlineSync.question('번호로 입력 : ');
-
-  return cardName;
 };
 
 export { tavern, shop, shopping, mergeCard };
