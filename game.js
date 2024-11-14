@@ -33,12 +33,20 @@ import {
   Boss,
   makeRandomMonster,
 } from './C_monster.js';
-import { loadJson, getAchievements, unlockAchievement } from './jsonFunction.js';
+import { loadJson, getAchievements, unlockAchievement, saveAndExit } from './jsonFunction.js';
 import { tavern, shop, shopping, mergeCard } from './shop.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
-export function typeName(difficulty, uiStyle) {
+export function typeName(difficulty, uiStyle, saveData = null) {
   console.clear();
+
+  if (saveData) {
+    const player = new Player(saveData.save.player.name, difficulty);
+    player.updateData(saveData.save.player);
+    startGame(player, uiStyle);
+
+    return;
+  }
 
   const playerName = readlineSync.question(
     '\n결정을 내렸군요, 용감한 영혼이여. 그대의 이름은 무엇인가요? \n',
@@ -97,20 +105,14 @@ export async function startGame(player, uiStyle) {
     } else if (player.isEscape) {
       break;
     } else if (monster.hp <= 0) {
-      player.stage++;
+      // 스테이지를 클리어했니?
+      clearStage(player);
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
-      // 최대 체력 증가
-      player.maxHp += player.stage * 10;
-      player.bondingIndex += player.stage * 5;
-      // 스테이지가 끝나면 전투 중에 얻은 스탯들 초기화
-      player.spikeDmg = 20; // 가시 데미지
-      player.multiAttackProb = 50; // 연속 공격 확률
-      player.maxAttackCount = 2; // 최대 공격 횟수
-      player.defense = 0;
       // 전투 로그 초기화
       setBattleText('');
       tavern(player);
+      await saveAndExit('./savedGame.json', player, uiStyle);
     }
   }
 
@@ -334,3 +336,20 @@ function addCard(player, NA = 0, ND = 0, RA = 0, RD = 0, EA = 0, ED = 0, LA = 0,
     player.hasCard.push(new LegendaryDefenseCard()); // 객체 생성 후 배열에 추가
   }
 }
+
+let clearStage = (player) => {
+  // 스테이지 클리어 시 스탯 증가
+  player.stage++;
+  player.maxHp += player.stage * 10;
+  player.bondingIndex += player.stage * 5;
+  if (player.isEliteStage) {
+    player.gold += 250;
+  } else {
+    player.gold += 150;
+  }
+  // 전투 중에 얻은 스탯들은 초기화
+  player.spikeDmg = 20; // 가시 데미지
+  player.multiAttackProb = 50; // 연속 공격 확률
+  player.maxAttackCount = 2; // 최대 공격 횟수
+  player.defense = 0;
+};

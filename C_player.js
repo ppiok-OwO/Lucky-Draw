@@ -25,6 +25,7 @@ class Player {
     this.isEliteStage = false;
     this.isBossStage = false;
     this.difficulty = difficulty;
+    this.gold = 0;
   }
 
   // 카드 드로우
@@ -159,6 +160,13 @@ class Player {
     }
   }
 
+  updateHpByTavern(num) {
+    this.hp += num;
+    if (this.hp >= this.maxHp) {
+      this.hp = this.maxHp;
+    }
+  }
+
   // 카드에 의한 방어도 업데이트
   updateDefenseByCard(playingCard, cardPower = 1) {
     // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 그리고 현재 가지고 있는 가시데미지의 절반만큼 방어도를 추가로 얻는다.
@@ -211,6 +219,11 @@ class Player {
     } else if (randomValue >= 3 && randomValue < 4) {
       this.runAwayProb += 3;
     }
+  }
+
+  // 클래스 인스턴스에 데이터를 업데이트하는 메서드
+  updateData(data) {
+    Object.assign(this, data); // 받은 데이터로 현재 인스턴스의 프로퍼티 덮어쓰기
   }
 }
 
