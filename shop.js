@@ -32,6 +32,7 @@ let tavern = (player) => {
         const restorHpPrice = 30;
         if (player.gold >= restorHpPrice) {
           player.updateHpByTavern(restorHpPrice);
+          player.gold -= restorHpPrice;
         } else {
           console.log(colors.error('보유 금액이 부족합니다!'));
           readlineSync.keyInPause();

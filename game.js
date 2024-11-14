@@ -176,7 +176,7 @@ const battle = (player, monster, uiStyle) => {
     let choice;
     do {
       choice = readlineSync.question('당신의 선택은? \n');
-    } while (!['1', '2', '3', '4', '5', '6'].includes(choice));
+    } while (!['1', '2', '3', '4', '5', '6', 'test'].includes(choice));
 
     console.log(chalk.hex('#ffcdbc')(`\n${choice}번을 선택하셨습니다.`));
 
