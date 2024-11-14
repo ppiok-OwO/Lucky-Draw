@@ -18,6 +18,8 @@ const colors = {
   battleLog: (str) => chalk.hex('#FF4545').bold(`${str}`),
   cardChoice: (str) => chalk.hex('#E8B86D')(`${str}`),
   monsterDebuff: (str) => chalk.hex('#FFCFB3')(`${str}`),
+  white: (str) => chalk.white(`${str}`),
+  pink: (str) => chalk.hex('#EE66A6')(`${str}`),
 };
 //#endregion
 

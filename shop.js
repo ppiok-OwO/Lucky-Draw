@@ -5,6 +5,7 @@ import { colors } from './functions.js';
 import { makeRandomCard, countCard } from './C_card.js';
 import { combineCardNamesToString, displayDeckList, miniUI } from './logs.js';
 
+// 여관
 let tavern = (player) => {
   let tavernChoice;
   let card1 = makeRandomCard(player);
@@ -24,11 +25,17 @@ let tavern = (player) => {
       tavernChoice = readlineSync.question(
         '\n1. 체력 회복하기    2. 상점 이용하기    3. 중복 카드 합치기    4. 다음 전투로(자동저장)!\n',
       );
-    } while (!['1', '2', '3', '4'].includes(tavernChoice)); // 1, 2, 3 외의 입력을 방지
+    } while (!['1', '2', '3', '4'].includes(tavernChoice)); // 1, 2, 3, 4 외의 입력을 방지
 
     switch (tavernChoice) {
       case '1':
-        player.updateHpByTavern(30);
+        const restorHpPrice = 30;
+        if (player.gold >= restorHpPrice) {
+          player.updateHpByTavern(restorHpPrice);
+        } else {
+          console.log(colors.error('보유 금액이 부족합니다!'));
+          readlineSync.keyInPause();
+        }
         break;
       case '2':
         shop(player, card1, card2, card3);
@@ -42,12 +49,8 @@ let tavern = (player) => {
   }
 };
 
-// 카드 상점
+//#region 카드 상점
 let shop = (player, card1, card2, card3) => {
-  console.clear();
-  displayDeckList(player);
-  miniUI(player);
-
   let cardName = shopping(card1, card2, card3, player);
 
   switch (cardName) {
@@ -85,6 +88,7 @@ let shop = (player, card1, card2, card3) => {
 let shopping = (card1, card2, card3, player) => {
   console.clear();
   displayDeckList(player);
+  miniUI(player);
 
   console.log(
     colors.cardChoice(`
@@ -149,7 +153,9 @@ let shopping = (card1, card2, card3, player) => {
 
   return cardName;
 };
+//#endregion
 
+// 카드 합치기
 let mergeCard = (player) => {
   console.clear();
   // 덱 리스트 보여주고

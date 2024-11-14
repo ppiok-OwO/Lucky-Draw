@@ -82,34 +82,34 @@ class Monster {
 class Slime extends Monster {
   constructor(player) {
     // name, threat, hp, attackDmg
-    super('킹슬라임', '뽀잉! 뽀잉!', player);
+    super('킹슬라임', '"뽀잉! 뽀잉!"', player);
   }
 }
 class Skelleton extends Monster {
   constructor(player) {
-    super('눈이 파란 해골', 'WA! 샌즈 아시는구나!', player);
+    super('웃음이 특이한 해골', '"WA! 샌즈 아시는구나!"', player);
   }
 }
 class Harpy extends Monster {
   constructor(player) {
-    super('높은 바위 하피', '깃털 총공격!', player);
+    super('높은 바위 하피', '"깃털 총공격!"', player);
   }
 }
 class Ork extends Monster {
   constructor(player) {
-    super('렉사르', '사냥을 시작하지! 네놈을 추격해주마!', player);
+    super('렉사르', '"사냥을 시작하지! 네놈을 추격해주마!"', player);
   }
 }
 class Ogre extends Monster {
   constructor(player) {
-    super('오우거 마법사', '준비됐어! 난 아직인데?', player);
+    super('오우거 마법사', '"준비됐어! 난 아직인데?"', player);
   }
 }
 // 여기까지가 1~9스테이지 몬스터
 
 class Boss extends Monster {
   constructor(player) {
-    super('만물의 종결자', '너흰 아직 준비가 안 되었다!', player);
+    super('만물의 종결자', '"내가 바로 대격변이다!"', player);
   }
 } // 10스테이지는 마왕
 
