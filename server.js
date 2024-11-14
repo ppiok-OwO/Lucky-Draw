@@ -1,92 +1,35 @@
 // 한글이 깨진다면 chcp 65001
 
-import chalk from 'chalk';
+import chalk, { colorNames } from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
+import { loadJson, getAchievements, unlockAchievement, loadSaveFile } from './jsonFunction.js';
+import { colors } from './functions.js';
+
+let difficultyChoice = 'NORMAL';
+let difficulty = 1;
+let uiStyle = 'COMPACT';
 
 // 시나리오 스크립트
 async function scenario() {
-  // console.clear();
-  // const line = chalk.white('='.repeat(50));
-  // console.log(line);
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log(
-  //       chalk.red.bold(`
-  // 10년 전, 마왕의 부활로 인해 세상은 혼돈에 휩싸였습니다.
-  //         `),
-  //     );
-  //     resolve(); // 비동기 작업 완료
-  //   }, 1000);
-  // });
+  console.clear();
+  // const lines = [
+  //   '10년 전, 마왕의 부활로 인해 대륙은 혼돈에 휩싸이기 시작했습니다.\n\n',
+  //   '포악한 몬스터들이 인류를 학살하자, 평화롭던 마을도 순식간에 잿더미가 되어 버렸죠.\n\n',
+  //   '선량한 자가 무참히 짓밟히고 악한 자만이 살아남는 시대...\n\n',
+  //   '우리에게 남은 희망은 정의로운 영웅이 나타나 마왕을 처단해주는 것 뿐입니다.\n\n',
+  //   '어쩌면 당신이 바로 그 영웅이 될 수도 있겠네요.\n\n',
+  //   '...비록 당신은 알코올 중독에 걸린 도박꾼이지만 말이죠.\n\n',
+  // ];
 
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log(
-  //       chalk.red.bold(`
-  // 포악한 몬스터들이 인류를 약탈하였고 마을은 잿더미가 되었습니다. 그리고, 수많은 용사들이 목숨을 잃고 말았습니다.
-  //         `),
-  //     );
-  //     resolve();
-  //   }, 3000);
-  // });
-
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log(
-  //       chalk.red.bold(`
-  // 선량한 자는 무참히 짓밟히고 악한 자가 욕망에 타락하는 지금, 인류는 영웅의 탄생을 바라고 있습니다.
-  //         `),
-  //     );
-  //     resolve();
-  //   }, 3000);
-  // });
-
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log(
-  //       chalk.red.bold(`
-  // 우리의 희망은 정의로운 영웅이 나타나 몬스터를 물리치고 마왕을 처단하는 것 뿐입니다.
-  //         `),
-  //     );
-  //     resolve();
-  //   }, 3000);
-  // });
-
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log(
-  //       chalk.red.bold(`
-  // 하지만 누가, 어떻게 영웅이 될 수 있을까요? 어쩌면 당신이 영웅이 될 수 있을지도 모르겠네요. 누구나 정의로울 수는 있으니까요.
-  //         `),
-  //     );
-  //     resolve();
-  //   }, 3000);
-  // });
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log(
-  //       chalk.red.bold(`
-  // ...비록 당신은 알코올 중독에 걸린 도박꾼이지만 말이죠.
-  //         `),
-  //     );
-  //     resolve();
-  //   }, 4000);
-  // });
-
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log(line);
-  //     resolve();
-  //   }, 1000);
-  // });
+  // await printCharacter(lines);
 
   await new Promise(() => {
     setTimeout(() => {
       displayLobby();
       handleUserInput();
-    }, 2000);
+    }, 1500);
   });
 }
 
@@ -96,9 +39,9 @@ function displayLobby() {
 
   // 타이틀 텍스트
   console.log(
-    chalk.cyan(
+    chalk.hex('#FFF7D1')(
       figlet.textSync('Lucky Draw=*', {
-        font: 'ANSI Shadow',
+        font: 'Delta Corps Priest 1',
         horizontalLayout: 'default',
         verticalLayout: 'default',
       }),
@@ -106,26 +49,32 @@ function displayLobby() {
   );
 
   // 상단 경계선
-  const line = chalk.magentaBright('='.repeat(50));
+  const line = chalk.grey('='.repeat(50));
   console.log(line);
 
   // 게임 이름
   console.log(
-    chalk.yellowBright.bold(`
-덱빌딩 카드 게임 LuckyDraw!\n술주정뱅이 도박꾼이라도 영웅이 될 수 있다?! 
+    chalk.hex('#FFECC8').bold(`
+덱빌딩 카드 게임 LuckyDraw!\n주정뱅이 도박꾼이라도 영웅이 될 수 있을까?!
 당신의 운빨을 확인해보세요!\n
     `),
   );
 
   // 설명 텍스트
-  // console.log(chalk.green('옵션을 선택해주세요.'));
+  console.log(
+    chalk.hex('#FFD09B')(
+      `옵션을 선택해주세요.(현재 난이도 : ${difficultyChoice} / UI 스타일 : ${uiStyle})`,
+    ),
+  );
   console.log();
 
   // 옵션들
-  console.log(chalk.blue('1.') + chalk.white(' 새로운 게임 시작'));
-  console.log(chalk.blue('2.') + chalk.white(' 업적 확인하기'));
-  console.log(chalk.blue('3.') + chalk.white(' 옵션'));
-  console.log(chalk.blue('4.') + chalk.white(' 종료'));
+  console.log(chalk.hex('#FFB0B0')('1.') + chalk.hex('#FFB0B0')(' 새로운 게임 시작'));
+  console.log(chalk.hex('#FFB0B0')('2.') + chalk.hex('#FFB0B0')(' 업적 확인하기'));
+  console.log(chalk.hex('#FFB0B0')('3.') + chalk.hex('#FFB0B0')(' 난이도'));
+  console.log(chalk.hex('#FFB0B0')('4.') + chalk.hex('#FFB0B0')(' UI 옵션'));
+  console.log(chalk.hex('#FFB0B0')('5.') + chalk.hex('#FFB0B0')(' 세이브 파일'));
+  console.log(chalk.hex('#FFB0B0')('6.') + chalk.hex('#FFB0B0')(' 종료\n'));
 
   // 하단 경계선
   console.log(line);
@@ -134,35 +83,90 @@ function displayLobby() {
   console.log(chalk.gray('\n1-4 사이의 수를 입력한 뒤 엔터를 누르세요.'));
 }
 
-// 유저 입력을 받아 처리하는 함수
-function handleUserInput() {
+// 메뉴에서 입력을 받는다.
+async function handleUserInput() {
   const choice = readlineSync.question('입력: ');
 
   switch (choice) {
     case '1':
       console.log(chalk.green('게임을 시작합니다.'));
       // 여기에서 새로운 게임 시작 로직을 구현
-      typeName();
+      typeName(difficulty, uiStyle);
       // startGame();
       break;
     case '2':
-      console.log(chalk.yellow('구현 준비중입니다.. 게임을 시작하세요'));
+      console.clear();
       // 업적 확인하기 로직을 구현
+      await getAchievements();
+      readlineSync.keyInPause('\n메뉴로 되돌아 가기: ');
+      displayLobby();
       handleUserInput();
       break;
     case '3':
-      console.log(chalk.blue('구현 준비중입니다.. 게임을 시작하세요'));
-      // 옵션 메뉴 로직을 구현
-      handleUserInput();
+      let input = readlineSync.question('\n난이도 선택 [ NORMAL / HARD / HELL ] : ');
+      input = input.toUpperCase();
+
+      if (input === 'NORMAL') {
+        difficultyChoice = input;
+        difficulty = 1.5;
+        displayLobby();
+        handleUserInput();
+      } else if (input === 'HARD') {
+        difficultyChoice = input;
+        difficulty = 1.2;
+        displayLobby();
+        handleUserInput();
+      } else if (input === 'HELL') {
+        difficultyChoice = input;
+        difficulty = 1;
+        displayLobby();
+        handleUserInput();
+      } else {
+        console.log(chalk.red('올바르지 않은 입력입니다.'));
+        displayLobby();
+        handleUserInput();
+      }
       break;
+    // 옵션 메뉴 로직을 구현
     case '4':
+      let selectUI = readlineSync.question('\nUI 스타일 [ LARGE / COMPACT ] : ');
+      selectUI = selectUI.toUpperCase();
+
+      if (selectUI === 'LARGE' || selectUI === 'COMPACT') {
+        uiStyle = selectUI;
+        displayLobby();
+        handleUserInput();
+      } else {
+        console.log(chalk.red('올바르지 않은 입력입니다.'));
+        displayLobby();
+        handleUserInput();
+      }
+      break;
+    case '5':
+      console.clear();
+      let saveData = await loadSaveFile();
+
+      if (saveData) {
+        if (readlineSync.keyInYN('\n해당 세이브 파일을 이어서 진행하시겠습니까?: ')) {
+          typeName(saveData.save.player.difficulty, saveData.save.uiStyle, saveData);
+        } else {
+          displayLobby();
+          handleUserInput();
+        }
+      } else {
+        console.log(colors.battleLog('세이브 파일이 존재하지 않습니다.'));
+        readlineSync.keyInPause();
+      }
+
+      break;
+    case '6':
       console.log(chalk.red('게임을 종료합니다.'));
       // 게임 종료 로직을 구현
       process.exit(0); // 게임 종료
-      break;
     default:
-      console.log(chalk.red('올바른 선택을 하세요.'));
+      console.log(chalk.red('올바르지 않은 입력입니다.'));
       handleUserInput(); // 유효하지 않은 입력일 경우 다시 입력 받음
+      break;
   }
 }
 
@@ -171,5 +175,27 @@ async function start() {
   scenario();
 }
 
+// 타자기 효과
+async function printCharacter(lines, lineDelay = 1000) {
+  for (let i = 0; i < lines.length; i++) {
+    await new Promise((resolve) => {
+      let index = 0;
+      function print() {
+        if (index < lines[i].length) {
+          process.stdout.write(chalk.red.bold(lines[i].charAt(index)));
+          index++;
+          setTimeout(print, 80);
+        } else {
+          resolve(); // 한 줄의 출력이 끝나면 resolve 호출
+        }
+      }
+      print();
+    });
+    await new Promise((resolve) => setTimeout(resolve, lineDelay));
+  }
+}
+
 // 게임 실행
 start();
+
+export { displayLobby, handleUserInput };

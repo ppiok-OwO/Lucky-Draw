@@ -1,45 +1,112 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import {
-  Card,
-  NormalAttackCard,
-  NormalDefenseCard,
-  RareAttackCard,
-  RareDefenseCard,
-  EpicAttackCard,
-  EpicDefenseCard,
-  LegendaryAttackCard,
-  LegendaryDefenseCard,
-  makeRandomCard,
-  seeCard,
-} from './C_card.js';
+import { makeRandomCard, seeCard } from './C_card.js';
 import { Player } from './C_player.js';
+import { colors } from './functions.js';
 
 // 인게임 안내 메시지를 위한 변수들
 const info = `[TIP]전투 중에 카드를 자세히 보시려면 번호 앞에 'see'를 붙여주세요\n`;
-let message;
+let message = '';
+let battleText = '';
 
-// 화면에 각종 스탯을 적어보자
-function displayStatus(stage, player, monster) {
-  let allCardNames = combineCardNamesToString(player);
-  console.log(chalk.green.bold(`| 덱 리스트 | ${allCardNames}`));
-  console.log(chalk.magentaBright.bold(`\n====== Current Status ======`));
+// LARGE UI
+function largeUI(player, monster) {
+  let difficultyInfo =
+    player.difficulty === 1 ? 'NORMAL' : player.difficulty === 1.2 ? 'HARD' : 'HELL';
+  displayDeckList(player);
+  console.log(colors.grey(`\n====== Current Status ======`));
+
+  if (player.isBossStage) {
+    console.log(
+      colors.danger(`
+| Stage: ${player.stage}(BOSS!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+      `),
+    );
+  } else if (player.isEliteStage) {
+    console.log(
+      colors.elite(`
+| Stage: ${player.stage}(ELITE!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+      `),
+    );
+  } else {
+    console.log(
+      colors.green2(`
+| Stage: ${player.stage} | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+      `),
+    );
+  }
+
+  blessingExplain(player);
   console.log(
-    chalk.cyanBright(`\n| Stage: ${stage} |\n`) +
-      chalk.blueBright(
-        `| 플레이어 정보 | 이름: ${player.name}, HP: ${player.hp}/${player.maxHp}, 방어도: ${player.defense}, 도망확률: ${player.runAwayProb} |
-| 카드와의 유대감: ${player.bondingIndex}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} |
-      `,
-      ) +
-      chalk.redBright(`
-| 몬스터 정보 | HP: ${monster.hp}, 공격력: ${monster.attackDmg} | "네놈을 추격해주마!" |`),
+    colors.green3(`
+| 플레이어 정보 | ${player.name} | HP: ${Math.round(player.hp)}/${Math.round(player.maxHp)}, 방어도: ${Math.round(player.defense)}, 도망확률: ${Math.round(player.runAwayProb)} |
+| 카드와의 유대감: ${Math.round(player.bondingIndex)}, 카드 개수: ${player.hasCard.length + player.hasCardInHand.length}, 손패 크기: ${player.handSize} | `),
   );
-  console.log(chalk.magentaBright(`===========================`));
-  console.log(chalk.cyanBright(`\n${info}`));
-  console.log(chalk.cyanBright(`>>알림: ${message}`));
+
+  if (player.blessing === 'Spike Defender') {
+    console.log(colors.green3(`| 가시 데미지 : ${Math.round(player.spikeDmg)} |`));
+  } else if (player.blessing === 'Berserker') {
+    console.log(
+      colors.green3(
+        `| 연속 공격 확률 : ${Math.round(player.multiAttackProb)}, 최대 공격 횟수 : ${Math.floor(player.maxAttackCount)} |`,
+      ),
+    );
+  }
+
+  monsterImage(monster);
+  console.log(
+    colors.monster(`
+| 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | ${monster.threat} |\n`),
+  );
+
+  if (player.blessing === 'Chieftain') {
+    console.log(colors.monster(`| 턴당 점화 스택 : ${monster.igniteStack} |`));
+  }
+
+  console.log(colors.grey(`===========================`));
+  console.log(colors.info(`\n${info}`));
+  console.log(colors.message(`>> 알림 로그: ${message}`));
+  console.log(colors.battleLog(`>> 전투 로그: ${battleText}`));
 }
 
+// COMPACT UI
+let compactUI = (player, monster) => {
+  let difficultyInfo =
+    player.difficulty === 1 ? 'NORMAL' : player.difficulty === 1.2 ? 'HARD' : 'HELL';
+  displayDeckList(player);
+  console.log(colors.grey(`\n====== Current Status ======`));
+
+  if (player.isBossStage) {
+    console.log(
+      colors.danger(`
+| Stage: ${player.stage}(BOSS!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+      `),
+    );
+  } else if (player.isEliteStage) {
+    console.log(
+      colors.elite(`
+| Stage: ${player.stage}(ELITE!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+      `),
+    );
+  } else {
+    console.log(
+      colors.green2(`
+| Stage: ${player.stage} | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+      `),
+    );
+  }
+
+  blessingExplain(player);
+  DisplayBattleStatus(player, monster);
+
+  console.log(colors.grey(`\n===========================`));
+  console.log(colors.info(`\n${info}`));
+  console.log(colors.message(`>> 알림 로그: ${message}`));
+  console.log(colors.battleLog(`>> 전투 로그: ${battleText}`));
+};
+
+// 보유한 카드의 이름들을 문자열로 정렬하기
 function combineCardNamesToString(obj) {
   const cardNames = [];
 
@@ -65,12 +132,23 @@ function combineCardNamesToString(obj) {
   return cardNames.join(', ');
 }
 
+// 알림
 function setMessage(newMessage) {
   message = newMessage;
 }
 
+// 전투로그
+function setBattleText(newText) {
+  battleText = newText;
+}
+
+// 스테이지 보상
 function selectReward(player) {
   console.clear();
+
+  const reward1 = makeRandomCard(player);
+  const reward2 = makeRandomCard(player);
+  const reward3 = makeRandomCard(player);
 
   console.log(
     chalk.cyan(
@@ -82,21 +160,17 @@ function selectReward(player) {
     ),
   );
 
-  const reward1 = makeRandomCard();
-  const reward2 = makeRandomCard();
-  const reward3 = makeRandomCard();
-
   console.log(
-    chalk.yellow(`
+    colors.cardChoice(`
   1. 
   ======| 카드 상세보기 |======
   
-    >>> ${reward1.cardName} <<<
+  >>> ${reward1.cardName}
 
   등급 : ${reward1.cardTier}
   발동 확률 : ${reward1.actProb}
   공격 데미지 : ${reward1.attackDmg}
-  주문 데미지 : ${reward1.spellDmg}
+  화염 데미지 : ${reward1.fireDmg}
   체력 회복량 : ${reward1.restoreHp}
   방어도 : ${reward1.defense}
 
@@ -105,12 +179,12 @@ function selectReward(player) {
   2. 
   ======| 카드 상세보기 |======
   
-    >>> ${reward2.cardName} <<<
+  >>> ${reward2.cardName}
 
   등급 : ${reward2.cardTier}
   발동 확률 : ${reward2.actProb}
   공격 데미지 : ${reward2.attackDmg}
-  주문 데미지 : ${reward2.spellDmg}
+  화염 데미지 : ${reward2.fireDmg}
   체력 회복량 : ${reward2.restoreHp}
   방어도 : ${reward2.defense}
 
@@ -119,12 +193,12 @@ function selectReward(player) {
   3. 
   ======| 카드 상세보기 |======
   
-    >>> ${reward3.cardName} <<<
+  >>> ${reward3.cardName}
 
   등급 : ${reward3.cardTier}
   발동 확률 : ${reward3.actProb}
   공격 데미지 : ${reward3.attackDmg}
-  주문 데미지 : ${reward3.spellDmg}
+  화염 데미지 : ${reward3.fireDmg}
   체력 회복량 : ${reward3.restoreHp}
   방어도 : ${reward3.defense}
 
@@ -149,4 +223,257 @@ function selectReward(player) {
   }
 }
 
-export { displayStatus, setMessage, selectReward };
+// 축복 설명
+let blessingExplain = (player) => {
+  if (player.blessing === 'Spike Defender') {
+    console.log(
+      colors.green2(
+        '| 가시 수호자는 기본 가시데미지를 20 얻습니다. 방어도를 얻을 때 현재 가시 데미지 수치의 절반만큼을 방어도로 획득합니다. 방어도를 가지고 있을 때에만 공격자에게 가시 데미지를 줄 수 있습니다.',
+      ),
+    );
+  } else if (player.blessing === 'Berserker') {
+    console.log(
+      colors.green2(
+        '| 광전사는 연속으로 공격할 확률을 얻습니다. 이때, 최대 공격 횟수에 따라 여러 번 공격할 수 있습니다. 카드를 쓸 때마다 체력을 5씩 잃지만 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1씩 증가합니다. 가한 피해만큼 흡혈할 수 있습니다.',
+      ),
+    );
+  } else if (player.blessing === 'Chieftain') {
+    console.log(
+      colors.green2(
+        '| 화염 투사는 카드가 가진 화염 데미지만큼 적에게 점화를 걸 수 있습니다. 화염 데미지는 화염투사만이 적에게 가할 수 있습니다. 점화 스택은 턴이 끝날 때마다 1씩 감소합니다. 카드를 통해 HP를 회복할 때 직접 가한 화염 데미지만큼 추가로 회복할 수 있으며, 회복한 체력만큼 점화 스택이 증가합니다.',
+      ),
+    );
+  }
+};
+
+// 체력바 생성 함수
+function CreateHealthBar(player, color, length = 20) {
+  const filledLength = Math.round((player.hp / player.maxHp) * length);
+  const emptyLength = length - filledLength;
+  return chalk.hex(color)('█'.repeat(filledLength)) + chalk.white('░'.repeat(emptyLength));
+}
+
+// 전투 상태 표시 함수
+function DisplayBattleStatus(player, monster) {
+  const playerHealthBar = CreateHealthBar(player, '#15B392');
+  console.log(
+    `${chalk.hex('#15B392').bold(`\n| 플레이어 | ${player.name} | 방어도${Math.round(player.defense)} | 유대감${Math.round(player.bondingIndex)} |\n`)}`,
+  );
+
+  console.log(
+    playerHealthBar + chalk.yellow.bold(` ${Math.round(player.hp)}/${Math.round(player.maxHp)}\n`),
+  );
+
+  if (player.blessing === 'Spike Defender') {
+    console.log(colors.green4(`가시:${player.spikeDmg}`));
+  } else if (player.blessing === 'Berserker') {
+    console.log(
+      colors.green4(
+        `연속공격확률:${player.multiAttackProb}, 최대공격횟수:${player.maxAttackCount}`,
+      ),
+    );
+  }
+
+  monsterImage(monster);
+
+  const monsterHealthBar = CreateHealthBar(monster, '#F31559');
+  console.log(
+    `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} |\n`)}`,
+  );
+  console.log(
+    monsterHealthBar +
+      chalk.yellow.bold(` ${Math.round(monster.hp)}/${Math.round(monster.maxHp)}\n`),
+  );
+  if (player.blessing === 'Chieftain') {
+    console.log(
+      colors.monsterDebuff(
+        `점화:${monster.igniteStack}스택, 공격력: ${Math.round(monster.attackDmg)}`,
+      ),
+    );
+  } else {
+    console.log(colors.monsterDebuff(`공격력: ${Math.round(monster.attackDmg)}`));
+  }
+}
+
+let miniUI = (player) => {
+  const playerHealthBar = CreateHealthBar(player, '#15B392');
+  console.log(
+    `${chalk.hex('#15B392').bold(`| 플레이어 | ${player.name} | 방어도 ${Math.round(player.defense)} | 유대감 ${Math.round(player.bondingIndex)} | 보유골드 ${player.gold} |\n`)}`,
+  );
+  console.log(
+    playerHealthBar + chalk.yellow.bold(` ${Math.round(player.hp)}/${Math.round(player.maxHp)}`),
+  );
+
+  if (player.blessing === 'Spike Defender') {
+    console.log(colors.green4(`가시:${player.spikeDmg}`));
+  } else if (player.blessing === 'Berserker') {
+    console.log(
+      colors.green4(
+        `연속공격확률:${player.multiAttackProb}, 최대공격횟수:${player.maxAttackCount}`,
+      ),
+    );
+  }
+};
+
+let displayDeckList = (player) => {
+  let allCardNames = combineCardNamesToString(player);
+  console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
+};
+
+let playerImage = () => {
+  console.log(
+    colors.green1(`
+⢒⠆⠀⠀⠀⠀⠠⢠⣴⢾⢶⡍⢻⣿⠲⣤⣀⠀⠀⡀⠀⡄⢒⡳⡆
+⠪⠄⠀⠀⠀⠀⠐⣯⣯⣩⠷⣶⣎⣻⡧⣿⣧⠀⠄⠀⠀⠐⠂⠓⡂
+⢩⠂⠀⠀⠀⠀⠈⢷⡞⢩⢷⣻⣿⠷⢿⣿⣯⠀⠀⡀⠁⠌⠀⠃⠅
+⢡⠁⡀⠀⠀⠀⠀⠈⡗⠀⢈⠛⡟⠤⢿⣿⡇⠀⠀⠀⠄⠂⠁⡁⠆
+⢚⡀⠀⠀⢀⡀⢤⣒⡅⢲⣤⣜⣄⣶⡾⢿⣶⣶⣤⣀⣀⡀⢁⠂⢂
+⠠⠀⢠⣅⡄⠀⢠⣿⢳⠶⢛⠁⠻⠛⣶⣿⣿⣯⣾⠀⢀⣹⣦⠈⠄
+⠀⢀⣳⠤⣱⡄⢺⣧⣎⡗⡤⢳⣿⣬⣿⡟⡇⣿⡇⣤⢋⠤⣼⡆⠀
+⢠⠦⠘⣓⢎⢣⣯⡅⣷⣿⣿⣥⣭⣿⣿⣿⣷⣯⣿⠯⢓⠬⢯⣷⠀
+⢤⢏⡥⠌⡹⠟⠛⠃⠘⢿⣿⣿⢏⣙⠻⢿⣿⣿⣿⠥⠖⣠⠤⣌⡅
+⣴⠞⢀⣎⣠⡒⡌⢆⠱⡌⠻⡟⢰⢶⡈⣿⣿⣿⣿⡾⢉⡒⠛⣮⡍
+⠿⢞⣾⣿⣿⣿⣿⣾⣧⣘⢦⡜⣘⠠⣼⣿⣿⠿⠃⣠⡆⠘⢳⣼⡗
+⢸⡆⣿⣿⣿⣿⣷⣌⣛⡹⠒⢉⠉⣉⣁⠩⣩⣴⡿⢋⣤⣼⣧⣿⠟
+⢽⣇⣒⣐⡶⣶⣶⠴⠒⠚⠛⢶⣿⣷⣶⣤⣥⣤⡴⠛⠛⠛⠿⣴⠦
+    `),
+  );
+};
+
+let monsterImage = (monster) => {
+  if (monster.name === '킹슬라임') {
+    console.log(
+      colors.pink(`
+⣿⣿⡟⣿⢿⣹⢏⣵⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⡼⣭⣛⣿⢻⣿⣿
+⣿⡾⣥⣷⢏⣿⣿⣿⣿⣿⠿⠛⠛⠛⠿⢿⣿⣿⣷⣿⣿⢸⡧⣻⣿
+⣾⠳⣼⣿⣺⣿⣿⡿⣉⠖⠂⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣇⣿⡇⢿
+⣯⡇⣿⣿⣻⣿⢋⡶⡍⢎⠡⢀⠀⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⠼
+⣯⢳⣿⡷⣫⢇⣯⢷⡹⢎⡴⢁⠀⠀⠀⠀⡔⣤⠀⢹⣞⣧⡿⣿⢼
+⣳⢸⡿⡽⡱⢊⣼⣫⢷⡘⢷⠿⢀⣄⣀⡄⠻⠋⠀⠸⡜⢮⢟⡇⣺
+⣳⢺⡝⡣⢇⠡⣚⣽⣳⣽⢢⠆⡌⡀⢀⠠⢀⠀⣜⠁⢎⡃⢞⣡⢿
+⡳⡜⢧⡙⠄⢢⡝⣾⡱⣯⣌⡳⣧⢝⠦⣇⠯⢤⢣⠌⢀⠢⢡⣚⡿
+⡟⢧⡓⣌⡐⠸⣼⡱⢻⡵⣮⣟⡷⣞⡻⣬⠟⢃⠘⢣⠆⢀⠧⣘⣵
+⢿⡛⢷⠢⡑⠄⡐⠀⠘⣯⢷⡚⠙⠚⣗⣳⡌⠆⠀⡀⠐⣌⠶⡹⢋
+⣷⣉⢷⡳⣆⢠⢠⡀⣄⣾⢳⡆⡤⢄⣰⢟⡰⡀⠠⠈⠐⢀⣈⣾⡿
+⣿⣿⣆⡹⣞⡖⠀⠁⠀⠀⠁⠀⠁⠈⠀⠀⠐⠀⠀⢠⣉⡽⢏⣾⣽
+⣿⣿⣿⣿⣶⣟⣻⣞⡷⣄⣄⣠⣀⣈⢡⡤⣤⡼⣯⣟⣯⣶⣿⣿⣿
+      `),
+    );
+  } else if (monster.name === '눈이 파란 해골') {
+    console.log(
+      colors.pink(`
+⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠙⠋⠛⠙⠛⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⠀⣠⣶⣶⣦⠀⠀⢠⣶⣶⣦⡄⢸⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⡄⠛⠿⠴⠏⢀⣄⠈⢷⠴⠟⠃⣼⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⠇⠀⡆⣁⡀⣘⢋⣀⢀⣁⡦⠀⣽⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⠟⠛⢷⡀⠈⠃⠼⣀⠇⣸⠠⠊⠀⡠⠋⢉⣻⣿⣿⣿⣿
+⣿⣿⣿⡿⣾⣶⣦⣈⠻⢶⡖⠶⠶⢲⣶⡿⠛⢁⣴⢿⣎⢹⣿⣿⣿
+⣿⡿⣱⣾⣿⡇⣿⣿⡇⠆⣼⠂⠠⡷⠠⢰⣿⣿⠃⣿⣿⣧⡜⢿⣿
+⣿⡁⢿⣿⣿⢃⣴⣶⣶⢙⢸⠀⠀⡇⣊⡙⣭⣴⣆⢻⣿⣿⣷⢸⣿
+⣿⣿⣦⡙⢻⠸⣿⣿⣿⡌⢸⢀⡀⠇⠆⣼⣿⣿⡿⢸⠿⠟⣡⣾⣿
+⣿⣿⣿⣿⣷⣦⣤⣭⣭⣴⣶⣶⣿⣾⣶⠶⣶⣶⢤⣾⣶⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⢡⡏⢰⣿⣿⣿⢛⢻⣿⣿⠀⢿⣿⡎⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣟⢲⠁⣾⣿⣿⡟⣸⡎⣿⣿⡀⢼⣿⣟⢸⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣯⣬⣤⣛⣛⣛⣫⣼⣧⣛⣛⣃⣈⣫⣭⣼⣿⣿⣿⣿⣿
+⣿⣿⣿⡟⠁⠀⠉⢠⣘⣿⣿⣿⣿⣿⣁⣀⡀⠚⠉⠀⠉⢻⣿⣿⣿
+⣿⣿⣿⣷⣶⣶⣶⣾⣷⣿⣿⣿⣿⣷⣶⣶⣿⣶⣶⣶⣾⣿⣿⣿⣿
+      `),
+    );
+  } else if (monster.name === '높은 바위 하피') {
+    console.log(
+      colors.pink(`
+⣿⣿⣿⣿⣿⣟⠟⡟⠱⢿⡿⢿⣿⠿⣾⡙⣶⡀⠀⢤⠀⡀⠠⠀⠄
+⣿⣿⣿⢻⡟⢀⠛⠈⣄⢻⣶⢿⣼⣿⠿⡯⣿⣧⡎⢄⡃⡄⠡⠀⠌
+⣿⣿⣿⡿⡇⠈⠀⣸⢃⣾⠏⣼⠛⠉⠀⠘⣯⣯⣽⡄⠒⡡⠌⠁⡌
+⣿⣝⣛⢉⣁⢔⡚⢕⣻⣽⡻⠁⠀⠀⠀⢀⡌⣻⣻⣿⡈⡱⠈⠲⢄
+⣿⣿⡟⣼⠿⣘⣵⠟⣻⣯⣷⡶⣆⠀⠿⡷⠶⠛⣯⣼⣊⣇⠡⣍⠢
+⣿⣿⡃⢡⡮⣿⣛⢼⢩⣟⠓⠁⡽⠀⠀⠀⠀⡄⡏⢷⣷⠎⡑⣄⠃
+⣟⣡⣽⢌⢡⢸⠏⠘⡇⠺⣷⠠⡟⡛⡂⠀⡘⠀⡆⠀⠣⣒⠐⠂⠌
+⣿⣿⡟⠀⢰⠉⠳⡌⠃⠈⡹⢯⣿⠽⣹⠡⠂⢀⠷⠀⢃⢈⡂⢁⠂
+⣿⣟⣿⣄⠀⠀⠠⠠⠃⢠⣿⣶⣟⣴⣄⣶⠀⠀⠘⢀⠂⠠⢀⠃⠄
+⣿⣿⢹⣷⣦⡐⠀⠀⣠⣾⣿⣿⣿⣷⣽⡛⠀⠀⢐⣠⠄⣰⠀⠌⡀
+⣿⡏⣘⣿⡿⢿⣶⣞⣹⣟⣿⣻⣿⣽⡿⣏⠉⠿⣿⡿⣱⡇⠀⠀⠀
+⠟⣠⣿⣿⠙⢧⢾⣿⣷⣩⣧⣍⡍⠁⠙⠁⢉⢈⣭⣕⣿⣱⣦⡄⠀
+⣿⣿⣿⣷⣿⣿⣿⢻⣷⣾⣯⣿⢷⣄⡂⠄⡀⠂⠉⢸⣿⣹⢿⣷⡀
+      `),
+    );
+  } else if (monster.name === '렉사르') {
+    console.log(
+      colors.pink(`
+⠢⡐⠄⠂⠀⡄⠀⠀⠀⢀⣀⠴⡀⣲⣄⠆⠠⢀⢂⠔⢢⡼⡀⢆⠢
+⢣⠘⠀⠀⠀⡇⠡⣠⣼⢯⠋⠐⣨⢇⡻⡿⢄⠢⠈⢠⡟⢾⡐⠨⣀
+⢢⠀⠀⠀⠀⢳⡖⣫⣵⣮⣤⣀⡔⠊⠟⣧⢂⣤⣰⢿⠁⠠⢁⠂⠄
+⠡⠀⠀⠀⠠⢾⣽⠿⣧⡟⠞⣩⣽⣷⣾⣤⢯⣹⡟⠣⠀⠀⠂⢀⠂
+⢁⠂⠀⠀⠀⠠⣿⢛⣦⡉⠛⡉⣀⣤⠿⣻⣿⢣⣞⠀⠀⠀⡨⠀⠀
+⠀⠌⡠⢐⠲⣾⣇⠌⠠⢛⠁⠛⠭⠉⠛⢀⣟⢋⣾⡿⣶⠾⠁⠁⠀
+⠀⢂⡱⣬⣾⣿⣺⢩⠄⢀⣀⡠⠀⢀⡴⡿⣧⢾⡓⢿⣾⣤⣠⡼⠂
+⠀⢠⠿⣉⣾⣿⢼⣎⠤⢚⡉⠤⢀⡠⣽⣷⣿⣹⡿⡄⢛⣭⣿⣶⡆
+⠰⣋⣴⡿⢃⣿⢼⣿⣹⡩⢹⣑⣲⣷⣿⣧⣿⢼⣃⣾⣿⢿⠻⣛⡴
+⡟⡿⢋⡶⣩⢟⣿⣿⣇⡧⣿⣿⣽⡿⢋⣴⣿⣹⣟⡁⡀⠉⢑⡀⢞
+⣻⢳⣷⣶⣭⣾⠧⣸⣿⣿⣿⡿⡗⣎⣿⠯⣄⢿⡒⢗⡭⣀⣣⣾⣿
+⣷⣿⣿⣿⣯⣴⡞⢇⡹⢶⡼⣾⣇⢟⣱⣧⣙⣌⣿⣋⣴⣿⡟⣉⣡
+⡿⣿⣯⢴⡻⣧⢶⡧⢊⣷⡝⢿⠳⣎⢧⢛⣾⡿⣿⣿⣿⣿⣳⡾⣁
+      `),
+    );
+  } else if (monster.name === '오우거 마법사') {
+    console.log(
+      colors.pink(`
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢦⣶⠄⠀⠀⠀⣠⡄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢰⣠⠃⢉⡁⢠⡲⣠⠌⠑⠎⢄⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣈⣟⡷⡖⢦⡶⣻⠷⣦⡜⣬⣼⡞⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⡄⡋⢴⣿⢣⣙⣩⢾⣿⣿⢂⠳⣫⣶⡇⠂⠄⠀⠀⠀⠀
+⠀⠀⠀⢲⡐⠘⡬⣽⣿⣶⣿⣿⣿⣿⣯⣽⣷⢏⡱⠀⢈⠆⠀⠀⠀
+⠀⠀⡘⠀⠙⣦⡘⡜⣿⣾⣿⠟⣁⠻⣿⣿⢿⢫⠐⣠⠞⢸⠀⠀⠀
+⠀⣰⣛⣦⠄⡌⢻⢪⣾⡟⢋⣩⢎⣁⢀⣹⠎⡔⣼⠃⣀⣥⣶⡄⠀
+⠀⣋⣡⡬⢝⣈⣽⣿⣏⢞⡯⢐⣂⠘⡿⢎⡴⣾⣫⡶⣯⢬⣤⡇⠀
+⠀⢹⣯⣾⣿⣿⣭⢶⣟⣮⢛⢧⠾⣙⣵⣻⠼⣄⠁⣴⠉⠣⣛⡇⠀
+⠀⣸⡿⣿⣿⣿⡿⡿⣝⢿⡫⡛⠾⠯⣥⣶⣴⣺⣯⡟⠣⠐⣽⠁⠀
+⠀⢻⣽⣾⣿⡿⣑⣭⠖⣩⣿⡼⣉⡉⡙⣻⣿⣿⣿⡟⠷⢞⡧⠀⠀
+⠀⠈⢹⣿⠹⡇⠻⢃⠰⣭⣿⣷⣭⣽⣿⣿⡟⣿⣿⣌⣭⣿⠁⠀⠀
+⠀⠀⠀⠸⢸⢁⡓⣤⡟⣼⢹⣹⣿⣿⡿⣹⠰⣿⢾⣟⣷⡿⠀⠀⠀
+      `),
+    );
+  } else if (monster.name === '만물의 종결자') {
+    console.log(
+      colors.danger(`
+⢂⠐⡀⢢⡿⢀⠐⠠⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⢀⠀⠀⠀⠀⠄⡀⢠⢀⡁⠎⡌⢧⡙⢬⢣⡹⣨⣷⣿⣿⣿⣿⣿⣿⣿
+⢀⠈⠄⣿⡇⠠⢈⠔⡀⠂⠐⠀⠀⠀⠀⠀⢀⠂⠀⠀⢀⡎⠀⡄⣼⢠⠀⡀⢀⠆⡐⣡⠞⡄⢳⡘⢦⠙⢦⣾⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠂⡔⣸⣿⡇⠠⠁⠠⠀⠁⠄⠂⠀⠀⠀⠀⢸⠀⠠⡄⣾⢀⣼⣿⣿⢹⣾⣤⡞⣠⣾⠋⠐⡈⠧⡘⢦⡙⢺⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠡⠄⣿⣿⣯⡐⠀⠀⠐⠀⠀⠀⠀⠀⠀⠀⢋⢧⢀⣿⠋⣼⣿⣿⠟⢸⣿⣍⣠⣿⣇⡴⠀⡕⢢⠉⢆⡘⣵⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢡⢊⣿⣷⢿⣳⡌⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣦⠼⣽⣈⣿⡟⣲⠝⣿⣿⣿⣿⣭⡿⣷⣾⣷⣇⡼⠂⣬⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠢⢸⣿⣿⣿⣏⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠈⢥⣛⣮⢝⣷⣞⣥⣾⣿⣿⣿⣿⣿⣷⣏⣾⡽⣟⣷⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠡⢚⣿⣿⣿⣯⢷⣯⡟⠶⢠⣀⡆⠀⠀⠀⠀⢠⣿⡛⢸⣧⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣴⣿⢏⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠁⢺⣿⣿⣿⣿⣿⣶⣶⣶⣶⣿⣧⣄⣀⠀⡀⣍⣯⢿⣿⣿⢿⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⣩⠖⣸⢿⣛⢎⣷⣿⣾⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣷⣻⣬⣶⣮⡝⠺⡿⣟⣾⣿⣿⣿⣿⣿⣿⣿⣿⣏⢳⣜⣾⣹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠀⢺⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⡙⢾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠀⠀⢿⣿⣿⣿⣻⣿⣟⣾⣟⡿⣻⣿⣿⣿⣿⣷⢿⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠀⠀⠘⣿⣿⣟⣿⣽⡿⡝⠚⣻⣯⣟⣴⣿⣿⣿⣿⣿⣿⣯⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣭⢙⣍⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠀⠀⠰⠿⢿⣾⣻⢾⡝⢃⡠⢽⣿⣿⣿⣿⡿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣿⣿⢧⡽⣿⣿⡿⣳⣿⣿⣿⣿⣿
+⠀⠀⠀⠀⠀⠀⠹⢿⣏⣾⡇⢴⣿⣿⣿⣿⠉⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡃⣽⣿⢷⣿⣿⣿⣿⠿⢻
+⠀⠀⠀⠀⠀⠀⠀⠈⣽⡷⡟⣾⣿⣿⣿⡷⠂⠀⠀⠀⠺⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣹⢯⣿⣿⢏⣹⣯⣵⣿⣿⣿⣿⠏⠀⠁
+⠀⠀⠀⠀⠀⠀⠀⠐⡿⡿⣱⣿⣿⣿⡿⠉⠀⠀⠀⠀⠀⣹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠣⢏⣿⣿⡿⣺⣿⣿⣿⡿⢿⡟⠙⠆⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢐⣏⡧⣿⡟⠋⠁⠀⠀⠀⠀⠀⠀⢸⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣄⡻⢏⣶⡿⣿⣽⣿⣿⡿⠋⠀⡀⠄⠀
+⠀⠀⠀⠀⠀⠀⠀⣾⡿⡟⣕⣣⠤⢠⡀⠀⠀⠀⡀⢄⣾⣿⣷⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⢫⣽⣿⣿⣿⣿⣿⡿⠋⠀⠀⠄⠀⣿⡄
+⠀⠀⠀⠀⠀⠀⢀⣟⡯⣟⢦⣻⣿⣿⣱⣀⢀⣲⠾⣛⣿⣿⣿⣿⣿⣿⣿⢛⣭⣽⣯⠟⣍⡫⣗⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⡿⠁
+⢀⠂⠀⢀⣶⣶⣯⣼⡗⣿⣛⡿⠉⠉⢿⣼⡞⣠⣿⣿⣿⣿⣿⣿⣿⡿⣼⣿⣿⣿⣿⣿⡏⣼⣿⣿⣿⣿⣿⣋⠀⠀⠀⠀⠀⠀⠀⡐⠁⠀
+⠂⠀⠄⣸⠃⠀⣼⡿⣏⣿⣼⠇⢠⣎⣤⣿⣿⣿⣿⣟⣿⣿⣿⣿⣿⣽⣿⣿⣿⣿⣿⡯⣱⣿⣿⣿⣿⣿⣿⣻⣉⡀⢀⠀⡀⢀⡼⠀⠀⢀
+⠀⠀⠄⠘⠀⠈⡿⠁⢻⣿⡿⣧⣺⣽⣿⣿⣿⣿⡿⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢯⣼⣿⣿⣿⣿⣿⣿⣷⣟⡿⠴⠏⠾⠱⠎⠀⠀⠀⢈
+⠀⠠⠀⠀⠀⠀⠳⠀⠀⢹⣷⣖⡻⢾⣽⣻⣟⣾⣿⢿⣻⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣤⡀⠀⠀⠀⠀⠀⣳⣼
+⠀⠀⠐⠀⡀⠀⠀⢀⡄⠻⡜⢫⢛⣧⡛⢧⢻⡟⢾⡫⠝⣧⢻⡝⣿⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⡄⣔⣠⢠⡆⣴⣻⣿
+      `),
+    );
+  }
+};
+
+export {
+  largeUI,
+  compactUI,
+  setMessage,
+  selectReward,
+  setBattleText,
+  combineCardNamesToString,
+  displayDeckList,
+  miniUI,
+};
