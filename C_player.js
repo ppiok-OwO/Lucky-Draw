@@ -25,6 +25,7 @@ class Player {
     this.isEliteStage = false;
     this.isBossStage = false;
     this.difficulty = difficulty;
+    this.gold = 0;
   }
 
   // 카드 드로우

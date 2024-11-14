@@ -105,12 +105,16 @@ export async function startGame(player, uiStyle) {
     } else if (player.isEscape) {
       break;
     } else if (monster.hp <= 0) {
-      player.stage++;
+      // 최대 체력 증가
+      let clearStage = () => {
+        player.stage++;
+        player.maxHp += player.stage * 10;
+        player.bondingIndex += player.stage * 5;
+        player.
+      };
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
-      // 최대 체력 증가
-      player.maxHp += player.stage * 10;
-      player.bondingIndex += player.stage * 5;
+
       // 스테이지가 끝나면 전투 중에 얻은 스탯들 초기화
       player.spikeDmg = 20; // 가시 데미지
       player.multiAttackProb = 50; // 연속 공격 확률
