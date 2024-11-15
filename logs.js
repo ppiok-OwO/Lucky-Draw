@@ -57,7 +57,7 @@ function largeUI(player, monster) {
   monsterImage(monster);
   console.log(
     colors.monster(`
-| 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | 스킬: ${monster.skillName} | ${monster.threat} |\n`),
+| 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | 스킬: ${monster.skillName} | ${monster.threat} | 공격턴: ${monster.monsterAttackCount + 1} |\n`),
   );
 
   if (player.blessing === 'Chieftain') {
@@ -278,7 +278,7 @@ function DisplayBattleStatus(player, monster) {
 
   const monsterHealthBar = CreateHealthBar(monster, '#F31559');
   console.log(
-    `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} | 스킬: ${monster.skillName} |\n`)}`,
+    `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} | 스킬: ${monster.skillName} | 공격턴: ${monster.monsterAttackCount + 1} |\n`)}`,
   );
 
   console.log(

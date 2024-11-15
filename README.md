@@ -1,4 +1,4 @@
-게임 시작은 npm run start!!
+<u>**게임 시작은 npm run start!!**</u>
 
 # <font color="#de7802">로그라이크 게임 - Lucky Draw!</font>
 

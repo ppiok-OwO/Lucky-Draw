@@ -24,15 +24,7 @@ import {
   LegendaryDefenseCard,
   seeCard,
 } from './C_card.js';
-import {
-  Monster,
-  Slime,
-  Harpy,
-  Ork,
-  Ogre,
-  Boss,
-  makeRandomMonster,
-} from './C_monster.js';
+import { Monster, Slime, Harpy, Ork, Ogre, Boss, makeRandomMonster } from './C_monster.js';
 import { loadJson, getAchievements, unlockAchievement, saveAndExit } from './jsonFunction.js';
 import { tavern, shop, shopping, mergeCard } from './shop.js';
 import { colors } from './functions.js';
@@ -116,7 +108,7 @@ export async function startGame(player, uiStyle) {
       } else {
         process.exit(0);
       }
-    } else if (player.stage === 10) {
+    } else if (player.stage === 10 && monster.hp <= 0) {
       // 게임을 클리어하면 반복문 탈출하기
       player.isWon = true;
       break;
@@ -143,6 +135,9 @@ export async function startGame(player, uiStyle) {
     } else if (player.blessing === 'Chieftain') {
       await unlockAchievement('./data.json', 2);
     }
+
+    endingLog();
+
     console.log(
       chalk.cyan(
         figlet.textSync('*YOU WIN!*', {
@@ -152,8 +147,6 @@ export async function startGame(player, uiStyle) {
         }),
       ),
     );
-
-    endingLog();
 
     if (
       readlineSync.keyInYN(
@@ -238,23 +231,24 @@ const battle = (player, monster, uiStyle) => {
       //     }
       //   }
       // } else {
-        let cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
+      let cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
 
-        const cardIndex = Number(cardChoice - 1);
-        const playingCard = player.hasCardInHand[cardIndex];
+      const cardIndex = Number(cardChoice - 1);
+      const playingCard = player.hasCardInHand[cardIndex];
 
-        // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
-        for (let i = 0; i < player.hasCardInHand.length; i++) {
-          if (cardChoice === `see${i + 1}`) {
-            seeCard(player.hasCardInHand[i]);
-          } else if (cardChoice === `${i + 1}`) {
-            player.cardPlay(playingCard, monster, cardIndex);
+      // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
+      for (let i = 0; i < player.hasCardInHand.length; i++) {
+        if (cardChoice === `see${i + 1}`) {
+          seeCard(player.hasCardInHand[i]);
+        } else if (cardChoice === `${i + 1}`) {
+          setBattleText('');
+          player.cardPlay(playingCard, monster, cardIndex);
 
-            // 죽였는데 맞는 건 이상하니까.
-            if (monster.hp > 0) {
-              monster.monsterAttack(player);
-            }
+          // 죽였는데 맞는 건 이상하니까.
+          if (monster.hp > 0) {
+            monster.monsterAttack(player);
           }
+        }
         // }
       }
 
@@ -404,8 +398,8 @@ function addCard(player, NA = 0, ND = 0, RA = 0, RD = 0, EA = 0, ED = 0, LA = 0,
 let clearStage = (player) => {
   // 스테이지 클리어 시 스탯 증가
   player.stage++;
-  player.maxHp += player.stage * 10;
-  player.bondingIndex += player.stage * 5;
+  player.maxHp += player.stage * 30;
+  player.bondingIndex += 5;
   if (player.isEliteStage) {
     player.gold += 250;
   } else {
@@ -421,7 +415,6 @@ let clearStage = (player) => {
   player.isTargeted = false;
   player.isClumsy = false;
 };
-
 
 // function getRandomNumbers(min, max, count) {
 //   let result = new Set();
