@@ -7,11 +7,11 @@ class Monster {
   constructor(name, threat, player) {
     this.name = name;
     if (player.isBossStage) {
-      this.hp = Math.round(400 + 90 * player.stage * player.difficulty);
-      this.attackDmg = Math.round(35 * player.stage * player.difficulty);
+      this.hp = Math.round(400 + 80 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(30 * player.stage * player.difficulty);
     } else if (player.isEliteStage) {
       this.hp = Math.round(250 + 70 * player.stage * player.difficulty);
-      this.attackDmg = Math.round(25 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(20 * player.stage * player.difficulty);
     } else {
       this.hp = Math.round(200 + 60 * player.stage * player.difficulty);
       this.attackDmg = Math.round(15 * player.stage * player.difficulty);
@@ -216,7 +216,7 @@ function makeRandomMonster(player) {
   // 3, 6, 9 턴은 player.isEliteStage = true;
   player.isEliteStage = player.stage % 3 === 0;
   player.isBossStage = player.stage === 10;
-  const monsterClasses = [Slime, Skelleton, Harpy, Ork, Ogre];
+  const monsterClasses = [Slime, Harpy, Ork, Ogre];
   // 무작위로 클래스 선택
   const randomMonsterInstance = monsterClasses[Math.floor(Math.random() * monsterClasses.length)];
 
