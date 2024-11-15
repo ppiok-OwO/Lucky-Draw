@@ -7,13 +7,13 @@ class Monster {
   constructor(name, threat, player) {
     this.name = name;
     if (player.isBossStage) {
-      this.hp = Math.round(400 + ((80 * player.stage) / 2) * player.difficulty);
+      this.hp = Math.round(400 + ((100 * player.stage) / 2) * player.difficulty);
       this.attackDmg = Math.round(30 * player.stage * player.difficulty);
     } else if (player.isEliteStage) {
-      this.hp = Math.round(250 + ((60 * player.stage) / 2) * player.difficulty);
+      this.hp = Math.round(250 + ((80 * player.stage) / 2) * player.difficulty);
       this.attackDmg = Math.round(20 * player.stage * player.difficulty);
     } else {
-      this.hp = Math.round(200 + ((50 * player.stage) / 2) * player.difficulty);
+      this.hp = Math.round(200 + ((70 * player.stage) / 2) * player.difficulty);
       this.attackDmg = Math.round(10 * player.stage * player.difficulty);
     }
     this.maxHp = this.hp;
