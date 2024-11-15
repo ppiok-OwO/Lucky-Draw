@@ -117,7 +117,7 @@ function seeCard(card) {
 }
 
 let countCard = (player) => {
-  // 카드 한 배열로 모으고 정렬
+  // 소유한 카드들을 모두 하나의 배열로 모으고 정렬
   player.collectAllCard();
 
   // 카드 개수 세기
