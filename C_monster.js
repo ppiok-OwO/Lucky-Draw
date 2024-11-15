@@ -29,7 +29,6 @@ class Monster {
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
-    this.monsterAttackCount += 5;
   }
 
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
