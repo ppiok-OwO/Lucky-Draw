@@ -185,15 +185,15 @@ class Player {
 
   // 카드에 의한 방어도 업데이트
   updateDefenseByCard(playingCard, cardPower = 1) {
-    // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 그리고 현재 가지고 있는 가시데미지의 절반만큼 방어도를 추가로 얻는다.
+    // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 현재 가시데미지의 절반만큼을 추가 방어도로 얻는다.
     if (this.blessing === 'Spike Defender' && this.isTargeted) {
       this.spikeDmg += playingCard.defense / 2;
-      this.defense += Math.round((playingCard.defense / 2) * cardPower + this.spikeDmg / 2);
+      this.defense += Math.round(playingCard.defense + this.spikeDmg / 2);
     } else if (this.blessing === 'Spike Defender') {
       this.spikeDmg += playingCard.defense / 2;
-      this.defense += Math.round(playingCard.defense * cardPower + this.spikeDmg / 2);
+      this.defense += Math.round(playingCard.defense + this.spikeDmg / 2);
     } else {
-      this.defense += Math.round(playingCard.defense * cardPower);
+      this.defense += Math.round(playingCard.defense);
     }
   }
 

@@ -108,7 +108,7 @@ async function handleUserInput() {
 
       if (input === 'NORMAL') {
         difficultyChoice = input;
-        difficulty = 1.5;
+        difficulty = 1;
         displayLobby();
         handleUserInput();
       } else if (input === 'HARD') {
@@ -118,7 +118,7 @@ async function handleUserInput() {
         handleUserInput();
       } else if (input === 'HELL') {
         difficultyChoice = input;
-        difficulty = 1;
+        difficulty = 1.5;
         displayLobby();
         handleUserInput();
       } else {

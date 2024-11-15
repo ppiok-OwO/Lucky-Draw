@@ -27,7 +27,6 @@ import {
 import {
   Monster,
   Slime,
-  Skelleton,
   Harpy,
   Ork,
   Ogre,
@@ -43,7 +42,7 @@ export function typeName(difficulty, uiStyle, saveData = null) {
   console.clear();
 
   if (saveData) {
-    const player = new Player(saveData.save.player.name, difficulty);
+    const player = new Player(saveData.save.player.name, saveData.save.player.difficulty);
     player.updateData(saveData.save.player);
     startGame(player, uiStyle);
 
@@ -113,6 +112,7 @@ export async function startGame(player, uiStyle) {
       if (readlineSync.keyInYNStrict('다시 시작하시겠습니까? ')) {
         displayLobby();
         handleUserInput();
+        break;
       } else {
         process.exit(0);
       }
@@ -207,35 +207,37 @@ const battle = (player, monster, uiStyle) => {
           \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
 
-      if (player.isUndertaled) {
-        // 플레이어의 손패에서 손패 크기의 절반에 해당하는 카드가 뼈다귀 효과를 받는다.
-        let undertaledCard = getRandomNumbers(player.hasCardInHand, Math.ceil(player.handSize / 2));
-        console.log(
-          colors.battleLog(`사용 가능한 카드 목록 : ${player.hasCardInHand[undertaledCard - 1]}`),
-        );
+      // if (player.isUndertaled) {
+      //   // 플레이어의 손패에서 손패 크기의 절반에 해당하는 카드가 뼈다귀 효과를 받는다.
+      //   let undertaledCard = getRandomNumbers(
+      //     1,
+      //     player.handSize.length,
+      //     Math.floor(player.handSize.length / 2),
+      //   );
+      //   console.log(colors.battleLog(`사용 가능한 카드 목록 : ${undertaledCard}`));
 
-        let cardChoice;
-        do {
-          cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
-        } while (!undertaledCard.includes(cardChoice));
+      //   let cardChoice;
+      //   do {
+      //     cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
+      //   } while (!undertaledCard.includes(cardChoice));
 
-        const cardIndex = Number(cardChoice - 1);
-        const playingCard = player.hasCardInHand[cardIndex];
+      //   const cardIndex = Number(cardChoice - 1);
+      //   const playingCard = player.hasCardInHand[cardIndex];
 
-        // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
-        for (let i = 0; i < player.hasCardInHand.length; i++) {
-          if (cardChoice === `see${i + 1}`) {
-            seeCard(player.hasCardInHand[i]);
-          } else if (cardChoice === `${i + 1}`) {
-            player.cardPlay(playingCard, monster, cardIndex);
+      //   // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
+      //   for (let i = 0; i < player.hasCardInHand.length; i++) {
+      //     if (cardChoice === `see${i + 1}` || cardChoice === `SEE${i + 1}`) {
+      //       seeCard(player.hasCardInHand[i]);
+      //     } else if (cardChoice === `${i + 1}`) {
+      //       player.cardPlay(playingCard, monster, cardIndex);
 
-            // 죽였는데 맞는 건 이상하니까.
-            if (monster.hp > 0) {
-              monster.monsterAttack(player);
-            }
-          }
-        }
-      } else {
+      //       // 죽였는데 맞는 건 이상하니까.
+      //       if (monster.hp > 0) {
+      //         monster.monsterAttack(player);
+      //       }
+      //     }
+      //   }
+      // } else {
         let cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
 
         const cardIndex = Number(cardChoice - 1);
@@ -253,7 +255,7 @@ const battle = (player, monster, uiStyle) => {
               monster.monsterAttack(player);
             }
           }
-        }
+        // }
       }
 
       // 소매치기
@@ -338,9 +340,7 @@ const battle = (player, monster, uiStyle) => {
 
       // 게임 메뉴로 나가기
     } else if (choice === '6') {
-      if (
-        readlineSync.keyInYN('게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.(Y/N): ')
-      ) {
+      if (readlineSync.keyInYN('게임 메뉴로 나가시겠습니까? 진행상황은 저장되지 않습니다.: ')) {
         player.isEscape = true;
         break;
       }
@@ -422,14 +422,16 @@ let clearStage = (player) => {
   player.isClumsy = false;
 };
 
-function getRandomNumbers(array, count) {
-  // 배열을 복사하고 랜덤하게 섞음
-  // 카드 섞을 때랑 똑같은 방식으로 배열 섞기
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
 
-  // 앞에서부터 원하는 개수만큼 반환
-  return shuffled.slice(0, count);
-}
+// function getRandomNumbers(min, max, count) {
+//   let result = new Set();
+
+//   // 중복 없이 랜덤한 숫자 추가
+//   while (result.size < count) {
+//     let randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+//     result.add(randomNum);
+//   }
+
+//   // 각 숫자를 큰따옴표로 감싸고 문자열로 변환
+//   return Array.from(result).map((num) => `"${num}"`);
+// }

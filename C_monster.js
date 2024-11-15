@@ -7,14 +7,14 @@ class Monster {
   constructor(name, threat, player) {
     this.name = name;
     if (player.isBossStage) {
-      this.hp = Math.round(400 + ((90 * player.stage) / 2) * player.difficulty);
-      this.attackDmg = Math.round(30 * player.stage * player.difficulty);
+      this.hp = Math.round(400 + 90 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(35 * player.stage * player.difficulty);
     } else if (player.isEliteStage) {
-      this.hp = Math.round(250 + ((70 * player.stage) / 2) * player.difficulty);
-      this.attackDmg = Math.round(20 * player.stage * player.difficulty);
+      this.hp = Math.round(250 + 70 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(25 * player.stage * player.difficulty);
     } else {
-      this.hp = Math.round(200 + ((60 * player.stage) / 2) * player.difficulty);
-      this.attackDmg = Math.round(10 * player.stage * player.difficulty);
+      this.hp = Math.round(200 + 60 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(15 * player.stage * player.difficulty);
     }
     this.maxHp = this.hp;
     this.isIgnited = false;
@@ -29,7 +29,7 @@ class Monster {
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
-    this.monsterAttackCount++;
+    this.monsterAttackCount += 5;
   }
 
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
@@ -110,25 +110,25 @@ class Slime extends Monster {
 }
 
 // 샌즈
-class Skelleton extends Monster {
-  constructor(player) {
-    super('웃음이 특이한 해골', '"WA! 샌즈 아시는구나!"', player);
-  }
+// class Skelleton extends Monster {
+//   constructor(player) {
+//     super('웃음이 특이한 해골', '"WA! 샌즈 아시는구나!"', player);
+//   }
 
-  skillName =
-    '[이기는 게 아니야. 그 사이를 뚫고 지나가] - 카드 이름에  뼈다귀 표시가 생깁니다. 해당 턴에는 그 카드들만 사용할 수 있습니다.';
+//   skillName =
+//     '[이기는 게 아니야. 그 사이를 뚫고 지나가] - 카드 이름에  뼈다귀 표시가 생깁니다. 해당 턴에는 그 카드들만 사용할 수 있습니다.';
 
-  monsterAttack(player) {
-    // 몬스터의 공격
-    player.updateHpByMonster(-this.attackDmg);
-    player.updateDefenseByMonster(-this.attackDmg);
-    this.attackDmg += player.difficulty;
-    this.monsterAttackCount++;
+//   monsterAttack(player) {
+//     // 몬스터의 공격
+//     player.updateHpByMonster(-this.attackDmg);
+//     player.updateDefenseByMonster(-this.attackDmg);
+//     this.attackDmg += player.difficulty;
+//     this.monsterAttackCount++;
 
-    // isUndertaled가 true면 숫자를 랜덤하게 3개 뽑아서 해당 입력값만 받을 수 있다.
-    player.isUndertaled = true;
-  }
-}
+//     // isUndertaled가 true면 숫자를 랜덤하게 3개 뽑아서 해당 입력값만 받을 수 있다.
+//     player.isUndertaled = true;
+//   }
+// }
 
 // 하피
 class Harpy extends Monster {
@@ -224,4 +224,4 @@ function makeRandomMonster(player) {
   return new randomMonsterInstance(player);
 }
 
-export { Monster, Slime, Skelleton, Harpy, Ork, Ogre, Boss, makeRandomMonster };
+export { Monster, Slime, Harpy, Ork, Ogre, Boss, makeRandomMonster };
