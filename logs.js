@@ -57,7 +57,7 @@ function largeUI(player, monster) {
   monsterImage(monster);
   console.log(
     colors.monster(`
-| 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | ${monster.threat} |\n`),
+| 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | 스킬: ${monster.skillName} | ${monster.threat} | 공격턴: ${monster.monsterAttackCount + 1} |\n`),
   );
 
   if (player.blessing === 'Chieftain') {
@@ -278,8 +278,9 @@ function DisplayBattleStatus(player, monster) {
 
   const monsterHealthBar = CreateHealthBar(monster, '#F31559');
   console.log(
-    `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} |\n`)}`,
+    `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} | 스킬: ${monster.skillName} | 공격턴: ${monster.monsterAttackCount + 1} |\n`)}`,
   );
+
   console.log(
     monsterHealthBar +
       chalk.yellow.bold(` ${Math.round(monster.hp)}/${Math.round(monster.maxHp)}\n`),
@@ -295,6 +296,7 @@ function DisplayBattleStatus(player, monster) {
   }
 }
 
+// 필수 UI(상점에선 이것만 사용)
 let miniUI = (player) => {
   const playerHealthBar = CreateHealthBar(player, '#15B392');
   console.log(
@@ -315,11 +317,13 @@ let miniUI = (player) => {
   }
 };
 
+// 덱리스트 보기
 let displayDeckList = (player) => {
   let allCardNames = combineCardNamesToString(player);
   console.log(colors.green1(`| 덱 리스트 | ${allCardNames}`));
 };
 
+// 자리가 없어서 못 넣는 플레이어 초상화
 let playerImage = () => {
   console.log(
     colors.green1(`
@@ -340,6 +344,7 @@ let playerImage = () => {
   );
 };
 
+// 몬스터 이미지
 let monsterImage = (monster) => {
   if (monster.name === '킹슬라임') {
     console.log(
@@ -359,7 +364,7 @@ let monsterImage = (monster) => {
 ⣿⣿⣿⣿⣶⣟⣻⣞⡷⣄⣄⣠⣀⣈⢡⡤⣤⡼⣯⣟⣯⣶⣿⣿⣿
       `),
     );
-  } else if (monster.name === '눈이 파란 해골') {
+  } else if (monster.name === '웃음이 특이한 해골') {
     console.log(
       colors.pink(`
 ⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠙⠋⠛⠙⠛⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -467,6 +472,99 @@ let monsterImage = (monster) => {
   }
 };
 
+let endingLog = () => {
+  console.log(
+    colors.danger(`
+      
+흉포한 울음소리가 도사리던 어둠 속. 
+
+      `),
+  );
+
+  readlineSync.keyInPause();
+
+  console.log(
+    colors.danger(`
+      
+실낱같은 빛줄기가 마왕의 목덜미를 꿰뚫었습니다! 
+
+      `),
+  );
+
+  readlineSync.keyInPause();
+
+  console.log(
+    colors.danger(`
+      
+그것은 바로...
+
+      `),
+  );
+
+  readlineSync.keyInPause();
+
+  console.log(
+    chalk.white.bold(`
+      
+당신과 오랜 여정을 함께한 카드였습니다!
+
+
+⣿⢿⣿⣻⠿⣝⣯⢻⡹⣌⠡⣎⡼⣭⠯⣝⢧⣛⡬⣳⢿⡿⣿⢿⡿⣿⢿⡿⣿⢿⡿⣿⢿⡿⣿⠟⡹⢫⡿⣻⠏⣟⠸⠟⢏⠉⡉⢁⣤⡶
+⣿⣻⢾⣝⡿⣹⢮⢷⣙⢆⠳⣎⢷⣣⢟⣮⢳⣭⠲⣍⢏⠿⣌⠿⣽⣟⣯⣿⣻⣯⢿⣻⡏⣽⣏⠠⣇⣸⠄⡛⠤⠃⣜⣨⣴⣶⠿⣟⣯⠶
+⣿⣹⢯⡾⣝⢯⡞⣧⣛⢮⡳⡜⣧⣛⡾⣼⢳⣎⠷⣜⣊⠗⣮⡝⣮⢻⣽⡾⣷⢿⠻⢿⢠⠘⣏⢤⣃⠼⡼⣒⣴⢿⡿⣹⣯⣾⣿⣿⣿⣶
+⡾⣝⡾⣳⣏⠿⣼⢣⡟⣮⢳⡽⣲⢏⡷⣽⣣⣟⣻⡼⣎⡟⣶⡹⣎⡿⣞⣿⣻⡙⣗⠺⣌⡳⢊⠷⡛⢏⣴⣿⣽⣾⣿⣿⣿⣿⣿⣿⡿⢡
+⣿⢯⣟⣷⣯⡟⣧⢟⡼⣲⢏⣞⡳⢯⣻⢶⣻⣼⣳⢿⣹⢾⣱⣻⡼⠹⡜⢣⡼⢱⠎⣵⢸⣰⣧⣿⣷⣿⣻⣿⣿⡿⠻⠿⣻⣟⣿⢫⣧⣷
+⣯⣿⢫⢷⡫⡝⡜⣎⠵⣣⢏⡞⡹⢯⡹⢯⡷⣯⣟⣯⣟⣯⡷⣯⣷⣜⡴⢫⠼⣍⣷⣿⣟⠻⣍⡟⣭⢲⡭⢳⠯⡷⠿⣿⣿⣿⣯⣽⣏⡹
+⣿⣽⣻⣎⢷⡹⡼⣬⢳⡱⢮⡜⡝⢦⡝⢮⡻⣷⢯⣟⣾⡽⡿⣽⠯⡙⢆⡣⡞⢛⠻⠽⣭⣯⣴⡞⢇⣋⣴⣿⡿⠿⢿⣛⣻⣿⣿⣿⣎⣹
+⣿⣞⣷⣾⣳⣟⡷⣭⢷⣫⢷⡹⣞⡱⣎⡳⣽⡹⣞⡽⢮⣽⣲⣇⣻⣼⠶⡑⢄⠃⠴⡁⢖⣬⣷⣾⡞⢏⢳⡸⢽⣟⡻⣿⣿⣧⣿⡿⠭⠜
+⣿⣻⢾⣳⣯⡿⣽⢯⣷⣻⢾⣵⢫⣗⢮⣳⢎⣷⡹⣞⡳⢾⣿⣿⣃⣎⢡⡐⡢⡍⣖⡽⣾⣿⡿⠫⢞⣭⣶⣿⣯⣽⣿⣿⣿⣳⢿⡛⢾⣻
+⣳⣿⣻⢯⣷⢿⣯⢿⡾⣽⣻⣞⡿⣞⣯⢷⡻⣎⠷⡍⣡⠘⣿⣿⣷⡾⣧⢽⢷⢚⣧⣾⣿⢋⠾⣹⢿⣾⣿⣿⣷⣿⣿⣿⣿⢿⡭⢩⣯⣿
+⣟⣾⣻⣯⣟⡿⣞⣯⣟⣷⣻⠾⣽⣹⢎⡷⡹⠎⠃⠀⠁⠀⠀⠉⠀⠘⢹⣞⣾⣿⣿⡛⣆⣏⣟⡿⣟⣿⣳⣟⣾⣿⣿⣟⡻⠓⢢⣉⣿⡷
+⣿⣽⣳⣟⣾⡽⣯⢷⣻⡞⣵⡻⣕⠫⢞⠰⠁⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⣼⣿⢿⡓⣹⢢⣿⣽⣻⡽⣞⣷⣯⡿⢟⣓⠮⢍⡱⡿⣯⢿⡭
+⣿⢾⣽⢾⣳⢿⡽⣯⢳⡝⣖⠳⠌⠃⠌⠀⠀⠀⠀⠀⠀⠀⠀⠄⠀⠀⠀⢻⣽⣣⣚⡵⣟⡷⣯⢷⣻⣯⣟⢣⠭⣥⡛⠎⣤⢃⠿⣽⡟⢶
+⣽⣻⣞⣯⣟⣯⠿⣜⣏⠞⡤⠃⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠈⢻⣷⣮⢿⣽⣻⡽⣯⣟⣑⠮⡓⢲⢧⡉⢶⡩⠜⣹⢷⣏⡻
+⣻⢷⣻⢾⡽⣞⢯⡳⢎⠳⡀⠀⠀⠀⠀⠀⠀⢀⣀⠀⠀⠀⠀⠀⠈⠀⢀⡲⢯⡽⣞⣿⣺⡵⣿⢏⡼⣯⠱⢢⣟⠲⡜⣣⣹⡜⣮⣗⠧⣟
+⣟⣯⣟⣯⢿⡭⣗⢯⣍⠳⣀⠁⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀⢠⠖⡠⢏⣽⢳⡯⣟⡶⣯⢿⡿⣒⣿⡇⢭⣹⢮⣳⣾⣿⣿⣷⠸⣯⠍⡾
+⠛⡸⣟⡾⣏⡷⣏⠾⣌⠳⠠⠌⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⡴⣩⢻⣜⡯⢷⣯⣻⡽⣿⣳⣭⣿⠏⣴⢣⣷⣿⢟⢻⣿⣿⣷⣻⡏⠴
+⡑⠄⢻⡽⣏⡷⢭⡛⡌⢃⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠣⡖⣭⢳⢾⣹⡟⣶⢯⣟⣿⣿⣾⣿⣿⣹⣾⡏⢎⠪⡑⣢⢍⣻⢷⣿⡱
+⡜⡌⠤⡐⠸⣭⠓⡩⠐⠀⠀⠀⡀⢀⠀⡀⠀⠀⠀⠀⡀⠴⣠⢳⡹⣜⢯⣳⢟⡾⣽⣛⡾⢻⣿⣿⣿⣿⣿⡶⠩⢖⡢⡙⣔⢎⡴⣺⣿⣗
+⢆⡡⢂⠡⠐⠀⠁⠀⠀⠀⡐⢢⠐⣌⠦⡑⣌⠦⣑⢢⡱⢣⣎⢧⣻⠼⣏⢷⢫⡜⡷⣩⠞⣡⢿⣿⣿⣿⣿⣳⣽⣣⢖⡹⢌⢞⢴⣣⢿⣿
+⢮⡑⠆⠀⠀⠀⡀⢄⠂⡐⢠⠀⠌⡐⢈⡑⢊⠳⣭⢶⣹⢳⢮⡗⣯⢿⣹⣎⠳⣜⡱⡱⢎⡵⣊⢿⣿⣿⣿⣿⣞⣷⡺⣜⠷⣊⠗⣮⢾⡿
+⠂⠁⠀⠠⣄⠳⡜⢎⡱⣍⢶⡩⢆⡐⢦⡜⣢⠐⡘⢧⠿⢭⠷⢻⡽⣞⣳⢯⣛⠶⣍⡳⢭⠖⣭⢞⣿⣿⣿⣿⣿⣿⣿⣱⢯⡛⣾⣮⡱⡜
+⢀⡰⣜⡳⣎⢟⡱⣏⢶⡹⢮⣝⢯⣞⡳⡞⣥⠳⡜⡀⢒⡈⢖⣡⢻⣭⠷⣯⣛⣿⢺⡽⣏⡿⢮⣟⡼⣿⣿⣿⣿⣿⣿⣿⣯⢟⣥⡷⣱⢮
+⢷⣻⠾⣝⣮⢟⣵⣯⢿⣽⣻⡞⣷⢮⢷⡹⣎⡳⢄⠑⢢⢉⠒⠼⢋⡘⠻⣵⣻⡼⣏⡷⢯⣽⢻⣼⢻⣼⢻⣿⣿⣿⣿⣿⣾⣿⣾⣽⣯⣷
+⣯⢏⣿⢻⣼⣟⡷⣯⣟⣾⣳⢿⡽⣯⢯⡷⣭⢳⢎⡐⠂⡔⢨⠰⣡⠜⣐⠨⡐⣿⣹⢞⡿⣼⢻⣼⢻⣼⣛⡾⣿⣻⣿⡿⣟⣿⣿⠻⣛⣭
+      
+
+영웅의 기상이 카드와의 유대감과 공명하여 빛을 발하였군요!
+
+
+`),
+  );
+
+  readlineSync.keyInPause();
+
+  console.log(
+    chalk.white.bold(`
+      
+마왕의 육중한 시선이 쓰러지자, 하늘을 뒤덮던 먹구름이 사라지고 
+
+      `),
+  );
+
+  readlineSync.keyInPause();
+
+  console.log(
+    chalk.white.bold(`
+      
+내일의 광명이 눈부시게 떠오릅니다!
+
+      `),
+  );
+
+  readlineSync.keyInPause();
+};
+
 export {
   largeUI,
   compactUI,
@@ -476,4 +574,5 @@ export {
   combineCardNamesToString,
   displayDeckList,
   miniUI,
+  endingLog,
 };

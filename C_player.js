@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { largeUI, compactUI, setMessage } from './logs.js';
+import { largeUI, compactUI, setMessage, setBattleText } from './logs.js';
 
 class Player {
   // 생성자
@@ -26,6 +26,10 @@ class Player {
     this.isBossStage = false;
     this.difficulty = difficulty;
     this.gold = 0;
+    this.isSticky = false; // 슬라임한테 공격을 받을 때
+    this.isUndertaled = false; // 샌즈한테 공격을 받을 때
+    this.isTargeted = false; // 렉사르한테 공격을 받을 때
+    this.isClumsy = false; // 오우거 마법사한테 공격을 받을 때
   }
 
   // 카드 드로우
@@ -81,8 +85,17 @@ class Player {
     // 카드 발동 확률 = 카드 자체 발동 확률 + 카드와의 유대감
     const cardActProb = playingCard.actProb + this.bondingIndex;
 
-    // 카드 발동 확률이 랜덤한 숫자를 이기면 발동!
-    if (cardActProb >= randomValue) {
+    if (
+      monster.monsterAttackCount !== 0 &&
+      monster.monsterAttackCount % 6 === 0 &&
+      monster.name === '높은 바위 하피'
+    ) {
+      setBattleText('하피가 높이 날아올라 공격을 회피합니다!');
+    } else if (this.isClumsy) {
+      setMessage('이런! 엉뚱해진 바람에 카드를 사용하는 걸 까먹었습니다!');
+      this.isClumsy = false;
+    } else if (cardActProb >= randomValue) {
+      // 카드 발동 확률이 랜덤한 숫자를 이기면 발동!
       monster.monsterLoseHpByCard(
         this,
         playingCard,
@@ -124,7 +137,9 @@ class Player {
   updateHpByCard(playingCard, cardPower = 1, monster) {
     // 현재 체력 += 힐카드 계산식
     // 화염 투사는 카드의 점화 스택의 절반만큼 회복을 추가로 한다.
-    if (this.blessing === 'Chieftain') {
+    if (this.blessing === 'Chieftain' && this.isTargeted) {
+      this.hp += Math.round(((playingCard.restoreHp + monster.igniteStack / 2) * cardPower) / 2);
+    } else if (this.blessing === 'Chieftain') {
       this.hp += Math.round((playingCard.restoreHp + monster.igniteStack / 2) * cardPower);
     } else {
       this.hp += Math.round(playingCard.restoreHp * cardPower);
@@ -134,8 +149,9 @@ class Player {
     if (this.hp >= this.maxHp) {
       this.hp = this.maxHp;
     }
+
+    // 화염 투사의 경우 카드를 통해 회복한 체력만큼 점화를 걸 수 있다.(렉사르의 스킬로 인한 회복량의 감소는 반영되지 않는다. 그럼 너무 카운터니까.)
     if (this.blessing === 'Chieftain') {
-      // 화염 투사의 경우 카드를 통해 회복한 체력만큼 점화를 걸 수 있다.
       if (monster.isIgnited) {
         monster.igniteStack += Math.round(playingCard.restoreHp * cardPower);
       }
@@ -169,12 +185,15 @@ class Player {
 
   // 카드에 의한 방어도 업데이트
   updateDefenseByCard(playingCard, cardPower = 1) {
-    // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 그리고 현재 가지고 있는 가시데미지의 절반만큼 방어도를 추가로 얻는다.
-    if (this.blessing === 'Spike Defender') {
+    // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 현재 가시데미지의 절반만큼을 추가 방어도로 얻는다.
+    if (this.blessing === 'Spike Defender' && this.isTargeted) {
       this.spikeDmg += playingCard.defense / 2;
-      this.defense += Math.round(playingCard.defense * cardPower + this.spikeDmg / 2);
+      this.defense += Math.round(playingCard.defense + this.spikeDmg / 2);
+    } else if (this.blessing === 'Spike Defender') {
+      this.spikeDmg += playingCard.defense / 2;
+      this.defense += Math.round(playingCard.defense + this.spikeDmg / 2);
     } else {
-      this.defense += Math.round(playingCard.defense * cardPower);
+      this.defense += Math.round(playingCard.defense);
     }
   }
 

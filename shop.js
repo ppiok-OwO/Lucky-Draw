@@ -17,13 +17,15 @@ let tavern = (player) => {
     displayDeckList(player);
     miniUI(player);
 
-    console.log(colors.elite('\n=============| 여관 |=============\n'));
-    console.log(colors.elite('\n어서오세요! 꽤 보고 싶었다구요?\n'));
-    console.log(colors.elite('\n=============|******|=============\n'));
+    tavernImage();
+
+    console.log(colors.info('\n=============| 여관 |=============\n'));
+    console.log(colors.info('\n어서오세요! 꽤 보고 싶었다구요?\n'));
+    console.log(colors.info('\n=============|******|=============\n'));
 
     do {
       tavernChoice = readlineSync.question(
-        '\n1. 체력 회복하기    2. 상점 이용하기    3. 중복 카드 합치기    4. 다음 전투로(자동저장)!\n',
+        '\n1. 체력 30 회복하기(가격: 30골드)    2. 상점 이용하기    3. 중복 카드 합치기    4. 다음 전투로(자동저장)!\n',
       );
     } while (!['1', '2', '3', '4'].includes(tavernChoice)); // 1, 2, 3, 4 외의 입력을 방지
 
@@ -32,6 +34,7 @@ let tavern = (player) => {
         const restorHpPrice = 30;
         if (player.gold >= restorHpPrice) {
           player.updateHpByTavern(restorHpPrice);
+          player.gold -= 30;
         } else {
           console.log(colors.error('보유 금액이 부족합니다!'));
           readlineSync.keyInPause();
@@ -51,13 +54,17 @@ let tavern = (player) => {
 
 //#region 카드 상점
 let shop = (player, card1, card2, card3) => {
+  displayDeckList(player);
   let cardName = shopping(card1, card2, card3, player);
 
   switch (cardName) {
     case '1':
-      if (player.gold >= card1.price) {
+      if (player.gold >= card1.price && player.hp < player.maxHp) {
         player.hasCard.push(card1);
         player.gold -= card1.price;
+      } else if (player.hp >= player.maxHp) {
+        console.log(colors.error('체력이 이미 가득 찼습니다!'));
+        readlineSync.keyInPause();
       } else {
         console.log(colors.error('보유 금액이 부족합니다!'));
         readlineSync.keyInPause();
@@ -196,30 +203,30 @@ let mergeCard = (player) => {
           ),
         );
         readlineSync.keyInPause();
-      }
+      } else {
+        player.hasCard = player.hasCard.filter((card) => {
+          if (card.cardName === cardName && removedCards.length < 3) {
+            removedCards.push(card); // 제거한 카드를 저장
+            return false; // 제거할 카드는 false로 반환(filter() 메서드는 콜백함수의 조건이 true가 될 때 해당 요소를 선별해준다.)
+          }
+          return true; // 유지할 카드는 true로 반환
+        });
 
-      player.hasCard = player.hasCard.filter((card) => {
-        if (card.cardName === cardName && removedCards.length < 3) {
-          removedCards.push(card); // 제거한 카드를 저장
-          return false; // 제거할 카드는 false로 반환(filter() 메서드는 콜백함수의 조건이 true가 될 때 해당 요소를 선별해준다.)
+        if (removedCards.length === 3) {
+          // 첫 번째 카드를 기반으로 업그레이드된 카드 생성
+          let upgradedCard = { ...removedCards[0], cardName: cardName + '+' };
+
+          upgradedCard.actProb += 20;
+          upgradedCard.attackDmg += upgradedCard.attackDmg;
+          upgradedCard.fireDmg += upgradedCard.fireDmg;
+          upgradedCard.restoreHp += upgradedCard.restoreHp;
+          upgradedCard.defense += upgradedCard.defense;
+
+          player.hasCard.push(upgradedCard);
+
+          console.log(colors.success(`${cardName} 카드가 업그레이드되었습니다!`));
+          readlineSync.keyInPause();
         }
-        return true; // 유지할 카드는 true로 반환
-      });
-
-      if (removedCards.length === 3) {
-        // 첫 번째 카드를 기반으로 업그레이드된 카드 생성
-        let upgradedCard = { ...removedCards[0], cardName: cardName + '+' };
-
-        upgradedCard.actProb += 10;
-        upgradedCard.attackDmg += upgradedCard.attackDmg / 2;
-        upgradedCard.fireDmg += upgradedCard.fireDmg / 2;
-        upgradedCard.restoreHp += upgradedCard.restoreHp / 2;
-        upgradedCard.defense += upgradedCard.defense / 2;
-
-        player.hasCard.push(upgradedCard);
-
-        console.log(colors.success(`${cardName} 카드가 업그레이드되었습니다!`));
-        readlineSync.keyInPause();
       }
     } else {
       console.log(colors.error('유효하지 않은 카드입니다.'));
@@ -229,6 +236,38 @@ let mergeCard = (player) => {
     console.log(colors.error('합칠 수 있는 카드가 없습니다.'));
     readlineSync.keyInPause();
   }
+};
+
+let tavernImage = () => {
+  console.log(
+    colors.info(`
+
+⣿⣿⣿⡿⢿⣿⣿⣿⣿⣿⣣⣛⠃⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⠻⣧⢹⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⠡⢿⣃⠦⡤⡩⢍⣙⢫⣿⣎⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⡇⢺⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣧⠙⣾⣏⣳⢱⡹⢬⣻⣿⣁⡞⡃⣤⢒⡠⢌⡉⢋⠛⠛⠛⠿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣟⠾⣳⡼⣿⣿⣿⣿⣿⣿⣿
+⣿⣧⢩⢾⣿⣯⣷⣷⣯⣷⣿⣿⡇⢼⣆⡭⢒⡣⣚⢥⡚⡔⢢⠔⣠⢂⠀⡀⢀⠉⠛⣻⠙⠛⠿⠷⣯⡄⢿⣿⣿⣿⣿⣿⣿
+⣿⣿⣷⣶⣶⣶⣬⣭⣝⣏⣿⢛⢿⠸⢿⠿⣿⣮⣗⣶⣭⣼⣆⣫⡔⢭⣙⠰⡣⠖⡠⢉⠄⡠⡀⣄⣾⠻⠎⠉⠉⠉⠛⠛⢿
+⣿⣿⣿⡿⣛⠛⠿⠿⣿⣿⢾⣿⣸⣿⣷⣶⣷⣮⣯⣭⣝⣛⡿⠿⣿⣶⣿⣿⣷⣾⣶⣭⣶⣰⣌⡴⣿⣶⡉⠖⣐⠦⠄⡠⢨
+⣿⣿⡏⢰⣏⠯⢛⣴⣲⣡⠦⣼⣦⡉⢛⠿⡛⠟⠻⠿⣿⣿⣿⣿⣿⣿⣾⣷⣿⣯⣿⣻⣟⣻⡿⢿⣿⣿⡧⣿⣶⣾⣥⣒⣩
+⣿⣿⡷⢻⣏⢨⣻⢟⡻⠟⢿⠿⣷⢿⣞⣶⣭⣞⣖⣦⢤⣉⠴⣈⠌⣩⣍⠛⠛⠻⢿⠿⠿⣿⣿⣿⣣⣏⢿⣿⣽⣯⣿⣿⣿
+⣿⣿⣗⣸⣯⢂⡿⣬⣗⠚⡬⡑⢎⠦⡉⢦⠹⢌⠯⡙⡛⡛⠻⠽⠾⢟⣶⣯⣜⣶⢢⣌⣲⡤⣈⠁⡌⢙⡌⠛⠛⠛⠻⢿⣿
+⣿⣿⡿⢩⣿⠠⣟⡓⣚⠣⠴⠥⢌⢢⣙⠠⢃⠎⡰⢑⡲⢡⡧⢜⡄⢒⡠⢤⢉⠌⡩⠙⠳⢛⠛⠟⠞⢯⠷⣺⣴⣤⡂⠀⣹
+⣿⣿⡇⢾⣟⠠⡷⡐⣽⡿⠿⣷⣶⣶⣮⠉⠑⠒⠒⠢⠱⠨⠅⢎⣂⠘⠃⢇⠸⠚⠥⠉⠒⠠⠉⠤⠉⠄⠂⠄⣤⠛⣿⠄⣼
+⣿⣿⣿⣘⣿⡂⡿⢇⢻⡐⡃⣿⣇⠠⠹⠖⡂⣿⡧⠀⢳⣶⡶⠀⠠⣬⣄⣀⣂⠢⢄⠀⠁⡁⠘⠀⡘⠠⠈⡈⠍⠐⣻⡆⢸
+⣿⣿⡟⢡⣷⠉⡷⢤⢢⠍⡔⣿⡇⠠⢁⠠⣸⢿⣧⠀⡀⢻⣧⠀⠁⡾⠁⢹⡏⠙⢻⡍⣷⠖⢶⣄⠰⣦⡄⢠⣭⡉⣽⣇⢸
+⣿⣿⣇⢾⣻⠢⣿⣭⣓⣚⡒⣿⡇⠦⠤⢆⣿⣈⣿⡦⢔⡩⣿⣄⢲⣇⢠⢸⣏⣀⡦⠀⣿⠀⢀⣿⠀⡽⣧⠀⢸⠁⢾⡇⢸
+⣿⣿⣿⠿⣟⢂⡷⣈⣭⠩⡍⣿⡟⡙⠛⣼⠳⠶⢻⣷⠤⣄⢻⣧⣾⠉⡉⢹⣏⠙⡗⠂⣿⠿⣿⠧⠂⣽⢼⣧⢸⠄⢺⡷⣈
+⣿⣿⡏⣼⣏⠒⣯⣌⡦⠑⠾⠿⠷⣄⠵⣿⡄⡁⢂⣿⣇⡀⠘⣿⡃⠀⠀⢹⡏⠉⢈⡅⢿⠋⢻⡗⠢⢽⠄⢿⣿⠤⢻⡧⢼
+⣿⣿⣷⣸⣟⡰⣿⢶⣙⡻⢞⣬⠳⢬⢎⡴⣠⡙⣎⢥⡩⣑⢢⡝⣠⠈⡄⠛⠛⠓⠿⠐⠿⠇⠀⠿⡆⣾⡄⠀⢿⠀⢺⡟⡤
+⣿⣿⣟⢱⣷⠠⣟⣛⠮⣓⡮⠴⡩⡼⣝⡦⡑⣌⡩⢆⡓⢌⡡⢌⢤⡓⣬⠹⡌⡓⢦⡡⠆⡬⣐⡐⣠⢀⠔⢢⡖⠞⢾⣿⡐
+⣿⣿⡇⣾⣏⡒⣿⣻⣽⡵⣚⡭⣗⣲⢩⠭⡝⣥⠭⣧⢹⢮⢵⣋⠦⡝⣂⡛⡔⠛⣆⡱⠯⢴⠢⡜⢡⠎⡼⣁⢎⡙⢾⡿⡔
+⣿⣿⡏⣽⣷⣱⠹⠿⠿⠿⡿⣶⢷⣭⣯⣽⣽⣬⣻⣴⣋⣞⢦⣼⣘⠖⡣⣽⣌⠹⣤⠲⡬⠷⢦⣉⣦⡙⢤⣡⠒⣬⢾⣿⠡
+⣿⣿⣧⢿⣯⣷⣻⣿⣽⣯⣵⣳⣮⣴⣳⣮⣴⢥⢧⡬⣕⣊⣃⠞⣩⢛⣭⠭⣍⠯⣍⡛⣖⢳⣒⠳⣒⠻⠖⠧⠽⢽⢻⣏⢧
+⣿⣿⣿⣿⣾⣿⣿⣽⣿⣾⣽⣿⣽⣾⣿⣽⣿⣿⣿⣾⣿⣿⣟⣿⣳⡿⣾⣽⣽⣾⣶⢿⣶⣷⡾⢿⣷⣿⣯⣿⢿⣮⣷⣞⣶
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+    
+    `),
+  );
 };
 
 export { tavern, shop, shopping, mergeCard };
