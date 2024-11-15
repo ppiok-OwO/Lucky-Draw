@@ -198,4 +198,4 @@ async function printCharacter(lines, lineDelay = 1000) {
 // 게임 실행
 start();
 
-export { displayLobby, handleUserInput };
+export { displayLobby, handleUserInput, uiStyle };

@@ -32,9 +32,12 @@ let tavern = (player) => {
     switch (tavernChoice) {
       case '1':
         const restorHpPrice = 30;
-        if (player.gold >= restorHpPrice) {
+        if (player.gold >= restorHpPrice && player.hp < player.maxHp) {
           player.updateHpByTavern(restorHpPrice);
           player.gold -= 30;
+        } else if (player.hp >= player.maxHp) {
+          console.log(colors.error('체력이 이미 가득 찼습니다!'));
+          readlineSync.keyInPause();
         } else {
           console.log(colors.error('보유 금액이 부족합니다!'));
           readlineSync.keyInPause();
@@ -59,12 +62,9 @@ let shop = (player, card1, card2, card3) => {
 
   switch (cardName) {
     case '1':
-      if (player.gold >= card1.price && player.hp < player.maxHp) {
+      if (player.gold >= card1.price) {
         player.hasCard.push(card1);
         player.gold -= card1.price;
-      } else if (player.hp >= player.maxHp) {
-        console.log(colors.error('체력이 이미 가득 찼습니다!'));
-        readlineSync.keyInPause();
       } else {
         console.log(colors.error('보유 금액이 부족합니다!'));
         readlineSync.keyInPause();

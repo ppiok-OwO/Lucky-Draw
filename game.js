@@ -428,3 +428,5 @@ let clearStage = (player) => {
 //   // 각 숫자를 큰따옴표로 감싸고 문자열로 변환
 //   return Array.from(result).map((num) => `"${num}"`);
 // }
+
+export { clearStage };

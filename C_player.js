@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
 import { largeUI, compactUI, setMessage, setBattleText } from './logs.js';
+import { clearStage, startGame } from './game.js';
+import { uiStyle } from './server.js';
 
 class Player {
   // 생성자
@@ -211,10 +213,8 @@ class Player {
     let randomValue = Math.random() * 100;
 
     if (randomValue <= this.runAwayProb) {
-      setMessage('도망 성공!');
-      this.stage++;
-      this.incPlayerStat();
-      startGame(this);
+      clearStage(this);
+      startGame(this, uiStyle);
     } else {
       setMessage('이런! 불행하게도 도망치지 못했습니다.');
       monster.monsterAttack(this);
