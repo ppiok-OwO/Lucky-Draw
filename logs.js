@@ -364,7 +364,7 @@ let monsterImage = (monster) => {
 ⣿⣿⣿⣿⣶⣟⣻⣞⡷⣄⣄⣠⣀⣈⢡⡤⣤⡼⣯⣟⣯⣶⣿⣿⣿
       `),
     );
-  } else if (monster.name === '눈이 파란 해골') {
+  } else if (monster.name === '웃음이 특이한 해골') {
     console.log(
       colors.pink(`
 ⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠙⠋⠛⠙⠛⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿
