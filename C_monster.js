@@ -88,6 +88,7 @@ class Monster {
   }
 }
 
+// 킹슬라임
 class Slime extends Monster {
   constructor(player) {
     // name, threat, hp, attackDmg
@@ -102,10 +103,13 @@ class Slime extends Monster {
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
+    this.monsterAttackCount++;
 
     player.isSticky = true;
   }
 }
+
+// 샌즈
 class Skelleton extends Monster {
   constructor(player) {
     super('웃음이 특이한 해골', '"WA! 샌즈 아시는구나!"', player);
@@ -119,11 +123,14 @@ class Skelleton extends Monster {
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
+    this.monsterAttackCount++;
 
     // isUndertaled가 true면 숫자를 랜덤하게 3개 뽑아서 해당 입력값만 받을 수 있다.
     player.isUndertaled = false;
   }
 }
+
+// 하피
 class Harpy extends Monster {
   constructor(player) {
     super('높은 바위 하피', '"깃털 총공격!"', player);
@@ -131,6 +138,8 @@ class Harpy extends Monster {
 
   skillName = '[저항의 비상] - 몬스터가 6번 공격하면 다음 턴 동안 무적이 됩니다.';
 }
+
+// 렉사르
 class Ork extends Monster {
   constructor(player) {
     super('렉사르', '"사냥을 시작하지! 네놈을 추격해주마!"', player);
@@ -144,10 +153,13 @@ class Ork extends Monster {
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
+    this.monsterAttackCount++;
 
     player.isTargeted = true;
   }
 }
+
+// 오우거 마법사
 class Ogre extends Monster {
   constructor(player) {
     super('오우거 마법사', '"준비됐어! 난 아직인데?"', player);
@@ -160,30 +172,35 @@ class Ogre extends Monster {
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
+    this.monsterAttackCount++;
 
     player.isClumsy = true;
   }
 }
 // 여기까지가 1~9스테이지 몬스터
+
 // 10스테이지는 마왕
 class Boss extends Monster {
   constructor(player) {
     super('만물의 종결자', '"내가 바로 대격변이다!"', player);
   }
 
-  skillName = '[엉뚱] - 플레이어가 엉뚱해집니다. 50%의 확률로 공격해야 한다는 사실을 까먹습니다.';
+  skillName =
+    '[666] - 6번 공격하면 다음 턴에 브레스 스킬을 사용합니다. 감소한 hp에 비례하여 브레스의 데미지가 상승합니다.';
 
   monsterAttack(player) {
     // 몬스터의 공격
-
-    player.updateHpByMonster(-this.attackDmg);
-    player.updateDefenseByMonster(-this.attackDmg);
-    this.attackDmg += player.difficulty;
-
-    let randomValue = Math.random() * 2;
-
-    if (randomValue < 1) {
-      player.isClumsy = true;
+    if (this.monsterAttackCount !== 0 && this.monsterAttackCount % 6 === 0) {
+      // 감소한 hp만큼 공격데미지에 추가한다.
+      player.updateHpByMonster(-this.attackDmg + (this.maxHp - this.hp));
+      player.updateDefenseByMonster(-this.attackDmg + (this.maxHp - this.hp));
+      this.attackDmg += player.difficulty;
+      this.monsterAttackCount++;
+    } else {
+      player.updateHpByMonster(-this.attackDmg);
+      player.updateDefenseByMonster(-this.attackDmg);
+      this.attackDmg += player.difficulty;
+      this.monsterAttackCount++;
     }
   }
 }

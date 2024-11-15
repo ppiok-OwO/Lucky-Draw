@@ -1,8 +1,8 @@
 {
   "save": {
     "player": {
-      "name": "sg",
-      "hp": 630,
+      "name": "SGSG",
+      "hp": 535,
       "maxHp": 640,
       "defense": 0,
       "bondingIndex": 275,
@@ -10,105 +10,72 @@
       "runAwayProb": 20,
       "hasCard": [
         {
-          "cardName": "기본 공격",
-          "actProb": 75,
+          "cardName": "기본 공격+",
+          "actProb": 85,
           "cardTier": "Normal",
           "isThisCardPlayed": false,
-          "attackDmg": 100000,
-          "fireDmg": 5,
-          "restoreHp": 5,
+          "attackDmg": 15,
+          "fireDmg": 7.5,
+          "restoreHp": 7.5,
           "defense": 0,
           "price": 20
         },
         {
-          "cardName": "기본 방어",
-          "actProb": 75,
-          "cardTier": "Normal",
+          "cardName": "완벽한 타격++",
+          "actProb": 105,
+          "cardTier": "Epic",
           "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 5,
+          "attackDmg": 78.75,
+          "fireDmg": 33.75,
+          "restoreHp": 33.75,
+          "defense": 11.25,
+          "price": 80
+        },
+        {
+          "cardName": "말살검",
+          "actProb": 90,
+          "cardTier": "Legendary",
+          "isThisCardPlayed": false,
+          "attackDmg": 55,
+          "fireDmg": 25,
+          "restoreHp": 25,
           "defense": 10,
-          "price": 20
+          "price": 160
         },
         {
-          "cardName": "방패 올리기",
-          "actProb": 80,
+          "cardName": "피부 찢기++",
+          "actProb": 100,
           "cardTier": "Rare",
           "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15,
+          "attackDmg": 45,
+          "fireDmg": 22.5,
+          "restoreHp": 11.25,
+          "defense": 11.25,
           "price": 40
-        },
-        {
-          "cardName": "피부 찢기",
-          "actProb": 80,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 200000,
-          "fireDmg": 10,
-          "restoreHp": 5,
-          "defense": 5,
-          "price": 40
-        },
-        {
-          "cardName": "피부 찢기",
-          "actProb": 80,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 200000,
-          "fireDmg": 10,
-          "restoreHp": 5,
-          "defense": 5,
-          "price": 40
-        },
-        {
-          "cardName": "기본 공격",
-          "actProb": 75,
-          "cardTier": "Normal",
-          "isThisCardPlayed": false,
-          "attackDmg": 100000,
-          "fireDmg": 5,
-          "restoreHp": 5,
-          "defense": 0,
-          "price": 20
         }
       ],
       "hasCardInHand": [
         {
-          "cardName": "기본 방어",
-          "actProb": 75,
-          "cardTier": "Normal",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 5,
-          "defense": 10,
-          "price": 20
-        },
-        {
-          "cardName": "피부 찢기",
+          "cardName": "방패 올리기",
           "actProb": 80,
           "cardTier": "Rare",
           "isThisCardPlayed": false,
-          "attackDmg": 200000,
-          "fireDmg": 10,
-          "restoreHp": 5,
-          "defense": 5,
+          "attackDmg": 0,
+          "fireDmg": 0,
+          "restoreHp": 10,
+          "defense": 15,
           "price": 40
         },
         {
-          "cardName": "기본 공격",
-          "actProb": 75,
-          "cardTier": "Normal",
+          "cardName": "완벽한 타격+",
+          "actProb": 95,
+          "cardTier": "Epic",
           "isThisCardPlayed": false,
-          "attackDmg": 100000,
-          "fireDmg": 5,
-          "restoreHp": 5,
-          "defense": 0,
-          "price": 20
+          "attackDmg": 52.5,
+          "fireDmg": 22.5,
+          "restoreHp": 22.5,
+          "defense": 7.5,
+          "price": 80
         },
         {
           "cardName": "방패 올리기",
@@ -120,10 +87,21 @@
           "restoreHp": 10,
           "defense": 15,
           "price": 40
+        },
+        {
+          "cardName": "기본 방어",
+          "actProb": 75,
+          "cardTier": "Normal",
+          "isThisCardPlayed": false,
+          "attackDmg": 0,
+          "fireDmg": 0,
+          "restoreHp": 5,
+          "defense": 10,
+          "price": 20
         }
       ],
       "stage": 10,
-      "blessing": "Spike Defender",
+      "blessing": "Berserker",
       "spikeDmg": 20,
       "multiAttackProb": 50,
       "maxAttackCount": 2,
@@ -132,7 +110,11 @@
       "isEliteStage": true,
       "isBossStage": false,
       "difficulty": 1,
-      "gold": 1050
+      "gold": 420,
+      "isSticky": false,
+      "isUndertaled": false,
+      "isTargeted": false,
+      "isClumsy": false
     },
     "uiStyle": "COMPACT"
   }

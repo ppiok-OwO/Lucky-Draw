@@ -280,6 +280,7 @@ function DisplayBattleStatus(player, monster) {
   console.log(
     `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} | 스킬: ${monster.skillName} |\n`)}`,
   );
+
   console.log(
     monsterHealthBar +
       chalk.yellow.bold(` ${Math.round(monster.hp)}/${Math.round(monster.maxHp)}\n`),
@@ -473,7 +474,7 @@ let monsterImage = (monster) => {
 
 let endingLog = () => {
   console.log(
-    chalk.danger(`
+    colors.danger(`
       
 흉포한 울음소리가 도사리던 어둠 속. 
 
@@ -483,7 +484,7 @@ let endingLog = () => {
   readlineSync.keyInPause();
 
   console.log(
-    chalk.danger(`
+    colors.danger(`
       
 실낱같은 빛줄기가 마왕의 목덜미를 꿰뚫었습니다! 
 
@@ -493,7 +494,7 @@ let endingLog = () => {
   readlineSync.keyInPause();
 
   console.log(
-    chalk.wdanger(`
+    colors.danger(`
       
 그것은 바로...
 
@@ -537,13 +538,31 @@ let endingLog = () => {
 
 영웅의 기상이 카드와의 유대감과 공명하여 빛을 발하였군요!
 
-마왕의 육중한 시선이 쓰러지자, 하늘을 뒤덮던 먹구름이 사라지고 
-
-내일의 광명이 눈부시게 떠오릅니다!
-
 
 `),
   );
+
+  readlineSync.keyInPause();
+
+  console.log(
+    chalk.white.bold(`
+      
+마왕의 육중한 시선이 쓰러지자, 하늘을 뒤덮던 먹구름이 사라지고 
+
+      `),
+  );
+
+  readlineSync.keyInPause();
+
+  console.log(
+    chalk.white.bold(`
+      
+내일의 광명이 눈부시게 떠오릅니다!
+
+      `),
+  );
+
+  readlineSync.keyInPause();
 };
 
 export {

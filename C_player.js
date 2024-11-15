@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { largeUI, compactUI, setMessage } from './logs.js';
+import { largeUI, compactUI, setMessage, setBattleText } from './logs.js';
 
 class Player {
   // 생성자
@@ -85,7 +85,11 @@ class Player {
     // 카드 발동 확률 = 카드 자체 발동 확률 + 카드와의 유대감
     const cardActProb = playingCard.actProb + this.bondingIndex;
 
-    if (monster.monsterAttackCount === 6 && monster.name === '높은 바위 하피') {
+    if (
+      monster.monsterAttackCount !== 0 &&
+      monster.monsterAttackCount % 6 === 0 &&
+      monster.name === '높은 바위 하피'
+    ) {
       setBattleText('하피가 높이 날아올라 공격을 회피합니다!');
     } else if (this.isClumsy) {
       setBattleText('이런! 엉뚱해진 바람에 카드를 사용하는 걸 까먹었습니다!');
