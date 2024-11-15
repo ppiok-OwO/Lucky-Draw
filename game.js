@@ -33,6 +33,9 @@ import { colors } from './functions.js';
 export function typeName(difficulty, uiStyle, saveData = null) {
   console.clear();
 
+  setMessage('');
+  setBattleText('');
+
   if (saveData) {
     const player = new Player(saveData.save.player.name, saveData.save.player.difficulty);
     player.updateData(saveData.save.player);
@@ -259,22 +262,24 @@ const battle = (player, monster, uiStyle) => {
         let randomValue = Math.random() * 10;
 
         // 확률에 따라 높은 등급의 카드를 얻을 수도 있다!(스탯도)
-        if (randomValue < 0.5) {
+        if (randomValue < 0.3) {
           addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 1) {
+        } else if (randomValue < 0.9) {
           addCard(player, 0, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 2) {
+        } else if (randomValue < 1.5) {
           addCard(player, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 3) {
+        } else if (randomValue < 2.5) {
           addCard(player, 0, 0, 0, 0, 1);
-        } else if (randomValue < 4.5) {
+        } else if (randomValue < 3.5) {
           addCard(player, 0, 0, 0, 1);
-        } else if (randomValue < 6) {
+        } else if (randomValue < 5) {
           addCard(player, 0, 0, 1);
-        } else if (randomValue < 7.5) {
+        } else if (randomValue < 6.5) {
           addCard(player, 0, 1);
-        } else if (randomValue < 9) {
+        } else if (randomValue < 8) {
           addCard(player, 1);
+        } else if (randomValue < 9) {
+          player.gold += 100;
         } else {
           player.incPlayerStat();
         }

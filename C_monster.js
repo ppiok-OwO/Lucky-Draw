@@ -7,13 +7,13 @@ class Monster {
   constructor(name, threat, player) {
     this.name = name;
     if (player.isBossStage) {
-      this.hp = Math.round(400 + 80 * player.stage * player.difficulty);
+      this.hp = Math.round(400 + 110 * player.stage * player.difficulty);
       this.attackDmg = Math.round(30 * player.stage * player.difficulty);
     } else if (player.isEliteStage) {
-      this.hp = Math.round(250 + 70 * player.stage * player.difficulty);
+      this.hp = Math.round(250 + 90 * player.stage * player.difficulty);
       this.attackDmg = Math.round(20 * player.stage * player.difficulty);
     } else {
-      this.hp = Math.round(200 + 60 * player.stage * player.difficulty);
+      this.hp = Math.round(200 + 80 * player.stage * player.difficulty);
       this.attackDmg = Math.round(15 * player.stage * player.difficulty);
     }
     this.maxHp = this.hp;
@@ -29,6 +29,7 @@ class Monster {
     player.updateHpByMonster(-this.attackDmg);
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
+    this.monsterAttackCount++;
   }
 
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {

@@ -2,13 +2,24 @@
   "save": {
     "player": {
       "name": "SGSG",
-      "hp": 546.5,
-      "maxHp": 910,
+      "hp": 100,
+      "maxHp": 160,
       "defense": 0,
-      "bondingIndex": 35,
+      "bondingIndex": 10,
       "handSize": 5,
       "runAwayProb": 20,
       "hasCard": [
+        {
+          "cardName": "방패 올리기",
+          "actProb": 80,
+          "cardTier": "Rare",
+          "isThisCardPlayed": false,
+          "attackDmg": 0,
+          "fireDmg": 0,
+          "restoreHp": 10,
+          "defense": 15,
+          "price": 40
+        },
         {
           "cardName": "방패 올리기",
           "actProb": 80,
@@ -30,39 +41,6 @@
           "restoreHp": 15,
           "defense": 25,
           "price": 80
-        },
-        {
-          "cardName": "참호+",
-          "actProb": 110,
-          "cardTier": "Legendary",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 40,
-          "defense": 60,
-          "price": 160
-        },
-        {
-          "cardName": "바리게이트+",
-          "actProb": 105,
-          "cardTier": "Epic",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 30,
-          "defense": 50,
-          "price": 80
-        },
-        {
-          "cardName": "참호",
-          "actProb": 90,
-          "cardTier": "Legendary",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 20,
-          "defense": 30,
-          "price": 160
         },
         {
           "cardName": "기본 방어+",
@@ -96,42 +74,20 @@
           "restoreHp": 10,
           "defense": 0,
           "price": 20
-        },
-        {
-          "cardName": "방패 올리기",
-          "actProb": 80,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15,
-          "price": 40
-        },
-        {
-          "cardName": "참호+",
-          "actProb": 110,
-          "cardTier": "Legendary",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 40,
-          "defense": 60,
-          "price": 160
         }
       ],
       "hasCardInHand": [],
-      "stage": 7,
+      "stage": 2,
       "blessing": "Spike Defender",
       "spikeDmg": 20,
       "multiAttackProb": 50,
       "maxAttackCount": 2,
       "isEscape": false,
       "isWon": false,
-      "isEliteStage": true,
+      "isEliteStage": false,
       "isBossStage": false,
       "difficulty": 1.5,
-      "gold": 0,
+      "gold": 130,
       "isSticky": false,
       "isUndertaled": false,
       "isTargeted": false,
