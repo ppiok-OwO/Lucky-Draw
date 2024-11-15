@@ -36,6 +36,7 @@ import {
 } from './C_monster.js';
 import { loadJson, getAchievements, unlockAchievement, saveAndExit } from './jsonFunction.js';
 import { tavern, shop, shopping, mergeCard } from './shop.js';
+import { colors } from './functions.js';
 
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName(difficulty, uiStyle, saveData = null) {
@@ -97,8 +98,24 @@ export async function startGame(player, uiStyle) {
     // 스테이지 클리어 및 게임 종료 조건
     if (player.hp <= 0) {
       // 죽으면 처음부터 다시 시작
-      displayLobby();
-      handleUserInput();
+      // 타이틀 텍스트
+      console.clear();
+      console.log(
+        chalk.hex('#F31559')(
+          figlet.textSync('YOU DIE', {
+            font: 'Delta Corps Priest 1',
+            horizontalLayout: 'default',
+            verticalLayout: 'default',
+          }),
+        ),
+      );
+
+      if (readlineSync.keyInYNStrict('다시 시작하시겠습니까? ')) {
+        displayLobby();
+        handleUserInput();
+      } else {
+        process.exit(0);
+      }
     } else if (player.stage === 10) {
       // 게임을 클리어하면 반복문 탈출하기
       player.isWon = true;
@@ -179,7 +196,7 @@ const battle = (player, monster, uiStyle) => {
     let choice;
     do {
       choice = readlineSync.question('당신의 선택은? \n');
-    } while (!['1', '2', '3', '4', '5', '6'].includes(choice));
+    } while (!['1', '2', '3', '4', '5', '6', 'test'].includes(choice));
 
     console.log(chalk.hex('#ffcdbc')(`\n${choice}번을 선택하셨습니다.`));
 
@@ -189,82 +206,126 @@ const battle = (player, monster, uiStyle) => {
         chalk.hex('#FAA300')(`
           \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
-      const cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
-      const cardIndex = Number(cardChoice - 1);
-      const playingCard = player.hasCardInHand[cardIndex];
 
-      // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
-      for (let i = 0; i < player.hasCardInHand.length; i++) {
-        if (cardChoice === `see${i + 1}`) {
-          seeCard(player.hasCardInHand[i]);
-        } else if (cardChoice === `${i + 1}`) {
-          player.cardPlay(playingCard, monster, cardIndex);
+      if (player.isUndertaled) {
+        // 플레이어의 손패에서 손패 크기의 절반에 해당하는 카드가 뼈다귀 효과를 받는다.
+        let undertaledCard = getRandomNumbers(player.hasCardInHand, Math.ceil(player.handSize / 2));
+        console.log(
+          colors.battleLog(`사용 가능한 카드 목록 : ${player.hasCardInHand[undertaledCard - 1]}`),
+        );
 
-          // 죽였는데 맞는 건 이상하니까.
-          if (monster.hp > 0) {
-            monster.monsterAttack(player);
+        let cardChoice;
+        do {
+          cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
+        } while (!undertaledCard.includes(cardChoice));
+
+        const cardIndex = Number(cardChoice - 1);
+        const playingCard = player.hasCardInHand[cardIndex];
+
+        // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
+        for (let i = 0; i < player.hasCardInHand.length; i++) {
+          if (cardChoice === `see${i + 1}`) {
+            seeCard(player.hasCardInHand[i]);
+          } else if (cardChoice === `${i + 1}`) {
+            player.cardPlay(playingCard, monster, cardIndex);
+
+            // 죽였는데 맞는 건 이상하니까.
+            if (monster.hp > 0) {
+              monster.monsterAttack(player);
+            }
+          }
+        }
+      } else {
+        let cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
+
+        const cardIndex = Number(cardChoice - 1);
+        const playingCard = player.hasCardInHand[cardIndex];
+
+        // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
+        for (let i = 0; i < player.hasCardInHand.length; i++) {
+          if (cardChoice === `see${i + 1}`) {
+            seeCard(player.hasCardInHand[i]);
+          } else if (cardChoice === `${i + 1}`) {
+            player.cardPlay(playingCard, monster, cardIndex);
+
+            // 죽였는데 맞는 건 이상하니까.
+            if (monster.hp > 0) {
+              monster.monsterAttack(player);
+            }
           }
         }
       }
 
       // 소매치기
     } else if (choice === '2') {
-      setBattleText('손은 눈보다 빠르지!');
-      let randomValue = Math.random() * 10;
+      if (!player.isSticky) {
+        setBattleText('손은 눈보다 빠르지!');
+        let randomValue = Math.random() * 10;
 
-      // 확률에 따라 높은 등급의 카드를 얻을 수도 있다!(스탯도)
-      if (randomValue < 0.5) {
-        addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
-      } else if (randomValue < 1) {
-        addCard(player, 0, 0, 0, 0, 0, 0, 1);
-      } else if (randomValue < 2) {
-        addCard(player, 0, 0, 0, 0, 0, 1);
-      } else if (randomValue < 3) {
-        addCard(player, 0, 0, 0, 0, 1);
-      } else if (randomValue < 4.5) {
-        addCard(player, 0, 0, 0, 1);
-      } else if (randomValue < 6) {
-        addCard(player, 0, 0, 1);
-      } else if (randomValue < 7.5) {
-        addCard(player, 0, 1);
-      } else if (randomValue < 9) {
-        addCard(player, 1);
+        // 확률에 따라 높은 등급의 카드를 얻을 수도 있다!(스탯도)
+        if (randomValue < 0.5) {
+          addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
+        } else if (randomValue < 1) {
+          addCard(player, 0, 0, 0, 0, 0, 0, 1);
+        } else if (randomValue < 2) {
+          addCard(player, 0, 0, 0, 0, 0, 1);
+        } else if (randomValue < 3) {
+          addCard(player, 0, 0, 0, 0, 1);
+        } else if (randomValue < 4.5) {
+          addCard(player, 0, 0, 0, 1);
+        } else if (randomValue < 6) {
+          addCard(player, 0, 0, 1);
+        } else if (randomValue < 7.5) {
+          addCard(player, 0, 1);
+        } else if (randomValue < 9) {
+          addCard(player, 1);
+        } else {
+          player.incPlayerStat();
+        }
+        monster.monsterAttack(player);
       } else {
-        player.incPlayerStat();
+        readlineSync.keyInPause('손가락이 너무 끈적합니다. 해당 기능을 이용할 수 없습니다.');
       }
-      monster.monsterAttack(player);
 
       // 카드 셔플
     } else if (choice === '3') {
-      player.shuffleAllCards();
-      monster.monsterAttack(player);
+      if (!player.isSticky) {
+        player.shuffleAllCards();
+        monster.monsterAttack(player);
+      } else {
+        readlineSync.keyInPause('손가락이 너무 끈적합니다. 해당 기능을 이용할 수 없습니다.');
+      }
 
       // 카드 지우기
     } else if (choice === '4') {
-      console.log(
-        chalk.magenta(`
-          \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
-      );
-      const cardRemoveAnswer = readlineSync.question('몇 번째 카드를 지우시겠습니까? : ');
-      const cardIndex = Number(cardRemoveAnswer - 1);
+      if (!player.isSticky) {
+        console.log(
+          chalk.magenta(`
+            \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
+        );
+        const cardRemoveAnswer = readlineSync.question('몇 번째 카드를 지우시겠습니까? : ');
+        const cardIndex = Number(cardRemoveAnswer - 1);
 
-      // 지울 카드 상세보기
-      for (let i = 0; i < player.hasCardInHand.length; i++) {
-        if (i + 1 > 0) {
-          if (cardRemoveAnswer === `see${i + 1}`) {
-            seeCard(player.hasCardInHand[i]);
+        // 지울 카드 상세보기
+        for (let i = 0; i < player.hasCardInHand.length; i++) {
+          if (i + 1 > 0) {
+            if (cardRemoveAnswer === `see${i + 1}`) {
+              seeCard(player.hasCardInHand[i]);
+            }
           }
         }
-      }
 
-      if (player.hasCard.length + player.hasCardInHand.length <= player.handSize) {
-        setMessage('손패 크기보다 덱이 더 적을 수 없습니다.');
-      } else if (cardIndex < 0) {
-        setMessage('올바르지 않은 입력입니다.');
+        if (player.hasCard.length + player.hasCardInHand.length <= player.handSize) {
+          setMessage('손패 크기보다 덱이 더 적을 수 없습니다.');
+        } else if (cardIndex < 0) {
+          setMessage('올바르지 않은 입력입니다.');
+        } else {
+          setBattleText('');
+          removeCard(cardIndex, player);
+          monster.monsterAttack(player);
+        }
       } else {
-        setBattleText('');
-        removeCard(cardIndex, player);
-        monster.monsterAttack(player);
+        readlineSync.keyInPause('손가락이 너무 끈적합니다. 해당 기능을 이용할 수 없습니다.');
       }
 
       // 도망치기
@@ -355,4 +416,19 @@ let clearStage = (player) => {
   player.multiAttackProb = 50; // 연속 공격 확률
   player.maxAttackCount = 2; // 최대 공격 횟수
   player.defense = 0;
+  player.isSticky = false;
+  player.isUndertaled = false;
+  player.isTargeted = false;
 };
+
+function getRandomNumbers(array, count) {
+  // 배열을 복사하고 랜덤하게 섞음
+  // 카드 섞을 때랑 똑같은 방식으로 배열 섞기
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  // 앞에서부터 원하는 개수만큼 반환
+  return shuffled.slice(0, count);
+}

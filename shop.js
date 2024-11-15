@@ -25,7 +25,7 @@ let tavern = (player) => {
 
     do {
       tavernChoice = readlineSync.question(
-        '\n1. 체력 회복하기    2. 상점 이용하기    3. 중복 카드 합치기    4. 다음 전투로(자동저장)!\n',
+        '\n1. 체력 회복하기(30)    2. 상점 이용하기    3. 중복 카드 합치기    4. 다음 전투로(자동저장)!\n',
       );
     } while (!['1', '2', '3', '4'].includes(tavernChoice)); // 1, 2, 3, 4 외의 입력을 방지
 
