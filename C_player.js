@@ -92,7 +92,7 @@ class Player {
     ) {
       setBattleText('하피가 높이 날아올라 공격을 회피합니다!');
     } else if (this.isClumsy) {
-      setBattleText('이런! 엉뚱해진 바람에 카드를 사용하는 걸 까먹었습니다!');
+      setMessage('이런! 엉뚱해진 바람에 카드를 사용하는 걸 까먹었습니다!');
       this.isClumsy = false;
     } else if (cardActProb >= randomValue) {
       // 카드 발동 확률이 랜덤한 숫자를 이기면 발동!

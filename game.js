@@ -419,6 +419,7 @@ let clearStage = (player) => {
   player.isSticky = false;
   player.isUndertaled = false;
   player.isTargeted = false;
+  player.isClumsy = false;
 };
 
 function getRandomNumbers(array, count) {

@@ -7,13 +7,13 @@ class Monster {
   constructor(name, threat, player) {
     this.name = name;
     if (player.isBossStage) {
-      this.hp = Math.round(400 + ((100 * player.stage) / 2) * player.difficulty);
+      this.hp = Math.round(400 + ((90 * player.stage) / 2) * player.difficulty);
       this.attackDmg = Math.round(30 * player.stage * player.difficulty);
     } else if (player.isEliteStage) {
-      this.hp = Math.round(250 + ((80 * player.stage) / 2) * player.difficulty);
+      this.hp = Math.round(250 + ((70 * player.stage) / 2) * player.difficulty);
       this.attackDmg = Math.round(20 * player.stage * player.difficulty);
     } else {
-      this.hp = Math.round(200 + ((70 * player.stage) / 2) * player.difficulty);
+      this.hp = Math.round(200 + ((60 * player.stage) / 2) * player.difficulty);
       this.attackDmg = Math.round(10 * player.stage * player.difficulty);
     }
     this.maxHp = this.hp;
@@ -126,7 +126,7 @@ class Skelleton extends Monster {
     this.monsterAttackCount++;
 
     // isUndertaled가 true면 숫자를 랜덤하게 3개 뽑아서 해당 입력값만 받을 수 있다.
-    player.isUndertaled = false;
+    player.isUndertaled = true;
   }
 }
 
@@ -164,17 +164,23 @@ class Ogre extends Monster {
   constructor(player) {
     super('오우거 마법사', '"준비됐어! 난 아직인데?"', player);
   }
-
-  skillName = '[엉뚱] - 플레이어가 엉뚱해집니다. 50%의 확률로 공격해야 한다는 사실을 까먹습니다.';
+  isClumsy = true;
+  skillName =
+    '[엉뚱] - 플레이어와 오우거 마법사가 엉뚱해집니다. 50%의 확률로 공격해야 한다는 사실을 까먹습니다.';
 
   monsterAttack(player) {
     // 몬스터의 공격
-    player.updateHpByMonster(-this.attackDmg);
-    player.updateDefenseByMonster(-this.attackDmg);
-    this.attackDmg += player.difficulty;
-    this.monsterAttackCount++;
+    let randomValue = Math.random() * 2;
+    if (randomValue < 1) {
+      player.updateHpByMonster(-this.attackDmg);
+      player.updateDefenseByMonster(-this.attackDmg);
+      this.attackDmg += player.difficulty;
+      this.monsterAttackCount++;
 
-    player.isClumsy = true;
+      player.isClumsy = true;
+    } else {
+      setBattleText('오우거 마법사가 공격하는 걸 까먹었습니다!');
+    }
   }
 }
 // 여기까지가 1~9스테이지 몬스터
