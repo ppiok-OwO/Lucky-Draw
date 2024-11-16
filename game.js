@@ -7,7 +7,8 @@ import {
   compactUI,
   setMessage,
   selectReward,
-  setBattleText,
+  setPlayerBattleText,
+  setMonsterBattleText,
   displayDeckList,
   endingLog,
 } from './logs.js';
@@ -34,7 +35,8 @@ export function typeName(difficulty, uiStyle, saveData = null) {
   console.clear();
 
   setMessage('');
-  setBattleText('');
+  setPlayerBattleText('');
+  setMonsterBattleText('');
 
   if (saveData) {
     const player = new Player(saveData.save.player.name, saveData.save.player.difficulty);
@@ -123,7 +125,6 @@ export async function startGame(player, uiStyle) {
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
       // 전투 로그 초기화
-      setBattleText('');
       tavern(player);
       await saveAndExit('./savedGame.json', player, uiStyle);
     }
@@ -244,7 +245,7 @@ const battle = (player, monster, uiStyle) => {
         if (cardChoice === `see${i + 1}`) {
           seeCard(player.hasCardInHand[i]);
         } else if (cardChoice === `${i + 1}`) {
-          setBattleText('');
+          setPlayerBattleText('');
           player.cardPlay(playingCard, monster, cardIndex);
 
           // 죽였는데 맞는 건 이상하니까.
@@ -257,36 +258,31 @@ const battle = (player, monster, uiStyle) => {
 
       // 소매치기
     } else if (choice === '2') {
-      if (!player.isSticky) {
-        setBattleText('손은 눈보다 빠르지!');
-        let randomValue = Math.random() * 10;
-
-        // 확률에 따라 높은 등급의 카드를 얻을 수도 있다!(스탯도)
-        if (randomValue < 0.3) {
-          addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 0.9) {
-          addCard(player, 0, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 1.5) {
-          addCard(player, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 2.5) {
-          addCard(player, 0, 0, 0, 0, 1);
-        } else if (randomValue < 3.5) {
-          addCard(player, 0, 0, 0, 1);
-        } else if (randomValue < 5) {
-          addCard(player, 0, 0, 1);
-        } else if (randomValue < 6.5) {
-          addCard(player, 0, 1);
-        } else if (randomValue < 8) {
-          addCard(player, 1);
-        } else if (randomValue < 9) {
-          player.gold += 100;
-        } else {
-          player.incPlayerStat();
-        }
-        monster.monsterAttack(player);
+      setPlayerBattleText('손은 눈보다 빠르지!');
+      let randomValue = Math.random() * 10;
+      // 확률에 따라 높은 등급의 카드 혹은 골드를 얻을 수도 있다!(스탯도!)
+      if (randomValue < 0.3) {
+        addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 0.9) {
+        addCard(player, 0, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 1.5) {
+        addCard(player, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 2.5) {
+        addCard(player, 0, 0, 0, 0, 1);
+      } else if (randomValue < 3.5) {
+        addCard(player, 0, 0, 0, 1);
+      } else if (randomValue < 5) {
+        addCard(player, 0, 0, 1);
+      } else if (randomValue < 6.5) {
+        addCard(player, 0, 1);
+      } else if (randomValue < 8) {
+        addCard(player, 1);
+      } else if (randomValue < 9) {
+        player.gold += 100;
       } else {
-        readlineSync.keyInPause('손가락이 너무 끈적합니다. 해당 기능을 이용할 수 없습니다.');
+        player.incPlayerStat();
       }
+      monster.monsterAttack(player);
 
       // 카드 셔플
     } else if (choice === '3') {
@@ -321,7 +317,7 @@ const battle = (player, monster, uiStyle) => {
         } else if (cardIndex < 0) {
           setMessage('올바르지 않은 입력입니다.');
         } else {
-          setBattleText('');
+          setPlayerBattleText('');
           removeCard(cardIndex, player);
           monster.monsterAttack(player);
         }

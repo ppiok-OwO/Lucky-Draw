@@ -1,7 +1,13 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { largeUI, compactUI, setMessage, setBattleText } from './logs.js';
+import {
+  largeUI,
+  compactUI,
+  setMessage,
+  setPlayerBattleText,
+  setMonsterBattleText,
+} from './logs.js';
 
 class Monster {
   constructor(name, threat, player) {
@@ -30,6 +36,7 @@ class Monster {
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
+    setMonsterBattleText(`${this.name}이(가) ${this.attackDmg}만큼 공격했습니다!`);
   }
 
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
@@ -37,10 +44,14 @@ class Monster {
     if (player.blessing === 'Spike Defender') {
       if (player.defense > 0) {
         this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
-        setBattleText(`몬스터에게 ${Math.round(player.spikeDmg)}만큼의 가시 데미지를 주었습니다.`);
+        setPlayerBattleText(
+          `${this.name}에게 ${Math.round(player.spikeDmg)}만큼의 가시 데미지를 주었습니다.`,
+        );
       } else {
         this.hp -= Math.round(playingCard.attackDmg * cardPower);
-        setBattleText('');
+        setPlayerBattleText(
+          `${this.name}에게 ${Math.round(playingCard.attackDmg * cardPower)}만큼의 데미지를 주었습니다.`,
+        );
       }
       // 광전사
     } else if (player.blessing === 'Berserker') {
@@ -48,26 +59,23 @@ class Monster {
       // 공격 횟수는 플레이어의 최대 공격 횟수 이하의 범위에서 랜덤하게 정한다. 단, 최솟값은 2 이상.
       let attackCount = Math.floor(Math.random() * (player.maxAttackCount - 1)) + 2;
       if (player.multiAttackProb >= randomValue) {
-        for (let i = 0; i < attackCount; i++) {
-          // 위에서 계산된 공격 횟수만큼 공격한다.
-          this.hp -= Math.round(playingCard.attackDmg * cardPower);
-        }
+        this.hp -= Math.round(playingCard.attackDmg * cardPower) * attackCount;
         // 연속 공격에 성공하면 배틀 로그를 변경
-        if (attackCount >= 2) {
-          setBattleText(`미쳐 날뛰고 있습니다. ${attackCount}회 연속 공격!`);
-        } else {
-          // 연속 공격 안 하면 지워주기
-          setBattleText('');
-        }
-
+        setPlayerBattleText(
+          `미쳐 날뛰고 있습니다! ${this.name}에게 ${Math.round(playingCard.attackDmg * cardPower)}의 데미지로 ${attackCount}회 연속 공격!`,
+        );
         // 입힌 데미지만큼 회복
         player.hp += Math.round(playingCard.attackDmg * cardPower) * attackCount;
         if (player.hp >= player.maxHp) {
           player.hp = player.maxHp;
         }
       } else {
+        // 연속 공격 안 할 때
         this.hp -= Math.round(playingCard.attackDmg * cardPower);
         player.hp += Math.round(playingCard.attackDmg * cardPower);
+        setPlayerBattleText(
+          `${this.name}에게 ${Math.round(playingCard.attackDmg * cardPower)}만큼의 데미지를 주었습니다.`,
+        );
         if (player.hp >= player.maxHp) {
           player.hp = player.maxHp;
         }
@@ -76,6 +84,9 @@ class Monster {
     else if (player.blessing === 'Chieftain') {
       this.hp -= Math.round(playingCard.fireDmg * cardPower);
       this.isIgnited = true;
+      setPlayerBattleText(
+        `${this.name}에게 ${Math.round(playingCard.attackDmg * cardPower)}만큼의 데미지를 주었습니다. 적이 불에 타오르고 있습니다.`,
+      );
     }
   }
   monsterLoseHpByIgnite(playingCard, cardPower = 1, player) {
@@ -83,7 +94,6 @@ class Monster {
       this.igniteStack += Math.round(playingCard.fireDmg * cardPower);
       this.hp -= this.igniteStack;
       this.igniteStack--;
-      setBattleText(`적이 불에 타오르고 있습니다.`);
     }
   }
 }
@@ -104,6 +114,9 @@ class Slime extends Monster {
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
+    setMonsterBattleText(
+      `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
+    );
 
     player.isSticky = true;
   }
@@ -154,6 +167,9 @@ class Ork extends Monster {
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
+    setMonsterBattleText(
+      `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
+    );
 
     player.isTargeted = true;
   }
@@ -176,10 +192,13 @@ class Ogre extends Monster {
       player.updateDefenseByMonster(-this.attackDmg);
       this.attackDmg += player.difficulty;
       this.monsterAttackCount++;
+      setMonsterBattleText(
+        `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
+      );
 
       player.isClumsy = true;
     } else {
-      setBattleText('오우거 마법사가 공격하는 걸 까먹었습니다!');
+      setMonsterBattleText('오우거 마법사가 공격하는 걸 까먹었습니다!');
     }
   }
 }
@@ -198,15 +217,23 @@ class Boss extends Monster {
     // 몬스터의 공격
     if (this.monsterAttackCount !== 0 && this.monsterAttackCount % 6 === 0) {
       // 감소한 hp만큼 공격데미지에 추가한다.
-      player.updateHpByMonster(-this.attackDmg + (this.maxHp - this.hp));
-      player.updateDefenseByMonster(-this.attackDmg + (this.maxHp - this.hp));
+      let breathDmg = 400;
+      let tempAttackDmg = -this.attackDmg + 400 * (this.maxHp - this.hp);
+      player.updateHpByMonster(tempAttackDmg);
+      player.updateDefenseByMonster(tempAttackDmg);
       this.attackDmg += player.difficulty;
       this.monsterAttackCount++;
+      setMonsterBattleText(
+        `${this.name}이(가) 당신을 ${tempAttackDmg}만큼의 데미지로 공격했습니다!`,
+      );
     } else {
       player.updateHpByMonster(-this.attackDmg);
       player.updateDefenseByMonster(-this.attackDmg);
       this.attackDmg += player.difficulty;
       this.monsterAttackCount++;
+      setMonsterBattleText(
+        `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
+      );
     }
   }
 }

@@ -1,36 +1,14 @@
 {
   "save": {
     "player": {
-      "name": "SGSG",
-      "hp": 100,
-      "maxHp": 160,
+      "name": "sgsg",
+      "hp": 220,
+      "maxHp": 250,
       "defense": 0,
-      "bondingIndex": 10,
+      "bondingIndex": 25,
       "handSize": 5,
       "runAwayProb": 20,
       "hasCard": [
-        {
-          "cardName": "방패 올리기",
-          "actProb": 80,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15,
-          "price": 40
-        },
-        {
-          "cardName": "방패 올리기",
-          "actProb": 80,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15,
-          "price": 40
-        },
         {
           "cardName": "바리게이트",
           "actProb": 85,
@@ -43,14 +21,25 @@
           "price": 80
         },
         {
-          "cardName": "기본 방어+",
-          "actProb": 95,
-          "cardTier": "Normal",
+          "cardName": "참호",
+          "actProb": 90,
+          "cardTier": "Legendary",
           "isThisCardPlayed": false,
           "attackDmg": 0,
           "fireDmg": 0,
+          "restoreHp": 20,
+          "defense": 30,
+          "price": 160
+        },
+        {
+          "cardName": "기본 공격+",
+          "actProb": 95,
+          "cardTier": "Normal",
+          "isThisCardPlayed": false,
+          "attackDmg": 20,
+          "fireDmg": 10,
           "restoreHp": 10,
-          "defense": 20,
+          "defense": 0,
           "price": 20
         },
         {
@@ -65,19 +54,41 @@
           "price": 40
         },
         {
-          "cardName": "기본 공격+",
+          "cardName": "피부 찢기+",
+          "actProb": 100,
+          "cardTier": "Rare",
+          "isThisCardPlayed": false,
+          "attackDmg": 40,
+          "fireDmg": 20,
+          "restoreHp": 10,
+          "defense": 10,
+          "price": 40
+        },
+        {
+          "cardName": "기본 방어+",
           "actProb": 95,
           "cardTier": "Normal",
           "isThisCardPlayed": false,
-          "attackDmg": 20,
-          "fireDmg": 10,
+          "attackDmg": 0,
+          "fireDmg": 0,
           "restoreHp": 10,
-          "defense": 0,
+          "defense": 20,
           "price": 20
+        },
+        {
+          "cardName": "방패 올리기+",
+          "actProb": 100,
+          "cardTier": "Rare",
+          "isThisCardPlayed": false,
+          "attackDmg": 0,
+          "fireDmg": 0,
+          "restoreHp": 20,
+          "defense": 30,
+          "price": 40
         }
       ],
       "hasCardInHand": [],
-      "stage": 2,
+      "stage": 3,
       "blessing": "Spike Defender",
       "spikeDmg": 20,
       "multiAttackProb": 50,
@@ -86,8 +97,8 @@
       "isWon": false,
       "isEliteStage": false,
       "isBossStage": false,
-      "difficulty": 1.5,
-      "gold": 130,
+      "difficulty": 2,
+      "gold": 310,
       "isSticky": false,
       "isUndertaled": false,
       "isTargeted": false,

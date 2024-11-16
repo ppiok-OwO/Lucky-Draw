@@ -8,7 +8,8 @@ import { colors } from './functions.js';
 // 인게임 안내 메시지를 위한 변수들
 const info = `[TIP]전투 중에 카드를 자세히 보시려면 번호 앞에 'see'를 붙여주세요\n`;
 let message = '';
-let battleText = '';
+let playerBattleText = '';
+let monsterBattleText = '';
 
 // LARGE UI
 function largeUI(player, monster) {
@@ -67,13 +68,14 @@ function largeUI(player, monster) {
   console.log(colors.grey(`===========================`));
   console.log(colors.info(`\n${info}`));
   console.log(colors.message(`>> 알림 로그: ${message}`));
-  console.log(colors.battleLog(`>> 전투 로그: ${battleText}`));
+  console.log(colors.green4(`>> 전투 로그: ${playerBattleText}`));
+  console.log(colors.battleLog(`>> 전투 로그: ${monsterBattleText}`));
 }
 
 // COMPACT UI
 let compactUI = (player, monster) => {
   let difficultyInfo =
-    player.difficulty === 1 ? 'NORMAL' : player.difficulty === 1.2 ? 'HARD' : 'HELL';
+    player.difficulty === 1 ? 'NORMAL' : player.difficulty === 1.5 ? 'HARD' : 'HELL';
   displayDeckList(player);
   console.log(colors.grey(`\n====== Current Status ======`));
 
@@ -103,7 +105,8 @@ let compactUI = (player, monster) => {
   console.log(colors.grey(`\n===========================`));
   console.log(colors.info(`\n${info}`));
   console.log(colors.message(`>> 알림 로그: ${message}`));
-  console.log(colors.battleLog(`>> 전투 로그: ${battleText}`));
+  console.log(colors.green4(`>> 전투 로그: ${playerBattleText}`));
+  console.log(colors.battleLog(`>> 전투 로그: ${monsterBattleText}`));
 };
 
 // 보유한 카드의 이름들을 문자열로 정렬하기
@@ -138,8 +141,13 @@ function setMessage(newMessage) {
 }
 
 // 전투로그
-function setBattleText(newText) {
-  battleText = newText;
+function setPlayerBattleText(newText) {
+  playerBattleText = newText;
+}
+
+// 전투로그
+function setMonsterBattleText(newText) {
+  monsterBattleText = newText;
 }
 
 // 스테이지 보상
@@ -570,7 +578,8 @@ export {
   compactUI,
   setMessage,
   selectReward,
-  setBattleText,
+  setPlayerBattleText,
+  setMonsterBattleText,
   combineCardNamesToString,
   displayDeckList,
   miniUI,

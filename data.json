@@ -16,7 +16,7 @@
       "id": 3,
       "name": "실례지만 지금 불타고 계십니다.",
       "description": "화염 투사로 승리하기",
-      "isUnlocked": false
+      "isUnlocked": true
     },
     {
       "id": 4,

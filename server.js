@@ -6,10 +6,14 @@ import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
 import { loadJson, getAchievements, unlockAchievement, loadSaveFile } from './jsonFunction.js';
 import { colors } from './functions.js';
+import sound from 'sound-play';
+import path from 'path';
 
 let difficultyChoice = 'NORMAL';
 let difficulty = 1;
 let uiStyle = 'COMPACT';
+const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
+let isPlaying = false;
 
 // 시나리오 스크립트
 async function scenario() {
@@ -36,6 +40,9 @@ async function scenario() {
 // 로비 화면을 출력하는 함수
 function displayLobby() {
   console.clear();
+
+  // 오디오 재생
+  // playAudioLoop();
 
   // 타이틀 텍스트
   console.log(
@@ -113,12 +120,12 @@ async function handleUserInput() {
         handleUserInput();
       } else if (input === 'HARD') {
         difficultyChoice = input;
-        difficulty = 1.2;
+        difficulty = 1.5;
         displayLobby();
         handleUserInput();
       } else if (input === 'HELL') {
         difficultyChoice = input;
-        difficulty = 1.5;
+        difficulty = 2;
         displayLobby();
         handleUserInput();
       } else {
@@ -194,6 +201,27 @@ async function printCharacter(lines, lineDelay = 1000) {
     await new Promise((resolve) => setTimeout(resolve, lineDelay));
   }
 }
+
+// 반복 재생 함수
+// async function playAudioLoop() {
+//   while (true) {
+//     try {
+//       // 오디오 파일 재생
+//       await sound.play(filePath);
+//     } catch (error) {
+//       console.error('오디오 재생 중 오류 발생:', error);
+//       break; // 오류 시 루프 중지
+//     }
+//   }
+// }
+
+// 메인 화면 함수
+// let gameMain = () => {
+//   while (true) {
+//     displayLobby();
+//     handleUserInput();
+//   }
+// };
 
 // 게임 실행
 start();
