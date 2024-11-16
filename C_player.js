@@ -10,6 +10,7 @@ import {
 } from './logs.js';
 import { clearStage, startGame } from './game.js';
 import { uiStyle } from './server.js';
+import { tavern } from './shop.js';
 
 class Player {
   // 생성자
@@ -220,7 +221,8 @@ class Player {
 
     if (randomValue <= this.runAwayProb) {
       clearStage(this);
-      startGame(this, uiStyle);
+      // startGame(this, uiStyle);
+      tavern(this);
     } else {
       setMessage('이런! 불행하게도 도망치지 못했습니다.');
       monster.monsterAttack(this);

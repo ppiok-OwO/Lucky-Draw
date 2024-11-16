@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { displayLobby, handleUserInput } from './server.js';
+import { displayLobby, handleUserInput, playAudioLoop, stopAudio } from './server.js';
 import {
   largeUI,
   compactUI,
@@ -29,6 +29,9 @@ import { Monster, Slime, Harpy, Ork, Ogre, Boss, makeRandomMonster } from './C_m
 import { loadJson, getAchievements, unlockAchievement, saveAndExit } from './jsonFunction.js';
 import { tavern, shop, shopping, mergeCard } from './shop.js';
 import { colors } from './functions.js';
+import path from 'path';
+
+const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
 
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName(difficulty, uiStyle, saveData = null) {
@@ -79,6 +82,7 @@ export function typeName(difficulty, uiStyle, saveData = null) {
 export async function startGame(player, uiStyle) {
   console.clear();
 
+
   while (player.stage <= 10) {
     // const monster = new Monster(player.stage);
     let monster;
@@ -111,6 +115,7 @@ export async function startGame(player, uiStyle) {
         handleUserInput();
         break;
       } else {
+        stopAudio();
         process.exit(0);
       }
     } else if (player.stage === 10 && monster.hp <= 0) {
@@ -160,6 +165,7 @@ export async function startGame(player, uiStyle) {
       displayLobby();
       handleUserInput();
     } else {
+      stopAudio();
       process.exit(0);
     }
   } else if (player.isEscape) {
@@ -204,37 +210,6 @@ const battle = (player, monster, uiStyle) => {
           \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
 
-      // if (player.isUndertaled) {
-      //   // 플레이어의 손패에서 손패 크기의 절반에 해당하는 카드가 뼈다귀 효과를 받는다.
-      //   let undertaledCard = getRandomNumbers(
-      //     1,
-      //     player.handSize.length,
-      //     Math.floor(player.handSize.length / 2),
-      //   );
-      //   console.log(colors.battleLog(`사용 가능한 카드 목록 : ${undertaledCard}`));
-
-      //   let cardChoice;
-      //   do {
-      //     cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
-      //   } while (!undertaledCard.includes(cardChoice));
-
-      //   const cardIndex = Number(cardChoice - 1);
-      //   const playingCard = player.hasCardInHand[cardIndex];
-
-      //   // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
-      //   for (let i = 0; i < player.hasCardInHand.length; i++) {
-      //     if (cardChoice === `see${i + 1}` || cardChoice === `SEE${i + 1}`) {
-      //       seeCard(player.hasCardInHand[i]);
-      //     } else if (cardChoice === `${i + 1}`) {
-      //       player.cardPlay(playingCard, monster, cardIndex);
-
-      //       // 죽였는데 맞는 건 이상하니까.
-      //       if (monster.hp > 0) {
-      //         monster.monsterAttack(player);
-      //       }
-      //     }
-      //   }
-      // } else {
       let cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
 
       const cardIndex = Number(cardChoice - 1);

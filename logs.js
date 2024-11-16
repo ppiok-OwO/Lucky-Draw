@@ -21,24 +21,30 @@ function largeUI(player, monster) {
   if (player.isBossStage) {
     console.log(
       colors.danger(`
-| Stage: ${player.stage}(BOSS!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+| Stage: ${player.stage}(BOSS!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |\n
       `),
     );
   } else if (player.isEliteStage) {
     console.log(
       colors.elite(`
-| Stage: ${player.stage}(ELITE!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+| Stage: ${player.stage}(ELITE!!) | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |\n
       `),
     );
   } else {
     console.log(
       colors.green2(`
-| Stage: ${player.stage} | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |
+| Stage: ${player.stage} | ${player.blessing} | ${difficultyInfo} | 보유 골드: ${player.gold} |\n
       `),
     );
   }
 
   blessingExplain(player);
+
+  const playerHealthBar = CreateHealthBar(player, '#15B392');
+  console.log(
+    playerHealthBar + chalk.yellow.bold(` ${Math.round(player.hp)}/${Math.round(player.maxHp)}`),
+  );
+
   console.log(
     colors.green3(`
 | 플레이어 정보 | ${player.name} | HP: ${Math.round(player.hp)}/${Math.round(player.maxHp)}, 방어도: ${Math.round(player.defense)}, 도망확률: ${Math.round(player.runAwayProb)} |
@@ -56,6 +62,11 @@ function largeUI(player, monster) {
   }
 
   monsterImage(monster);
+  const monsterHealthBar = CreateHealthBar(monster, '#F31559');
+  console.log(
+    monsterHealthBar + chalk.yellow.bold(` ${Math.round(monster.hp)}/${Math.round(monster.maxHp)}`),
+  );
+
   console.log(
     colors.monster(`
 | 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | 스킬: ${monster.skillName} | ${monster.threat} | 공격턴: ${monster.monsterAttackCount + 1} |\n`),
@@ -236,19 +247,19 @@ let blessingExplain = (player) => {
   if (player.blessing === 'Spike Defender') {
     console.log(
       colors.green2(
-        '| 가시 수호자는 기본 가시데미지를 20 얻습니다. 방어도를 얻을 때 현재 가시 데미지 수치의 절반만큼을 방어도로 획득합니다. 방어도를 가지고 있을 때에만 공격자에게 가시 데미지를 줄 수 있습니다.',
+        '| 가시 수호자는 기본 가시데미지를 20 얻습니다. 방어도를 얻을 때 현재 가시 데미지 수치의 절반만큼을 방어도로 획득합니다. 방어도를 가지고 있을 때에만 공격자에게 가시 데미지를 줄 수 있습니다.\n',
       ),
     );
   } else if (player.blessing === 'Berserker') {
     console.log(
       colors.green2(
-        '| 광전사는 연속으로 공격할 확률을 얻습니다. 이때, 최대 공격 횟수에 따라 여러 번 공격할 수 있습니다. 카드를 쓸 때마다 체력을 5씩 잃지만 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1씩 증가합니다. 가한 피해만큼 흡혈할 수 있습니다.',
+        '| 광전사는 연속으로 공격할 확률을 얻습니다. 이때, 최대 공격 횟수에 따라 여러 번 공격할 수 있습니다. 카드를 쓸 때마다 체력을 5씩 잃지만 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1씩 증가합니다. 가한 피해만큼 흡혈할 수 있습니다.\n',
       ),
     );
   } else if (player.blessing === 'Chieftain') {
     console.log(
       colors.green2(
-        '| 화염 투사는 카드가 가진 화염 데미지만큼 적에게 점화를 걸 수 있습니다. 화염 데미지는 화염투사만이 적에게 가할 수 있습니다. 점화 스택은 턴이 끝날 때마다 1씩 감소합니다. 카드를 통해 HP를 회복할 때 직접 가한 화염 데미지만큼 추가로 회복할 수 있으며, 회복한 체력만큼 점화 스택이 증가합니다.',
+        '| 화염 투사는 카드가 가진 화염 데미지만큼 적에게 점화를 걸 수 있습니다. 화염 데미지는 화염투사만이 적에게 가할 수 있습니다. 점화 스택은 턴이 끝날 때마다 1씩 감소합니다. 카드를 통해 HP를 회복할 때 직접 가한 화염 데미지만큼 추가로 회복할 수 있으며, 회복한 체력만큼 점화 스택이 증가합니다.\n',
       ),
     );
   }
@@ -269,7 +280,7 @@ function DisplayBattleStatus(player, monster) {
   );
 
   console.log(
-    playerHealthBar + chalk.yellow.bold(` ${Math.round(player.hp)}/${Math.round(player.maxHp)}\n`),
+    playerHealthBar + chalk.yellow.bold(` ${Math.round(player.hp)}/${Math.round(player.maxHp)}`),
   );
 
   if (player.blessing === 'Spike Defender') {
@@ -290,8 +301,7 @@ function DisplayBattleStatus(player, monster) {
   );
 
   console.log(
-    monsterHealthBar +
-      chalk.yellow.bold(` ${Math.round(monster.hp)}/${Math.round(monster.maxHp)}\n`),
+    monsterHealthBar + chalk.yellow.bold(` ${Math.round(monster.hp)}/${Math.round(monster.maxHp)}`),
   );
   if (player.blessing === 'Chieftain') {
     console.log(
