@@ -12,7 +12,7 @@ import {
   displayDeckList,
   endingLog,
 } from './logs.js';
-import { Player } from './C_player.js';
+import { Player, SpikeDefender, Berserker, Chieftain } from './C_player.js';
 import {
   Card,
   NormalAttackCard,
@@ -63,23 +63,21 @@ export function typeName(difficulty, uiStyle, saveData = null) {
     ),
   );
 
-  const blessing = chooseBlessing();
-  const player = new Player(playerName, difficulty);
+  let blessing = chooseBlessing();
 
   if (blessing === '1') {
-    player.blessing = 'Spike Defender';
+    const player = new SpikeDefender(playerName, difficulty);
+    // 시작덱 배열에 카드들을 추가
+    makeNewDeckAndStart(player, uiStyle);
   } else if (blessing === '2') {
-    player.blessing = 'Berserker';
+    const player = new Berserker(playerName, difficulty);
+    // 시작덱 배열에 카드들을 추가
+    makeNewDeckAndStart(player, uiStyle);
   } else if (blessing === '3') {
-    player.blessing = 'Chieftain';
+    const player = new Chieftain(playerName, difficulty);
+    // 시작덱 배열에 카드들을 추가
+    makeNewDeckAndStart(player, uiStyle);
   }
-
-  // 시작덱 배열에 카드들을 추가
-  addCard(player, 3, 2, 3, 2);
-
-  player.drawCardRandomly();
-
-  startGame(player, uiStyle);
 }
 
 // 스테이지를 증가시키면서 보상 획득, 전투 반복
@@ -340,12 +338,22 @@ function chooseBlessing() {
         '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
       ),
   );
-  const blessingChoice = readlineSync.question('\n당신의 선택은? ');
+
+  let blessingChoice;
+  do {
+    blessingChoice = readlineSync.question('\n당신의 선택은? ');
+  } while (!['1', '2', '3'].includes(blessingChoice));
 
   console.log(chalk.hex('#ffcdbc')(`\n${blessingChoice}번을 선택하셨습니다.`));
 
   return blessingChoice;
 }
+
+let makeNewDeckAndStart = (player, uiStyle) => {
+  addCard(player, 3, 2, 3, 2);
+  player.drawCardRandomly();
+  startGame(player, uiStyle);
+};
 
 // 손패에 있는 카드를 지우는 함수
 function removeCard(cardRemoveIndex, player) {
@@ -385,7 +393,7 @@ let clearStage = (player) => {
   // 스테이지 클리어 시 스탯 증가
   player.stage++;
   player.maxHp += player.stage * 30;
-  player.bondingIndex += 5;
+  player.bondingIndex += 5 * player.stage;
   if (player.isEliteStage) {
     player.gold += 250;
   } else {

@@ -14,7 +14,7 @@ import { tavern } from './shop.js';
 
 class Player {
   // 생성자
-  constructor(name, difficulty = 1) {
+  constructor(name, difficulty = 1, blessing) {
     this.name = name;
     this.hp = 100;
     this.maxHp = 100;
@@ -25,10 +25,7 @@ class Player {
     this.hasCard = []; // 덱에 보유한 카드
     this.hasCardInHand = []; // 핸드에 들어오는 카드의 배열
     this.stage = 1;
-    this.blessing = ''; // 선택한 축복
-    this.spikeDmg = 20; // 가시 데미지
-    this.multiAttackProb = 50; // 연속 공격 확률
-    this.maxAttackCount = 2; // 최대 공격 횟수
+    this.blessing = blessing; // 선택한 축복
     this.isEscape = false;
     this.isWon = false;
     this.isEliteStage = false;
@@ -126,7 +123,6 @@ class Player {
         monster.isIgnited = false;
         monster.igniteStack = 0;
       }
-
       setMessage('카드 발동 성공!');
     } else {
       setMessage('카드 발동 실패!');
@@ -145,35 +141,11 @@ class Player {
   // 카드에 의한 HP 업데이트
   updateHpByCard(playingCard, cardPower = 1, monster) {
     // 현재 체력 += 힐카드 계산식
-    // 화염 투사는 카드의 점화 스택의 절반만큼 회복을 추가로 한다.
-    if (this.blessing === 'Chieftain' && this.isTargeted) {
-      this.hp += Math.round(((playingCard.restoreHp + monster.igniteStack / 2) * cardPower) / 2);
-    } else if (this.blessing === 'Chieftain') {
-      this.hp += Math.round((playingCard.restoreHp + monster.igniteStack / 2) * cardPower);
-    } else {
-      this.hp += Math.round(playingCard.restoreHp * cardPower);
-    }
+    this.hp += Math.round(playingCard.restoreHp * cardPower);
 
     // 단, 체력은 최대체력을 넘을 수 없다!
     if (this.hp >= this.maxHp) {
       this.hp = this.maxHp;
-    }
-
-    // 화염 투사의 경우 카드를 통해 회복한 체력만큼 점화를 걸 수 있다.(렉사르의 스킬로 인한 회복량의 감소는 반영되지 않는다. 그럼 너무 카운터니까.)
-    if (this.blessing === 'Chieftain') {
-      if (monster.isIgnited) {
-        monster.igniteStack += Math.round(playingCard.restoreHp * cardPower);
-      }
-    } else if (this.blessing === 'Berserker') {
-      // 광전사의 경우 카드를 쓸 때마다 5의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1 증가한다.
-      this.hp -= 5;
-      let randomValue = Math.random() * 2;
-
-      if (randomValue < 1 && this.multiAttackProb <= 100) {
-        this.multiAttackProb += 10;
-      } else {
-        this.maxAttackCount += 1;
-      }
     }
   }
 
@@ -194,16 +166,7 @@ class Player {
 
   // 카드에 의한 방어도 업데이트
   updateDefenseByCard(playingCard, cardPower = 1) {
-    // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 현재 가시데미지의 절반만큼을 추가 방어도로 얻는다.
-    if (this.blessing === 'Spike Defender' && this.isTargeted) {
-      this.spikeDmg += playingCard.defense / 2;
-      this.defense += Math.round(playingCard.defense + this.spikeDmg / 2);
-    } else if (this.blessing === 'Spike Defender') {
-      this.spikeDmg += playingCard.defense / 2;
-      this.defense += Math.round(playingCard.defense + this.spikeDmg / 2);
-    } else {
-      this.defense += Math.round(playingCard.defense);
-    }
+    this.defense += Math.round(playingCard.defense * cardPower);
   }
 
   // 몬스터에 의한 방어도 업데이트
@@ -254,4 +217,87 @@ class Player {
   }
 }
 
-export { Player };
+class SpikeDefender extends Player {
+  constructor(name, difficulty = 1) {
+    super(name, difficulty, 'Spike Defender');
+    this.spikeDmg = 20; // 가시 데미지
+  }
+
+  // 카드에 의한 방어도 업데이트
+  updateDefenseByCard(playingCard, cardPower = 1) {
+    // 가시 수호자의 경우 카드가 제공하는 방어도의 절반만큼 가시데미지를 얻는다. 현재 가시데미지의 절반만큼을 추가 방어도로 얻는다.
+    if (this.isTargeted) {
+      this.spikeDmg += (playingCard.defense * cardPower) / 2;
+      this.defense += Math.round((playingCard.defense * cardPower) / 2 + this.spikeDmg / 2);
+    } else {
+      this.spikeDmg += playingCard.defense / 2;
+      this.defense += Math.round(playingCard.defense * cardPower + this.spikeDmg / 2);
+    }
+  }
+}
+
+class Berserker extends Player {
+  constructor(name, difficulty = 1) {
+    super(name, difficulty, 'Berserker');
+    this.multiAttackProb = 50; // 연속 공격 확률
+    this.maxAttackCount = 2; // 최대 공격 횟수
+  }
+
+  // 카드에 의한 HP 업데이트
+  updateHpByCard(playingCard, cardPower = 1, monster) {
+    // 현재 체력 += 힐카드 계산식
+    if (this.isTargeted) {
+      this.hp += Math.round((playingCard.restoreHp * cardPower) / 2);
+    } else {
+      this.hp += Math.round(playingCard.restoreHp * cardPower);
+    }
+
+    // 단, 체력은 최대체력을 넘을 수 없다!
+    if (this.hp >= this.maxHp) {
+      this.hp = this.maxHp;
+    }
+
+    // 광전사의 경우 카드를 쓸 때마다 5의 피해를 입고 연속 공격 확률이 10%p 증가하거나 최대 공격 횟수가 1 증가한다.
+    this.hp -= 5;
+    let randomValue = Math.random() * 2;
+
+    if (randomValue < 1 && this.multiAttackProb <= 100) {
+      this.multiAttackProb += 10;
+    } else {
+      this.maxAttackCount += 1;
+    }
+  }
+}
+
+class Chieftain extends Player {
+  constructor(name, difficulty = 1) {
+    super(name, difficulty, 'Chieftain');
+    this.healEffieciency = 1.2;
+  }
+
+  // 카드에 의한 HP 업데이트
+  updateHpByCard(playingCard, cardPower = 1, monster) {
+    // 현재 체력 += 힐카드 계산식
+    // 화염 투사는 20퍼센트의 회복 효율을 가지고 있다. 카드의 점화 스택의 절반만큼 회복을 추가로 한다.
+    if (this.isTargeted) {
+      this.hp += Math.round(
+        (playingCard.restoreHp * this.healEffieciency * cardPower + monster.igniteStack / 2) / 2,
+      );
+    } else {
+      this.hp += Math.round(
+        playingCard.restoreHp * this.healEffieciency * cardPower + monster.igniteStack / 2,
+      );
+    }
+    // 단, 체력은 최대체력을 넘을 수 없다!
+    if (this.hp >= this.maxHp) {
+      this.hp = this.maxHp;
+    }
+
+    // 화염 투사의 경우 카드를 통해 회복한 체력만큼 점화를 걸 수 있다.(렉사르의 스킬로 인한 회복량의 감소는 반영되지 않는다. 그럼 너무 카운터니까.)
+    if (monster.isIgnited) {
+      monster.igniteStack += Math.round(playingCard.restoreHp * cardPower);
+    }
+  }
+}
+
+export { Player, SpikeDefender, Berserker, Chieftain };

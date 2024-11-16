@@ -21,6 +21,7 @@ let tavern = (player) => {
     if (!isPlaying) {
       playAudioLoop(filePath);
     }
+
     console.clear();
     displayDeckList(player);
     miniUI(player);

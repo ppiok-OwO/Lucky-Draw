@@ -23,9 +23,9 @@ async function scenario() {
     '10년 전, 마왕의 부활로 인해 대륙은 혼돈에 휩싸였습니다.\n\n',
     '포악한 몬스터들이 인류를 학살하면서 평화롭던 마을도 순식간에 잿더미가 되어 버렸습니다.\n\n',
     '선량한 자는 무참히 짓밟히고, 악한 자만이 살아남는 시대...\n\n',
-    '이제 우리에게 남은 희망은 정의로운 영웅이 나타나 마왕을 처단해 주는 것입니다.\n\n',
+    '이제 우리에게 남은 희망은 정의로운 영웅이 나타나 마왕을 처단해 주는 것뿐입니다.\n\n',
     '어쩌면 당신이 바로 그 영웅이 될 수도 있겠네요.\n\n',
-    '...비록, 당신은 손버릇이 나쁜 도박꾼일 뿐이지만요.\n\n',
+    '...설령, 당신이 손버릇이 나쁜 도박꾼이더라도요.\n\n',
   ];
 
   await printCharacter(lines);
@@ -210,7 +210,7 @@ async function playAudioLoop(filePath) {
 
   try {
     while (isPlaying) {
-      await sound.play(filePath); // 파일이 끝날 때까지 대기
+      await sound.play(filePath, 0.3); // 파일이 끝날 때까지 대기
     }
   } catch (error) {
     console.error('오디오 재생 중 오류 발생:', error);
@@ -218,7 +218,9 @@ async function playAudioLoop(filePath) {
 }
 
 // 게임 실행
-playAudioLoop(filePath);
+if (!isPlaying) {
+  playAudioLoop(filePath);
+}
 start();
 
 export { displayLobby, handleUserInput, uiStyle, playAudioLoop, isPlaying };
