@@ -37,6 +37,10 @@ const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
 export function typeName(difficulty, uiStyle, saveData = null) {
   console.clear();
 
+  if (!isPlaying) {
+    playAudioLoop(filePath);
+  }
+
   setMessage('');
   setPlayerBattleText('');
   setMonsterBattleText('');
@@ -182,6 +186,11 @@ const battle = (player, monster, uiStyle) => {
   while (player.hp > 0 && monster.hp > 0) {
     console.clear();
     // 다음 턴이 시작될 때, 손패에 빈자리가 있으면 카드를 보충한다.
+
+    if (!isPlaying) {
+      playAudioLoop(filePath);
+    }
+
     player.drawCardRandomly();
 
     if (uiStyle === 'LARGE') {
@@ -392,18 +401,5 @@ let clearStage = (player) => {
   player.isTargeted = false;
   player.isClumsy = false;
 };
-
-// function getRandomNumbers(min, max, count) {
-//   let result = new Set();
-
-//   // 중복 없이 랜덤한 숫자 추가
-//   while (result.size < count) {
-//     let randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
-//     result.add(randomNum);
-//   }
-
-//   // 각 숫자를 큰따옴표로 감싸고 문자열로 변환
-//   return Array.from(result).map((num) => `"${num}"`);
-// }
 
 export { clearStage };

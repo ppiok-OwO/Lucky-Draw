@@ -2,23 +2,23 @@
   "save": {
     "player": {
       "name": "SGSG",
-      "hp": 121.5,
+      "hp": 125.5,
       "maxHp": 160,
       "defense": 0,
-      "bondingIndex": 10,
+      "bondingIndex": 20,
       "handSize": 5,
-      "runAwayProb": 23,
+      "runAwayProb": 20,
       "hasCard": [
         {
-          "cardName": "방패 올리기",
-          "actProb": 80,
-          "cardTier": "Rare",
+          "cardName": "기본 방어",
+          "actProb": 75,
+          "cardTier": "Normal",
           "isThisCardPlayed": false,
           "attackDmg": 0,
           "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15,
-          "price": 40
+          "restoreHp": 5,
+          "defense": 10,
+          "price": 20
         },
         {
           "cardName": "기본 방어",
@@ -32,26 +32,15 @@
           "price": 20
         },
         {
-          "cardName": "방패 올리기",
-          "actProb": 80,
-          "cardTier": "Rare",
+          "cardName": "바리게이트",
+          "actProb": 85,
+          "cardTier": "Epic",
           "isThisCardPlayed": false,
           "attackDmg": 0,
           "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15,
-          "price": 40
-        },
-        {
-          "cardName": "기본 방어",
-          "actProb": 75,
-          "cardTier": "Normal",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 5,
-          "defense": 10,
-          "price": 20
+          "restoreHp": 15,
+          "defense": 25,
+          "price": 80
         },
         {
           "cardName": "참호",
@@ -65,15 +54,15 @@
           "price": 160
         },
         {
-          "cardName": "피부 찢기",
-          "actProb": 80,
-          "cardTier": "Rare",
+          "cardName": "기본 공격+",
+          "actProb": 95,
+          "cardTier": "Normal",
           "isThisCardPlayed": false,
           "attackDmg": 20,
           "fireDmg": 10,
-          "restoreHp": 5,
-          "defense": 5,
-          "price": 40
+          "restoreHp": 10,
+          "defense": 0,
+          "price": 20
         },
         {
           "cardName": "피부 찢기+",
@@ -84,6 +73,17 @@
           "fireDmg": 20,
           "restoreHp": 10,
           "defense": 10,
+          "price": 40
+        },
+        {
+          "cardName": "방패 올리기+",
+          "actProb": 100,
+          "cardTier": "Rare",
+          "isThisCardPlayed": false,
+          "attackDmg": 0,
+          "fireDmg": 0,
+          "restoreHp": 20,
+          "defense": 30,
           "price": 40
         },
         {
@@ -109,7 +109,7 @@
       "isEliteStage": false,
       "isBossStage": false,
       "difficulty": 1.5,
-      "gold": 90,
+      "gold": 0,
       "isSticky": false,
       "isUndertaled": false,
       "isTargeted": false,

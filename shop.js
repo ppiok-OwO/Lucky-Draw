@@ -13,6 +13,9 @@ let tavern = (player) => {
   let card3 = makeRandomCard(player);
 
   while (tavernChoice !== '4') {
+    if (!isPlaying) {
+      playAudioLoop(filePath);
+    }
     console.clear();
     displayDeckList(player);
     miniUI(player);
