@@ -20,13 +20,13 @@ class Monster {
     this.name = name;
     if (player.isBossStage) {
       this.hp = Math.round(300 + 100 * player.stage * player.difficulty);
-      this.attackDmg = Math.round(25 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(20 * player.stage * player.difficulty);
     } else if (player.isEliteStage) {
       this.hp = Math.round(250 + 90 * player.stage * player.difficulty);
-      this.attackDmg = Math.round(20 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(15 * player.stage * player.difficulty);
     } else {
       this.hp = Math.round(200 + 80 * player.stage * player.difficulty);
-      this.attackDmg = Math.round(15 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(10 * player.stage * player.difficulty);
     }
     this.maxHp = this.hp;
     this.isIgnited = false;
@@ -217,14 +217,14 @@ class Boss extends Monster {
   }
 
   skillName =
-    '[666] - 6번 공격하면 다음 턴에 브레스 스킬을 사용합니다. 감소한 hp에 비례하여 브레스의 데미지가 상승합니다.';
+    '[666] - 6번 공격하면 다음 턴에 브레스 스킬을 사용합니다. 감소한 hp만큼 브레스의 데미지가 상승합니다.';
 
   monsterAttack(player) {
     // 몬스터의 공격
     if (this.monsterAttackCount !== 0 && this.monsterAttackCount % 6 === 0) {
       // 감소한 hp만큼 공격데미지에 추가한다.
-      let breathDmg = 400;
-      let tempAttackDmg = -this.attackDmg + 400 * (this.maxHp - this.hp);
+      let breathDmg = 100;
+      let tempAttackDmg = -this.attackDmg + breathDmg + (this.maxHp - this.hp);
       // sound.play();
       player.updateHpByMonster(tempAttackDmg);
       player.updateDefenseByMonster(tempAttackDmg);
@@ -239,7 +239,7 @@ class Boss extends Monster {
       player.updateDefenseByMonster(-this.attackDmg);
       this.attackDmg += player.difficulty;
       this.monsterAttackCount++;
-      sound.play(bossAttackSound);
+      // sound.play(bossAttackSound);
       setMonsterBattleText(
         `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
       );
