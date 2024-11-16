@@ -102,7 +102,7 @@ async function handleUserInput() {
       console.log(chalk.green('게임을 시작합니다.'));
       // 여기에서 새로운 게임 시작 로직을 구현
       typeName(difficulty, uiStyle);
-      stopAudio();
+
       // startGame();
       break;
     case '2':
@@ -159,7 +159,6 @@ async function handleUserInput() {
 
       if (saveData) {
         if (readlineSync.keyInYN('\n해당 세이브 파일을 이어서 진행하시겠습니까?: ')) {
-          stopAudio();
           typeName(saveData.save.player.difficulty, saveData.save.uiStyle, saveData);
         } else {
           displayLobby();
@@ -174,7 +173,6 @@ async function handleUserInput() {
     case '6':
       console.log(chalk.red('게임을 종료합니다.'));
       // 게임 종료 로직을 구현
-      stopAudio();
       process.exit(0); // 게임 종료
     default:
       console.log(chalk.red('올바르지 않은 입력입니다.'));
@@ -224,12 +222,9 @@ async function playAudioLoop(filePath) {
   }
 }
 
-function stopAudio() {
-  isPlaying = false; // 루프를 중단시키기 위해 상태 해제
-}
 
 // 게임 실행
 playAudioLoop(filePath);
 start();
 
-export { displayLobby, handleUserInput, uiStyle, playAudioLoop, stopAudio, isPlaying };
+export { displayLobby, handleUserInput, uiStyle, playAudioLoop, isPlaying };

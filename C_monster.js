@@ -36,7 +36,9 @@ class Monster {
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
-    setMonsterBattleText(`${this.name}이(가) ${this.attackDmg}만큼 공격했습니다!`);
+    setMonsterBattleText(
+      `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
+    );
   }
 
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
@@ -150,6 +152,20 @@ class Harpy extends Monster {
   }
 
   skillName = '[저항의 비상] - 몬스터가 6번 공격하면 다음 턴 동안 무적이 됩니다.';
+
+  monsterAttack(player) {
+    // 몬스터의 공격
+    player.updateHpByMonster(-this.attackDmg);
+    player.updateDefenseByMonster(-this.attackDmg);
+    this.attackDmg += player.difficulty;
+    this.monsterAttackCount++;
+
+    if (this.monsterAttackCount % 6 === 0) {
+      setMonsterBattleText(
+        `${this.name}이(가) 높이 날아올라 모든 공격을 회피합니다. 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
+      );
+    }
+  }
 }
 
 // 렉사르

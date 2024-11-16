@@ -99,7 +99,7 @@ class Player {
       monster.monsterAttackCount % 6 === 0 &&
       monster.name === '높은 바위 하피'
     ) {
-      setMonsterBattleText('하피가 높이 날아올라 공격을 회피합니다!');
+      return;
     } else if (this.isClumsy) {
       setMessage('이런! 엉뚱해진 바람에 카드를 사용하는 걸 까먹었습니다!');
       this.isClumsy = false;

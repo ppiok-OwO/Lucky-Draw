@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { displayLobby, handleUserInput, playAudioLoop, stopAudio } from './server.js';
+import { displayLobby, handleUserInput, playAudioLoop, isPlaying } from './server.js';
 import {
   largeUI,
   compactUI,
@@ -82,6 +82,9 @@ export function typeName(difficulty, uiStyle, saveData = null) {
 export async function startGame(player, uiStyle) {
   console.clear();
 
+  if (!isPlaying) {
+    playAudioLoop(filePath);
+  }
 
   while (player.stage <= 10) {
     // const monster = new Monster(player.stage);
@@ -115,7 +118,6 @@ export async function startGame(player, uiStyle) {
         handleUserInput();
         break;
       } else {
-        stopAudio();
         process.exit(0);
       }
     } else if (player.stage === 10 && monster.hp <= 0) {
@@ -165,7 +167,6 @@ export async function startGame(player, uiStyle) {
       displayLobby();
       handleUserInput();
     } else {
-      stopAudio();
       process.exit(0);
     }
   } else if (player.isEscape) {
