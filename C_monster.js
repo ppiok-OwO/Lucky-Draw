@@ -8,13 +8,19 @@ import {
   setPlayerBattleText,
   setMonsterBattleText,
 } from './logs.js';
+import sound from 'sound-play';
+import path from 'path';
+
+// const attackSound = path.resolve('./musics/Fight Hits 24.mp3');
+// const bossAttackSound = path.resolve('./musics/Godzilla Roar Sound.mp3');
+// const ogreSound = path.resolve('./musics/Ogre Disappoint 2.mp3');
 
 class Monster {
   constructor(name, threat, player) {
     this.name = name;
     if (player.isBossStage) {
-      this.hp = Math.round(400 + 110 * player.stage * player.difficulty);
-      this.attackDmg = Math.round(30 * player.stage * player.difficulty);
+      this.hp = Math.round(300 + 100 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(25 * player.stage * player.difficulty);
     } else if (player.isEliteStage) {
       this.hp = Math.round(250 + 90 * player.stage * player.difficulty);
       this.attackDmg = Math.round(20 * player.stage * player.difficulty);
@@ -36,6 +42,7 @@ class Monster {
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
+    // sound.play(attackSound);
     setMonsterBattleText(
       `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
     );
@@ -116,6 +123,7 @@ class Slime extends Monster {
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
+    // sound.play(attackSound);
     setMonsterBattleText(
       `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
     );
@@ -123,27 +131,6 @@ class Slime extends Monster {
     player.isSticky = true;
   }
 }
-
-// 샌즈
-// class Skelleton extends Monster {
-//   constructor(player) {
-//     super('웃음이 특이한 해골', '"WA! 샌즈 아시는구나!"', player);
-//   }
-
-//   skillName =
-//     '[이기는 게 아니야. 그 사이를 뚫고 지나가] - 카드 이름에  뼈다귀 표시가 생깁니다. 해당 턴에는 그 카드들만 사용할 수 있습니다.';
-
-//   monsterAttack(player) {
-//     // 몬스터의 공격
-//     player.updateHpByMonster(-this.attackDmg);
-//     player.updateDefenseByMonster(-this.attackDmg);
-//     this.attackDmg += player.difficulty;
-//     this.monsterAttackCount++;
-
-//     // isUndertaled가 true면 숫자를 랜덤하게 3개 뽑아서 해당 입력값만 받을 수 있다.
-//     player.isUndertaled = true;
-//   }
-// }
 
 // 하피
 class Harpy extends Monster {
@@ -159,6 +146,7 @@ class Harpy extends Monster {
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
+    // sound.play(attackSound);
 
     if (this.monsterAttackCount % 6 === 0) {
       setMonsterBattleText(
@@ -183,6 +171,7 @@ class Ork extends Monster {
     player.updateDefenseByMonster(-this.attackDmg);
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
+    // sound.play(attackSound);
     setMonsterBattleText(
       `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
     );
@@ -208,6 +197,7 @@ class Ogre extends Monster {
       player.updateDefenseByMonster(-this.attackDmg);
       this.attackDmg += player.difficulty;
       this.monsterAttackCount++;
+      // sound.play(ogreSound);
       setMonsterBattleText(
         `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
       );
@@ -235,10 +225,12 @@ class Boss extends Monster {
       // 감소한 hp만큼 공격데미지에 추가한다.
       let breathDmg = 400;
       let tempAttackDmg = -this.attackDmg + 400 * (this.maxHp - this.hp);
+      // sound.play();
       player.updateHpByMonster(tempAttackDmg);
       player.updateDefenseByMonster(tempAttackDmg);
       this.attackDmg += player.difficulty;
       this.monsterAttackCount++;
+      sound.play(bossAttackSound);
       setMonsterBattleText(
         `${this.name}이(가) 당신을 ${tempAttackDmg}만큼의 데미지로 공격했습니다!`,
       );
@@ -247,6 +239,7 @@ class Boss extends Monster {
       player.updateDefenseByMonster(-this.attackDmg);
       this.attackDmg += player.difficulty;
       this.monsterAttackCount++;
+      sound.play(bossAttackSound);
       setMonsterBattleText(
         `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
       );

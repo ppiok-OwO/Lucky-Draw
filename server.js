@@ -12,9 +12,7 @@ import path from 'path';
 let difficultyChoice = 'NORMAL';
 let difficulty = 1;
 let uiStyle = 'COMPACT';
-const filePath = path.resolve(
-  './musics/Warriyo, Laura Brehm - Mortals (feat. Laura Brehm) [NCS Release].mp3',
-);
+const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
 let isPlaying = false;
 
 // 시나리오 스크립트
@@ -36,16 +34,13 @@ async function scenario() {
     setTimeout(() => {
       displayLobby();
       handleUserInput();
-    }, 1500);
+    }, 1000);
   });
 }
 
 // 로비 화면을 출력하는 함수
 function displayLobby() {
   console.clear();
-
-  // 오디오 재생
-  // playAudioLoop();
 
   // 타이틀 텍스트
   console.log(
@@ -221,7 +216,6 @@ async function playAudioLoop(filePath) {
     console.error('오디오 재생 중 오류 발생:', error);
   }
 }
-
 
 // 게임 실행
 playAudioLoop(filePath);

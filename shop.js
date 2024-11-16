@@ -4,6 +4,11 @@ import readlineSync from 'readline-sync';
 import { colors } from './functions.js';
 import { makeRandomCard, countCard } from './C_card.js';
 import { combineCardNamesToString, displayDeckList, miniUI } from './logs.js';
+import { playAudioLoop, isPlaying } from './server.js';
+import sound from 'sound-play';
+import path from 'path';
+
+const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
 
 // 여관
 let tavern = (player) => {

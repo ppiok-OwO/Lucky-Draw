@@ -79,7 +79,7 @@ function largeUI(player, monster) {
   console.log(colors.grey(`===========================`));
   console.log(colors.info(`\n${info}`));
   console.log(colors.message(`>> 알림 로그: ${message}`));
-  console.log(colors.green4(`>> 전투 로그: ${playerBattleText}`));
+  console.log(colors.green3(`>> 전투 로그: ${playerBattleText}`));
   console.log(colors.battleLog(`>> 전투 로그: ${monsterBattleText}`));
 }
 
@@ -116,7 +116,7 @@ let compactUI = (player, monster) => {
   console.log(colors.grey(`\n===========================`));
   console.log(colors.info(`\n${info}`));
   console.log(colors.message(`>> 알림 로그: ${message}`));
-  console.log(colors.green4(`>> 전투 로그: ${playerBattleText}`));
+  console.log(colors.green3(`>> 전투 로그: ${playerBattleText}`));
   console.log(colors.battleLog(`>> 전투 로그: ${monsterBattleText}`));
 };
 
