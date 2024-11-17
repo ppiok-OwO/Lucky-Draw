@@ -14,7 +14,7 @@ import { tavern } from './shop.js';
 
 class Player {
   // 생성자
-  constructor(name, difficulty = 1, blessing) {
+  constructor(name, difficulty, blessing) {
     this.name = name;
     this.hp = 100;
     this.maxHp = 100;
@@ -218,7 +218,7 @@ class Player {
 }
 
 class SpikeDefender extends Player {
-  constructor(name, difficulty = 1) {
+  constructor(name, difficulty) {
     super(name, difficulty, 'Spike Defender');
     this.spikeDmg = 20; // 가시 데미지
   }
@@ -237,7 +237,7 @@ class SpikeDefender extends Player {
 }
 
 class Berserker extends Player {
-  constructor(name, difficulty = 1) {
+  constructor(name, difficulty) {
     super(name, difficulty, 'Berserker');
     this.multiAttackProb = 50; // 연속 공격 확률
     this.maxAttackCount = 2; // 최대 공격 횟수
@@ -270,7 +270,7 @@ class Berserker extends Player {
 }
 
 class Chieftain extends Player {
-  constructor(name, difficulty = 1) {
+  constructor(name, difficulty) {
     super(name, difficulty, 'Chieftain');
     this.healEffieciency = 1.2;
   }

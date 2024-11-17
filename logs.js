@@ -69,7 +69,7 @@ function largeUI(player, monster) {
 
   console.log(
     colors.monster(`
-| 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | 스킬: ${monster.skillName} | ${monster.threat} | 공격턴: ${monster.monsterAttackCount + 1} |\n`),
+| 몬스터 정보 | ${monster.name} | HP: ${Math.round(monster.hp)}, 공격력: ${Math.round(monster.attackDmg)} | 스킬: ${monster.skillName} | ${monster.threat} | 공격턴: ${monster.monsterAttackCount} |\n`),
   );
 
   if (player.blessing === 'Chieftain') {
@@ -259,7 +259,7 @@ let blessingExplain = (player) => {
   } else if (player.blessing === 'Chieftain') {
     console.log(
       colors.green2(
-        '| 화염 투사는 카드를 사용할 때 20퍼센트의 추가 체력 회복량을 갖습니다. 카드가 가진 화염 데미지만큼 적에게 점화를 걸 수 있습니다. 카드에 적힌 화염 데미지는 화염투사만이 적에게 가할 수 있습니다. 점화 스택은 턴이 끝날 때마다 1씩 감소합니다. 카드를 통해 HP를 회복할 때 직접 가한 화염 데미지만큼 추가로 회복할 수 있으며, 회복한 체력만큼 점화 스택이 증가합니다.\n',
+        '| 화염 투사는 카드의 체력 회복량이 20퍼센트 증가합니다. 카드가 가진 화염 데미지의 절반만큼 적에게 점화를 걸 수 있습니다. 카드에 적힌 화염 데미지는 화염투사만이 적에게 가할 수 있습니다. 점화 스택은 턴이 끝날 때마다 1씩 감소합니다. 카드를 통해 HP를 회복할 때 직접 가한 화염 데미지만큼 추가로 회복할 수 있으며, 회복한 체력만큼 점화 스택이 증가합니다.\n',
       ),
     );
   }
@@ -297,7 +297,7 @@ function DisplayBattleStatus(player, monster) {
 
   const monsterHealthBar = CreateHealthBar(monster, '#F31559');
   console.log(
-    `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} | 스킬: ${monster.skillName} | 공격턴: ${monster.monsterAttackCount + 1} |\n`)}`,
+    `${chalk.hex('#F31559').bold(`\n| 몬스터 | ${monster.name} | ${monster.threat} | 스킬: ${monster.skillName} | 공격턴: ${monster.monsterAttackCount} |\n`)}`,
   );
 
   console.log(
@@ -380,27 +380,6 @@ let monsterImage = (monster) => {
 ⣷⣉⢷⡳⣆⢠⢠⡀⣄⣾⢳⡆⡤⢄⣰⢟⡰⡀⠠⠈⠐⢀⣈⣾⡿
 ⣿⣿⣆⡹⣞⡖⠀⠁⠀⠀⠁⠀⠁⠈⠀⠀⠐⠀⠀⢠⣉⡽⢏⣾⣽
 ⣿⣿⣿⣿⣶⣟⣻⣞⡷⣄⣄⣠⣀⣈⢡⡤⣤⡼⣯⣟⣯⣶⣿⣿⣿
-      `),
-    );
-  } else if (monster.name === '웃음이 특이한 해골') {
-    console.log(
-      colors.pink(`
-⣿⣿⣿⣿⣿⣿⣿⡿⠟⠛⠙⠋⠛⠙⠛⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⠀⣠⣶⣶⣦⠀⠀⢠⣶⣶⣦⡄⢸⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⡄⠛⠿⠴⠏⢀⣄⠈⢷⠴⠟⠃⣼⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⠇⠀⡆⣁⡀⣘⢋⣀⢀⣁⡦⠀⣽⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⠟⠛⢷⡀⠈⠃⠼⣀⠇⣸⠠⠊⠀⡠⠋⢉⣻⣿⣿⣿⣿
-⣿⣿⣿⡿⣾⣶⣦⣈⠻⢶⡖⠶⠶⢲⣶⡿⠛⢁⣴⢿⣎⢹⣿⣿⣿
-⣿⡿⣱⣾⣿⡇⣿⣿⡇⠆⣼⠂⠠⡷⠠⢰⣿⣿⠃⣿⣿⣧⡜⢿⣿
-⣿⡁⢿⣿⣿⢃⣴⣶⣶⢙⢸⠀⠀⡇⣊⡙⣭⣴⣆⢻⣿⣿⣷⢸⣿
-⣿⣿⣦⡙⢻⠸⣿⣿⣿⡌⢸⢀⡀⠇⠆⣼⣿⣿⡿⢸⠿⠟⣡⣾⣿
-⣿⣿⣿⣿⣷⣦⣤⣭⣭⣴⣶⣶⣿⣾⣶⠶⣶⣶⢤⣾⣶⣿⣿⣿⣿
-⣿⣿⣿⣿⣿⢡⡏⢰⣿⣿⣿⢛⢻⣿⣿⠀⢿⣿⡎⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣟⢲⠁⣾⣿⣿⡟⣸⡎⣿⣿⡀⢼⣿⣟⢸⣿⣿⣿⣿⣿
-⣿⣿⣿⣿⣯⣬⣤⣛⣛⣛⣫⣼⣧⣛⣛⣃⣈⣫⣭⣼⣿⣿⣿⣿⣿
-⣿⣿⣿⡟⠁⠀⠉⢠⣘⣿⣿⣿⣿⣿⣁⣀⡀⠚⠉⠀⠉⢻⣿⣿⣿
-⣿⣿⣿⣷⣶⣶⣶⣾⣷⣿⣿⣿⣿⣷⣶⣶⣿⣶⣶⣶⣾⣿⣿⣿⣿
       `),
     );
   } else if (monster.name === '높은 바위 하피') {

@@ -19,10 +19,10 @@ class Monster {
   constructor(name, threat, player) {
     this.name = name;
     if (player.isBossStage) {
-      this.hp = Math.round(300 + 100 * player.stage * player.difficulty);
-      this.attackDmg = Math.round(20 * player.stage * player.difficulty);
+      this.hp = Math.round(300 + 130 * player.stage * player.difficulty);
+      this.attackDmg = Math.round(25 * player.stage * player.difficulty);
     } else if (player.isEliteStage) {
-      this.hp = Math.round(250 + 90 * player.stage * player.difficulty);
+      this.hp = Math.round(250 + 100 * player.stage * player.difficulty);
       this.attackDmg = Math.round(15 * player.stage * player.difficulty);
     } else {
       this.hp = Math.round(200 + 80 * player.stage * player.difficulty);
@@ -32,7 +32,7 @@ class Monster {
     this.isIgnited = false;
     this.igniteStack = 0;
     this.threat = threat;
-    this.monsterAttackCount = 0;
+    this.monsterAttackCount = 1;
     this.skillName = '';
   }
 
@@ -51,17 +51,10 @@ class Monster {
   monsterLoseHpByCard(player, playingCard, cardPower = 1) {
     // 가시 수호자
     if (player.blessing === 'Spike Defender') {
-      if (player.defense > 0) {
-        this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
-        setPlayerBattleText(
-          `${this.name}에게 ${Math.round(player.spikeDmg)}만큼의 가시 데미지를 주었습니다.`,
-        );
-      } else {
-        this.hp -= Math.round(playingCard.attackDmg * cardPower);
-        setPlayerBattleText(
-          `${this.name}에게 ${Math.round(playingCard.attackDmg * cardPower)}만큼의 데미지를 주었습니다.`,
-        );
-      }
+      this.hp -= Math.round(playingCard.attackDmg * cardPower + player.spikeDmg);
+      setPlayerBattleText(
+        `${this.name}에게 ${Math.round(playingCard.attackDmg * cardPower)}만큼의 데미지와 ${Math.round(player.spikeDmg)}만큼의 가시 데미지를 주었습니다.`,
+      );
       // 광전사
     } else if (player.blessing === 'Berserker') {
       let randomValue = Math.random() * 100;
@@ -94,7 +87,7 @@ class Monster {
       this.hp -= Math.round(playingCard.fireDmg * cardPower);
       this.isIgnited = true;
       setPlayerBattleText(
-        `${this.name}에게 ${Math.round(playingCard.attackDmg * cardPower)}만큼의 데미지를 주었습니다. 적이 불에 타오르고 있습니다.`,
+        `${this.name}에게 ${Math.round(playingCard.fireDmg * cardPower)}만큼의 데미지를 주었습니다. 적이 불에 타오르고 있습니다.`,
       );
     }
   }
@@ -103,6 +96,12 @@ class Monster {
       this.igniteStack += Math.round(playingCard.fireDmg * cardPower);
       this.hp -= this.igniteStack;
       this.igniteStack--;
+    }
+  }
+  monsterRestoreHpByTurn() {
+    this.hp += this.maxHp * 0.05;
+    if (this.hp > this.maxHp) {
+      this.hp = this.maxHp;
     }
   }
 }
@@ -147,8 +146,11 @@ class Harpy extends Monster {
     this.attackDmg += player.difficulty;
     this.monsterAttackCount++;
     // sound.play(attackSound);
+    setMonsterBattleText(
+      `${this.name}이(가) 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
+    );
 
-    if (this.monsterAttackCount % 6 === 0) {
+    if (this.monsterAttackCount !== 0 && this.monsterAttackCount % 6 === 0) {
       setMonsterBattleText(
         `${this.name}이(가) 높이 날아올라 모든 공격을 회피합니다. 당신을 ${this.attackDmg}만큼의 데미지로 공격했습니다!`,
       );
@@ -223,14 +225,14 @@ class Boss extends Monster {
     // 몬스터의 공격
     if (this.monsterAttackCount !== 0 && this.monsterAttackCount % 6 === 0) {
       // 감소한 hp만큼 공격데미지에 추가한다.
-      let breathDmg = 100;
-      let tempAttackDmg = -this.attackDmg + breathDmg + (this.maxHp - this.hp);
+      let breathDmg = 300 * player.difficulty;
+      let tempAttackDmg = this.attackDmg + breathDmg + (this.maxHp - this.hp);
       // sound.play();
-      player.updateHpByMonster(tempAttackDmg);
-      player.updateDefenseByMonster(tempAttackDmg);
+      player.updateHpByMonster(-tempAttackDmg);
+      player.updateDefenseByMonster(-tempAttackDmg);
       this.attackDmg += player.difficulty;
       this.monsterAttackCount++;
-      sound.play(bossAttackSound);
+      // sound.play(bossAttackSound);
       setMonsterBattleText(
         `${this.name}이(가) 당신을 ${tempAttackDmg}만큼의 데미지로 공격했습니다!`,
       );

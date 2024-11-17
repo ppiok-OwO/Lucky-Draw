@@ -37,9 +37,7 @@ const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
 export function typeName(difficulty, uiStyle, saveData = null) {
   console.clear();
 
-  if (!isPlaying) {
-    playAudioLoop(filePath);
-  }
+  playAudioLoop(filePath);
 
   setMessage('');
   setPlayerBattleText('');
@@ -84,9 +82,7 @@ export function typeName(difficulty, uiStyle, saveData = null) {
 export async function startGame(player, uiStyle) {
   console.clear();
 
-  if (!isPlaying) {
-    playAudioLoop(filePath);
-  }
+  playAudioLoop(filePath);
 
   while (player.stage <= 10) {
     // const monster = new Monster(player.stage);
@@ -149,6 +145,14 @@ export async function startGame(player, uiStyle) {
       await unlockAchievement('./data.json', 2);
     }
 
+    if (player.difficulty === 1) {
+      await unlockAchievement('./data.json', 3);
+    } else if (player.difficulty === 1.5) {
+      await unlockAchievement('./data.json', 4);
+    } else if (player.difficulty === 2) {
+      await unlockAchievement('./data.json', 5);
+    }
+
     endingLog();
 
     console.log(
@@ -185,9 +189,7 @@ const battle = (player, monster, uiStyle) => {
     console.clear();
     // 다음 턴이 시작될 때, 손패에 빈자리가 있으면 카드를 보충한다.
 
-    if (!isPlaying) {
-      playAudioLoop(filePath);
-    }
+    playAudioLoop(filePath);
 
     player.drawCardRandomly();
 
@@ -225,7 +227,7 @@ const battle = (player, monster, uiStyle) => {
 
       // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
       for (let i = 0; i < player.hasCardInHand.length; i++) {
-        if (cardChoice === `see${i + 1}`) {
+        if (cardChoice === `see${i + 1}` || cardChoice === `SEE${i + 1}`) {
           seeCard(player.hasCardInHand[i]);
         } else if (cardChoice === `${i + 1}`) {
           setPlayerBattleText('');
@@ -289,7 +291,7 @@ const battle = (player, monster, uiStyle) => {
         // 지울 카드 상세보기
         for (let i = 0; i < player.hasCardInHand.length; i++) {
           if (i + 1 > 0) {
-            if (cardRemoveAnswer === `see${i + 1}`) {
+            if (cardRemoveAnswer === `see${i + 1}` || cardRemoveAnswer === `SEE${i + 1}`) {
               seeCard(player.hasCardInHand[i]);
             }
           }
@@ -408,6 +410,10 @@ let clearStage = (player) => {
   player.isUndertaled = false;
   player.isTargeted = false;
   player.isClumsy = false;
+
+  setMessage('');
+  setPlayerBattleText('');
+  setMonsterBattleText('');
 };
 
 export { clearStage };

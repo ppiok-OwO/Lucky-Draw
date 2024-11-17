@@ -218,9 +218,9 @@ async function playAudioLoop(filePath) {
 }
 
 // 게임 실행
-if (!isPlaying) {
-  playAudioLoop(filePath);
-}
+
+playAudioLoop(filePath);
+
 start();
 
 export { displayLobby, handleUserInput, uiStyle, playAudioLoop, isPlaying };
