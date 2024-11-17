@@ -1,69 +1,14 @@
 {
   "save": {
     "player": {
-      "name": "SEULGI",
-      "hp": 1381.5,
-      "maxHp": 1720,
+      "name": "SGSG",
+      "hp": 1411,
+      "maxHp": 1730,
       "defense": 0,
       "bondingIndex": 275,
       "handSize": 5,
       "runAwayProb": 20,
       "hasCard": [
-        {
-          "cardName": "방패 올리기+",
-          "actProb": 100,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 20,
-          "defense": 30,
-          "price": 40
-        },
-        {
-          "cardName": "참호+",
-          "actProb": 110,
-          "cardTier": "Legendary",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 40,
-          "defense": 60,
-          "price": 160
-        },
-        {
-          "cardName": "완벽한 타격++",
-          "actProb": 125,
-          "cardTier": "Epic",
-          "isThisCardPlayed": false,
-          "attackDmg": 140,
-          "fireDmg": 60,
-          "restoreHp": 60,
-          "defense": 20,
-          "price": 80
-        },
-        {
-          "cardName": "바리게이트+",
-          "actProb": 105,
-          "cardTier": "Epic",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 30,
-          "defense": 50,
-          "price": 80
-        },
-        {
-          "cardName": "피부 찢기+",
-          "actProb": 100,
-          "cardTier": "Rare",
-          "isThisCardPlayed": false,
-          "attackDmg": 40,
-          "fireDmg": 20,
-          "restoreHp": 10,
-          "defense": 10,
-          "price": 40
-        },
         {
           "cardName": "말살검+",
           "actProb": 110,
@@ -76,45 +21,77 @@
           "price": 160
         },
         {
-          "cardName": "말살검",
-          "actProb": 90,
-          "cardTier": "Legendary",
+          "cardName": "피부 찢기++",
+          "actProb": 120,
+          "cardTier": "Rare",
           "isThisCardPlayed": false,
-          "attackDmg": 55,
-          "fireDmg": 25,
-          "restoreHp": 25,
-          "defense": 10,
-          "price": 160
+          "attackDmg": 80,
+          "fireDmg": 40,
+          "restoreHp": 20,
+          "defense": 20,
+          "price": 40
         },
         {
-          "cardName": "참호+",
+          "cardName": "완벽한 타격+",
+          "actProb": 105,
+          "cardTier": "Epic",
+          "isThisCardPlayed": false,
+          "attackDmg": 70,
+          "fireDmg": 30,
+          "restoreHp": 30,
+          "defense": 10,
+          "price": 80
+        },
+        {
+          "cardName": "피부 찢기",
+          "actProb": 80,
+          "cardTier": "Rare",
+          "isThisCardPlayed": false,
+          "attackDmg": 20,
+          "fireDmg": 10,
+          "restoreHp": 5,
+          "defense": 5,
+          "price": 40
+        },
+        {
+          "cardName": "완벽한 타격+",
+          "actProb": 105,
+          "cardTier": "Epic",
+          "isThisCardPlayed": false,
+          "attackDmg": 70,
+          "fireDmg": 30,
+          "restoreHp": 30,
+          "defense": 10,
+          "price": 80
+        },
+        {
+          "cardName": "말살검+",
           "actProb": 110,
           "cardTier": "Legendary",
           "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 40,
-          "defense": 60,
+          "attackDmg": 110,
+          "fireDmg": 50,
+          "restoreHp": 50,
+          "defense": 20,
           "price": 160
         }
       ],
       "hasCardInHand": [],
       "stage": 10,
-      "blessing": "Chieftain",
+      "blessing": "Berserker",
       "isEscape": false,
       "isWon": false,
       "isEliteStage": true,
       "isBossStage": false,
-      "difficulty": 1.5,
-      "gold": 90,
+      "difficulty": 2,
+      "gold": 280,
       "isSticky": false,
       "isUndertaled": false,
       "isTargeted": false,
       "isClumsy": false,
-      "healEffieciency": 1.2,
-      "spikeDmg": 20,
       "multiAttackProb": 50,
-      "maxAttackCount": 2
+      "maxAttackCount": 2,
+      "spikeDmg": 20
     },
     "uiStyle": "COMPACT"
   }

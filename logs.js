@@ -137,8 +137,7 @@ function combineCardNamesToString(obj) {
       cardNames.push(card.cardName);
     }
   });
-  // sort() 메서드에 별다른 `compareFunction`이 제공되지 않는다면 배열의 요소를 문자열로 변환하고 두 요소를 비교한다.
-  // 즉, sort() 메서드에 아무런 함수도 넣지 않는다면 반환값이 '요소a-요소b'인 함수를 콜백함수로 받는 것과 다름없다.
+  // sort() 메서드에 `compareFunction`이 제공되지 않는다면 배열의 요소를 문자열로 변환하고 두 요소를 비교한다.
   // 따라서 오름차순으로 정렬된다.
   cardNames.sort();
 

@@ -4,13 +4,13 @@
       "id": 1,
       "name": "가시 달린 영웅",
       "description": "가시 수호자로 승리하기",
-      "isUnlocked": false
+      "isUnlocked": true
     },
     {
       "id": 2,
       "name": "분노 조절 문제",
       "description": "광전사로 승리하기",
-      "isUnlocked": false
+      "isUnlocked": true
     },
     {
       "id": 3,
@@ -34,7 +34,7 @@
       "id": 6,
       "name": "밸런스가 이게 맞아?",
       "description": "HELL모드에서 승리하기",
-      "isUnlocked": false
+      "isUnlocked": true
     }
   ]
 }
