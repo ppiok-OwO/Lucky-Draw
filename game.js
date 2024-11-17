@@ -1,17 +1,18 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import { displayLobby, handleUserInput } from './server.js';
+import { displayLobby, handleUserInput, playAudioLoop, isPlaying } from './server.js';
 import {
   largeUI,
   compactUI,
   setMessage,
   selectReward,
-  setBattleText,
+  setPlayerBattleText,
+  setMonsterBattleText,
   displayDeckList,
   endingLog,
 } from './logs.js';
-import { Player } from './C_player.js';
+import { Player, SpikeDefender, Berserker, Chieftain } from './C_player.js';
 import {
   Card,
   NormalAttackCard,
@@ -28,10 +29,19 @@ import { Monster, Slime, Harpy, Ork, Ogre, Boss, makeRandomMonster } from './C_m
 import { loadJson, getAchievements, unlockAchievement, saveAndExit } from './jsonFunction.js';
 import { tavern, shop, shopping, mergeCard } from './shop.js';
 import { colors } from './functions.js';
+import path from 'path';
+
+const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
 
 // 이름을 입력하세요. 축복을 선택하세요.
 export function typeName(difficulty, uiStyle, saveData = null) {
   console.clear();
+
+  playAudioLoop(filePath);
+
+  setMessage('');
+  setPlayerBattleText('');
+  setMonsterBattleText('');
 
   if (saveData) {
     const player = new Player(saveData.save.player.name, saveData.save.player.difficulty);
@@ -51,28 +61,28 @@ export function typeName(difficulty, uiStyle, saveData = null) {
     ),
   );
 
-  const blessing = chooseBlessing();
-  const player = new Player(playerName, difficulty);
+  let blessing = chooseBlessing();
 
   if (blessing === '1') {
-    player.blessing = 'Spike Defender';
+    const player = new SpikeDefender(playerName, difficulty);
+    // 시작덱 배열에 카드들을 추가
+    makeNewDeckAndStart(player, uiStyle);
   } else if (blessing === '2') {
-    player.blessing = 'Berserker';
+    const player = new Berserker(playerName, difficulty);
+    // 시작덱 배열에 카드들을 추가
+    makeNewDeckAndStart(player, uiStyle);
   } else if (blessing === '3') {
-    player.blessing = 'Chieftain';
+    const player = new Chieftain(playerName, difficulty);
+    // 시작덱 배열에 카드들을 추가
+    makeNewDeckAndStart(player, uiStyle);
   }
-
-  // 시작덱 배열에 카드들을 추가
-  addCard(player, 3, 2, 3, 2);
-
-  player.drawCardRandomly();
-
-  startGame(player, uiStyle);
 }
 
 // 스테이지를 증가시키면서 보상 획득, 전투 반복
 export async function startGame(player, uiStyle) {
   console.clear();
+
+  playAudioLoop(filePath);
 
   while (player.stage <= 10) {
     // const monster = new Monster(player.stage);
@@ -120,7 +130,6 @@ export async function startGame(player, uiStyle) {
       // 카드 고르기 기능 넣기(덱/빌/딩)
       selectReward(player);
       // 전투 로그 초기화
-      setBattleText('');
       tavern(player);
       await saveAndExit('./savedGame.json', player, uiStyle);
     }
@@ -134,6 +143,14 @@ export async function startGame(player, uiStyle) {
       await unlockAchievement('./data.json', 1);
     } else if (player.blessing === 'Chieftain') {
       await unlockAchievement('./data.json', 2);
+    }
+
+    if (player.difficulty === 1) {
+      await unlockAchievement('./data.json', 3);
+    } else if (player.difficulty === 1.5) {
+      await unlockAchievement('./data.json', 4);
+    } else if (player.difficulty === 2) {
+      await unlockAchievement('./data.json', 5);
     }
 
     endingLog();
@@ -171,6 +188,9 @@ const battle = (player, monster, uiStyle) => {
   while (player.hp > 0 && monster.hp > 0) {
     console.clear();
     // 다음 턴이 시작될 때, 손패에 빈자리가 있으면 카드를 보충한다.
+
+    playAudioLoop(filePath);
+
     player.drawCardRandomly();
 
     if (uiStyle === 'LARGE') {
@@ -200,37 +220,6 @@ const battle = (player, monster, uiStyle) => {
           \n손패에 있는 카드 : ${player.hasCardInHand.map((card, index) => index + 1 + '.' + card.cardName).join(', ')}`),
       );
 
-      // if (player.isUndertaled) {
-      //   // 플레이어의 손패에서 손패 크기의 절반에 해당하는 카드가 뼈다귀 효과를 받는다.
-      //   let undertaledCard = getRandomNumbers(
-      //     1,
-      //     player.handSize.length,
-      //     Math.floor(player.handSize.length / 2),
-      //   );
-      //   console.log(colors.battleLog(`사용 가능한 카드 목록 : ${undertaledCard}`));
-
-      //   let cardChoice;
-      //   do {
-      //     cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
-      //   } while (!undertaledCard.includes(cardChoice));
-
-      //   const cardIndex = Number(cardChoice - 1);
-      //   const playingCard = player.hasCardInHand[cardIndex];
-
-      //   // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
-      //   for (let i = 0; i < player.hasCardInHand.length; i++) {
-      //     if (cardChoice === `see${i + 1}` || cardChoice === `SEE${i + 1}`) {
-      //       seeCard(player.hasCardInHand[i]);
-      //     } else if (cardChoice === `${i + 1}`) {
-      //       player.cardPlay(playingCard, monster, cardIndex);
-
-      //       // 죽였는데 맞는 건 이상하니까.
-      //       if (monster.hp > 0) {
-      //         monster.monsterAttack(player);
-      //       }
-      //     }
-      //   }
-      // } else {
       let cardChoice = readlineSync.question('\n몇 번째 카드를 사용하시겠습니까? : ');
 
       const cardIndex = Number(cardChoice - 1);
@@ -238,10 +227,10 @@ const battle = (player, monster, uiStyle) => {
 
       // 카드 상세보기 기능을 이용했는가? 아니면 그냥 번호를 선택했는가?
       for (let i = 0; i < player.hasCardInHand.length; i++) {
-        if (cardChoice === `see${i + 1}`) {
+        if (cardChoice === `see${i + 1}` || cardChoice === `SEE${i + 1}`) {
           seeCard(player.hasCardInHand[i]);
         } else if (cardChoice === `${i + 1}`) {
-          setBattleText('');
+          setPlayerBattleText('');
           player.cardPlay(playingCard, monster, cardIndex);
 
           // 죽였는데 맞는 건 이상하니까.
@@ -254,34 +243,31 @@ const battle = (player, monster, uiStyle) => {
 
       // 소매치기
     } else if (choice === '2') {
-      if (!player.isSticky) {
-        setBattleText('손은 눈보다 빠르지!');
-        let randomValue = Math.random() * 10;
-
-        // 확률에 따라 높은 등급의 카드를 얻을 수도 있다!(스탯도)
-        if (randomValue < 0.5) {
-          addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 1) {
-          addCard(player, 0, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 2) {
-          addCard(player, 0, 0, 0, 0, 0, 1);
-        } else if (randomValue < 3) {
-          addCard(player, 0, 0, 0, 0, 1);
-        } else if (randomValue < 4.5) {
-          addCard(player, 0, 0, 0, 1);
-        } else if (randomValue < 6) {
-          addCard(player, 0, 0, 1);
-        } else if (randomValue < 7.5) {
-          addCard(player, 0, 1);
-        } else if (randomValue < 9) {
-          addCard(player, 1);
-        } else {
-          player.incPlayerStat();
-        }
-        monster.monsterAttack(player);
+      setPlayerBattleText('손은 눈보다 빠르지!');
+      let randomValue = Math.random() * 10;
+      // 확률에 따라 높은 등급의 카드 혹은 골드를 얻을 수도 있다!(스탯도!)
+      if (randomValue < 0.3) {
+        addCard(player, 0, 0, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 0.9) {
+        addCard(player, 0, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 1.5) {
+        addCard(player, 0, 0, 0, 0, 0, 1);
+      } else if (randomValue < 2.5) {
+        addCard(player, 0, 0, 0, 0, 1);
+      } else if (randomValue < 3.5) {
+        addCard(player, 0, 0, 0, 1);
+      } else if (randomValue < 5) {
+        addCard(player, 0, 0, 1);
+      } else if (randomValue < 6.5) {
+        addCard(player, 0, 1);
+      } else if (randomValue < 8) {
+        addCard(player, 1);
+      } else if (randomValue < 9) {
+        player.gold += 100;
       } else {
-        readlineSync.keyInPause('손가락이 너무 끈적합니다. 해당 기능을 이용할 수 없습니다.');
+        player.incPlayerStat();
       }
+      monster.monsterAttack(player);
 
       // 카드 셔플
     } else if (choice === '3') {
@@ -305,7 +291,7 @@ const battle = (player, monster, uiStyle) => {
         // 지울 카드 상세보기
         for (let i = 0; i < player.hasCardInHand.length; i++) {
           if (i + 1 > 0) {
-            if (cardRemoveAnswer === `see${i + 1}`) {
+            if (cardRemoveAnswer === `see${i + 1}` || cardRemoveAnswer === `SEE${i + 1}`) {
               seeCard(player.hasCardInHand[i]);
             }
           }
@@ -316,7 +302,7 @@ const battle = (player, monster, uiStyle) => {
         } else if (cardIndex < 0) {
           setMessage('올바르지 않은 입력입니다.');
         } else {
-          setBattleText('');
+          setPlayerBattleText('');
           removeCard(cardIndex, player);
           monster.monsterAttack(player);
         }
@@ -354,12 +340,22 @@ function chooseBlessing() {
         '\n1. 가시 수호자(Spike Defender)의 축복\t\t2. 광전사(Berserker)의 축복\t\t3. 화염 투사(Chieftain)의 축복',
       ),
   );
-  const blessingChoice = readlineSync.question('\n당신의 선택은? ');
+
+  let blessingChoice;
+  do {
+    blessingChoice = readlineSync.question('\n당신의 선택은? ');
+  } while (!['1', '2', '3'].includes(blessingChoice));
 
   console.log(chalk.hex('#ffcdbc')(`\n${blessingChoice}번을 선택하셨습니다.`));
 
   return blessingChoice;
 }
+
+let makeNewDeckAndStart = (player, uiStyle) => {
+  addCard(player, 3, 2, 3, 2);
+  player.drawCardRandomly();
+  startGame(player, uiStyle);
+};
 
 // 손패에 있는 카드를 지우는 함수
 function removeCard(cardRemoveIndex, player) {
@@ -399,7 +395,7 @@ let clearStage = (player) => {
   // 스테이지 클리어 시 스탯 증가
   player.stage++;
   player.maxHp += player.stage * 30;
-  player.bondingIndex += 5;
+  player.bondingIndex += 5 * player.stage;
   if (player.isEliteStage) {
     player.gold += 250;
   } else {
@@ -414,17 +410,10 @@ let clearStage = (player) => {
   player.isUndertaled = false;
   player.isTargeted = false;
   player.isClumsy = false;
+
+  setMessage('');
+  setPlayerBattleText('');
+  setMonsterBattleText('');
 };
 
-// function getRandomNumbers(min, max, count) {
-//   let result = new Set();
-
-//   // 중복 없이 랜덤한 숫자 추가
-//   while (result.size < count) {
-//     let randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
-//     result.add(randomNum);
-//   }
-
-//   // 각 숫자를 큰따옴표로 감싸고 문자열로 변환
-//   return Array.from(result).map((num) => `"${num}"`);
-// }
+export { clearStage };

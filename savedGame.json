@@ -1,46 +1,35 @@
 {
   "save": {
     "player": {
-      "name": "sgsg",
-      "hp": 1445,
+      "name": "SEULGI",
+      "hp": 1381.5,
       "maxHp": 1720,
       "defense": 0,
-      "bondingIndex": 50,
+      "bondingIndex": 275,
       "handSize": 5,
       "runAwayProb": 20,
       "hasCard": [
         {
-          "cardName": "기본 공격+",
-          "actProb": 95,
-          "cardTier": "Normal",
-          "isThisCardPlayed": false,
-          "attackDmg": 20,
-          "fireDmg": 10,
-          "restoreHp": 10,
-          "defense": 0,
-          "price": 20
-        },
-        {
-          "cardName": "말살검+",
-          "actProb": 110,
-          "cardTier": "Legendary",
-          "isThisCardPlayed": false,
-          "attackDmg": 110,
-          "fireDmg": 50,
-          "restoreHp": 50,
-          "defense": 20,
-          "price": 160
-        },
-        {
-          "cardName": "방패 올리기",
-          "actProb": 80,
+          "cardName": "방패 올리기+",
+          "actProb": 100,
           "cardTier": "Rare",
           "isThisCardPlayed": false,
           "attackDmg": 0,
           "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15,
+          "restoreHp": 20,
+          "defense": 30,
           "price": 40
+        },
+        {
+          "cardName": "참호+",
+          "actProb": 110,
+          "cardTier": "Legendary",
+          "isThisCardPlayed": false,
+          "attackDmg": 0,
+          "fireDmg": 0,
+          "restoreHp": 40,
+          "defense": 60,
+          "price": 160
         },
         {
           "cardName": "완벽한 타격++",
@@ -54,26 +43,15 @@
           "price": 80
         },
         {
-          "cardName": "방패 올리기",
-          "actProb": 80,
-          "cardTier": "Rare",
+          "cardName": "바리게이트+",
+          "actProb": 105,
+          "cardTier": "Epic",
           "isThisCardPlayed": false,
           "attackDmg": 0,
           "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 15,
-          "price": 40
-        },
-        {
-          "cardName": "기본 방어+",
-          "actProb": 95,
-          "cardTier": "Normal",
-          "isThisCardPlayed": false,
-          "attackDmg": 0,
-          "fireDmg": 0,
-          "restoreHp": 10,
-          "defense": 20,
-          "price": 20
+          "restoreHp": 30,
+          "defense": 50,
+          "price": 80
         },
         {
           "cardName": "피부 찢기+",
@@ -87,66 +65,56 @@
           "price": 40
         },
         {
-          "cardName": "완벽한 타격+",
-          "actProb": 105,
-          "cardTier": "Epic",
+          "cardName": "말살검+",
+          "actProb": 110,
+          "cardTier": "Legendary",
           "isThisCardPlayed": false,
-          "attackDmg": 70,
-          "fireDmg": 30,
-          "restoreHp": 30,
+          "attackDmg": 110,
+          "fireDmg": 50,
+          "restoreHp": 50,
+          "defense": 20,
+          "price": 160
+        },
+        {
+          "cardName": "말살검",
+          "actProb": 90,
+          "cardTier": "Legendary",
+          "isThisCardPlayed": false,
+          "attackDmg": 55,
+          "fireDmg": 25,
+          "restoreHp": 25,
           "defense": 10,
-          "price": 80
+          "price": 160
         },
         {
-          "cardName": "완벽한 타격+",
-          "actProb": 105,
-          "cardTier": "Epic",
+          "cardName": "참호+",
+          "actProb": 110,
+          "cardTier": "Legendary",
           "isThisCardPlayed": false,
-          "attackDmg": 70,
-          "fireDmg": 30,
-          "restoreHp": 30,
-          "defense": 10,
-          "price": 80
-        },
-        {
-          "cardName": "완벽한 타격",
-          "actProb": 85,
-          "cardTier": "Epic",
-          "isThisCardPlayed": false,
-          "attackDmg": 35,
-          "fireDmg": 15,
-          "restoreHp": 15,
-          "defense": 5,
-          "price": 80
-        },
-        {
-          "cardName": "완벽한 타격",
-          "actProb": 85,
-          "cardTier": "Epic",
-          "isThisCardPlayed": false,
-          "attackDmg": 35,
-          "fireDmg": 15,
-          "restoreHp": 15,
-          "defense": 5,
-          "price": 80
+          "attackDmg": 0,
+          "fireDmg": 0,
+          "restoreHp": 40,
+          "defense": 60,
+          "price": 160
         }
       ],
       "hasCardInHand": [],
       "stage": 10,
-      "blessing": "Berserker",
-      "spikeDmg": 20,
-      "multiAttackProb": 50,
-      "maxAttackCount": 2,
+      "blessing": "Chieftain",
       "isEscape": false,
       "isWon": false,
       "isEliteStage": true,
       "isBossStage": false,
-      "difficulty": 1,
-      "gold": 10,
+      "difficulty": 1.5,
+      "gold": 90,
       "isSticky": false,
       "isUndertaled": false,
       "isTargeted": false,
-      "isClumsy": false
+      "isClumsy": false,
+      "healEffieciency": 1.2,
+      "spikeDmg": 20,
+      "multiAttackProb": 50,
+      "maxAttackCount": 2
     },
     "uiStyle": "COMPACT"
   }

@@ -6,30 +6,35 @@ import readlineSync from 'readline-sync';
 import { startGame, typeName } from './game.js';
 import { loadJson, getAchievements, unlockAchievement, loadSaveFile } from './jsonFunction.js';
 import { colors } from './functions.js';
+import sound from 'sound-play';
+import path from 'path';
 
 let difficultyChoice = 'NORMAL';
 let difficulty = 1;
 let uiStyle = 'COMPACT';
+const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
+let isPlaying = false;
 
 // 시나리오 스크립트
 async function scenario() {
   console.clear();
-  // const lines = [
-  //   '10년 전, 마왕의 부활로 인해 대륙은 혼돈에 휩싸이기 시작했습니다.\n\n',
-  //   '포악한 몬스터들이 인류를 학살하자, 평화롭던 마을도 순식간에 잿더미가 되어 버렸죠.\n\n',
-  //   '선량한 자가 무참히 짓밟히고 악한 자만이 살아남는 시대...\n\n',
-  //   '우리에게 남은 희망은 정의로운 영웅이 나타나 마왕을 처단해주는 것 뿐입니다.\n\n',
-  //   '어쩌면 당신이 바로 그 영웅이 될 수도 있겠네요.\n\n',
-  //   '...비록 당신은 손버릇이 나쁜 도박꾼이지만 말이죠.\n\n',
-  // ];
 
-  // await printCharacter(lines);
+  const lines = [
+    '10년 전, 마왕의 부활로 인해 대륙은 혼돈에 휩싸였습니다.\n\n',
+    '포악한 몬스터들이 인류를 학살하면서 평화롭던 마을도 순식간에 잿더미가 되어 버렸습니다.\n\n',
+    '선량한 자는 무참히 짓밟히고, 악한 자만이 살아남는 시대...\n\n',
+    '이제 우리에게 남은 희망은 정의로운 영웅이 나타나 마왕을 처단해 주는 것뿐입니다.\n\n',
+    '어쩌면 당신이 바로 그 영웅이 될 수도 있겠네요.\n\n',
+    '...설령, 당신이 손버릇이 나쁜 도박꾼이더라도요.\n\n',
+  ];
+
+  await printCharacter(lines);
 
   await new Promise(() => {
     setTimeout(() => {
       displayLobby();
       handleUserInput();
-    }, 1500);
+    }, 1000);
   });
 }
 
@@ -92,6 +97,7 @@ async function handleUserInput() {
       console.log(chalk.green('게임을 시작합니다.'));
       // 여기에서 새로운 게임 시작 로직을 구현
       typeName(difficulty, uiStyle);
+
       // startGame();
       break;
     case '2':
@@ -113,12 +119,12 @@ async function handleUserInput() {
         handleUserInput();
       } else if (input === 'HARD') {
         difficultyChoice = input;
-        difficulty = 1.2;
+        difficulty = 1.5;
         displayLobby();
         handleUserInput();
       } else if (input === 'HELL') {
         difficultyChoice = input;
-        difficulty = 1.5;
+        difficulty = 2;
         displayLobby();
         handleUserInput();
       } else {
@@ -176,7 +182,7 @@ async function start() {
 }
 
 // 타자기 효과
-async function printCharacter(lines, lineDelay = 1000) {
+async function printCharacter(lines, lineDelay = 500) {
   for (let i = 0; i < lines.length; i++) {
     await new Promise((resolve) => {
       let index = 0;
@@ -184,7 +190,7 @@ async function printCharacter(lines, lineDelay = 1000) {
         if (index < lines[i].length) {
           process.stdout.write(chalk.red.bold(lines[i].charAt(index)));
           index++;
-          setTimeout(print, 80);
+          setTimeout(print, 40);
         } else {
           resolve(); // 한 줄의 출력이 끝나면 resolve 호출
         }
@@ -195,7 +201,26 @@ async function printCharacter(lines, lineDelay = 1000) {
   }
 }
 
+async function playAudioLoop(filePath) {
+  if (isPlaying) {
+    return; // 이미 실행 중이면 새로 시작하지 않음
+  }
+
+  isPlaying = true; // 재생 상태를 설정
+
+  try {
+    while (isPlaying) {
+      await sound.play(filePath, 0.3); // 파일이 끝날 때까지 대기
+    }
+  } catch (error) {
+    console.error('오디오 재생 중 오류 발생:', error);
+  }
+}
+
 // 게임 실행
+
+playAudioLoop(filePath);
+
 start();
 
-export { displayLobby, handleUserInput };
+export { displayLobby, handleUserInput, uiStyle, playAudioLoop, isPlaying };

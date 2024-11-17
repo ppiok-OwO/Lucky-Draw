@@ -4,7 +4,7 @@
       "id": 1,
       "name": "가시 달린 영웅",
       "description": "가시 수호자로 승리하기",
-      "isUnlocked": true
+      "isUnlocked": false
     },
     {
       "id": 2,
@@ -16,24 +16,24 @@
       "id": 3,
       "name": "실례지만 지금 불타고 계십니다.",
       "description": "화염 투사로 승리하기",
-      "isUnlocked": false
+      "isUnlocked": true
     },
     {
       "id": 4,
       "name": "이 정도는 껌이지.",
-      "description": "Normal모드에서 승리하기",
+      "description": "NORMAL모드에서 승리하기",
       "isUnlocked": false
     },
     {
       "id": 5,
       "name": "쉽다 쉬워.",
-      "description": "Normal모드에서 승리하기",
-      "isUnlocked": false
+      "description": "HARD모드에서 승리하기",
+      "isUnlocked": true
     },
     {
       "id": 6,
       "name": "밸런스가 이게 맞아?",
-      "description": "Normal모드에서 승리하기",
+      "description": "HELL모드에서 승리하기",
       "isUnlocked": false
     }
   ]

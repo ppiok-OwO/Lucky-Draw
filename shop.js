@@ -4,6 +4,11 @@ import readlineSync from 'readline-sync';
 import { colors } from './functions.js';
 import { makeRandomCard, countCard } from './C_card.js';
 import { combineCardNamesToString, displayDeckList, miniUI } from './logs.js';
+import { playAudioLoop, isPlaying } from './server.js';
+import sound from 'sound-play';
+import path from 'path';
+
+const filePath = path.resolve('./musics/THIRST - AIWA [NCS Release].mp3');
 
 // 여관
 let tavern = (player) => {
@@ -13,6 +18,8 @@ let tavern = (player) => {
   let card3 = makeRandomCard(player);
 
   while (tavernChoice !== '4') {
+    playAudioLoop(filePath);
+
     console.clear();
     displayDeckList(player);
     miniUI(player);
@@ -32,9 +39,12 @@ let tavern = (player) => {
     switch (tavernChoice) {
       case '1':
         const restorHpPrice = 30;
-        if (player.gold >= restorHpPrice) {
+        if (player.gold >= restorHpPrice && player.hp < player.maxHp) {
           player.updateHpByTavern(restorHpPrice);
           player.gold -= 30;
+        } else if (player.hp >= player.maxHp) {
+          console.log(colors.error('체력이 이미 가득 찼습니다!'));
+          readlineSync.keyInPause();
         } else {
           console.log(colors.error('보유 금액이 부족합니다!'));
           readlineSync.keyInPause();
@@ -59,12 +69,9 @@ let shop = (player, card1, card2, card3) => {
 
   switch (cardName) {
     case '1':
-      if (player.gold >= card1.price && player.hp < player.maxHp) {
+      if (player.gold >= card1.price) {
         player.hasCard.push(card1);
         player.gold -= card1.price;
-      } else if (player.hp >= player.maxHp) {
-        console.log(colors.error('체력이 이미 가득 찼습니다!'));
-        readlineSync.keyInPause();
       } else {
         console.log(colors.error('보유 금액이 부족합니다!'));
         readlineSync.keyInPause();

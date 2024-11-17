@@ -76,7 +76,7 @@ let loadSaveFile = async () => {
       let difficultyInfo =
         jsonData.save.player.difficulty === 1
           ? 'NORMAL'
-          : jsonData.save.player.difficulty === 1.2
+          : jsonData.save.player.difficulty === 1.5
             ? 'HARD'
             : 'HELL';
 
