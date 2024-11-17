@@ -352,7 +352,7 @@ function chooseBlessing() {
 }
 
 let makeNewDeckAndStart = (player, uiStyle) => {
-  addCard(player, 3, 2, 3, 2);
+  addCard(player, 2, 2, 2, 2);
   player.drawCardRandomly();
   startGame(player, uiStyle);
 };

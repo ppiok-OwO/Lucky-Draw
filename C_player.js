@@ -234,6 +234,15 @@ class SpikeDefender extends Player {
       this.defense += Math.round(playingCard.defense * cardPower + this.spikeDmg / 2);
     }
   }
+
+  // 몬스터에 의한 방어도 업데이트
+  updateDefenseByMonster(num) {
+    this.defense += num;
+    if (this.defense <= 0) {
+      this.defense = 0;
+      this.spikeDmg /= 2;
+    }
+  }
 }
 
 class Berserker extends Player {

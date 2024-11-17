@@ -52,7 +52,7 @@ function largeUI(player, monster) {
   );
 
   if (player.blessing === 'Spike Defender') {
-    console.log(colors.green3(`| 가시 데미지 : ${Math.round(player.spikeDmg)} |`));
+    console.log(colors.green3(`| 가시 데미지 : ${Math.floor(player.spikeDmg)} |`));
   } else if (player.blessing === 'Berserker') {
     console.log(
       colors.green3(
@@ -283,7 +283,7 @@ function DisplayBattleStatus(player, monster) {
   );
 
   if (player.blessing === 'Spike Defender') {
-    console.log(colors.green4(`가시:${player.spikeDmg}`));
+    console.log(colors.green4(`가시:${Math.floor(player.spikeDmg)}`));
   } else if (player.blessing === 'Berserker') {
     console.log(
       colors.green4(
@@ -324,7 +324,7 @@ let miniUI = (player) => {
   );
 
   if (player.blessing === 'Spike Defender') {
-    console.log(colors.green4(`가시:${player.spikeDmg}`));
+    console.log(colors.green4(`가시:${Math.floor(player.spikeDmg)}`));
   } else if (player.blessing === 'Berserker') {
     console.log(
       colors.green4(
